@@ -162,3 +162,26 @@ TEST_CASE("RGBPixel division rejects non-positive scales") {
    REQUIRE_THROWS_AS(mutablePixel /= 0.0, std::invalid_argument);
    REQUIRE_THROWS_AS(mutablePixel /= -1.0, std::invalid_argument);
 }
+
+TEST_CASE("RGBPixel toGrayScale converts a pixel using the luminance formula") {
+   const raytracer::RGBPixel pixel {10, 20, 30};
+
+   const raytracer::RGBPixel grayPixel = pixel.toGrayScale();
+
+   requirePixel(grayPixel, 18, 18, 18);
+   requirePixel(pixel, 10, 20, 30);
+}
+
+TEST_CASE("RGBPixel toGrayScale keeps grayscale pixels unchanged") {
+   const raytracer::RGBPixel pixel {77, 77, 77};
+
+   const raytracer::RGBPixel grayPixel = pixel.toGrayScale();
+
+   requirePixel(grayPixel, 77, 77, 77);
+}
+
+TEST_CASE("RGBPixel toGrayScale maps extreme colors to their grayscale equivalent") {
+   requirePixel(raytracer::PIXEL_BLACK.toGrayScale(), 0, 0, 0);
+   requirePixel(raytracer::PIXEL_WHITE.toGrayScale(), 255, 255, 255);
+   requirePixel(raytracer::PIXEL_RED.toGrayScale(), 76, 76, 76);
+}
