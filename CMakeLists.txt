@@ -10,6 +10,7 @@ include(CTest)
 add_library(raytracer_core
 	include/Images/RGBPixel.cpp
 	include/Images/Image.cpp
+   include/Images/Background.cpp
 	include/Utils/NetpbmUtils.cpp
 )
 target_include_directories(raytracer_core
