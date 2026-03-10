@@ -35,7 +35,7 @@ namespace raytracer {
    }
 
    /** Access operator */
-   uint8_t RGBPixel::operator[](RGBChannel channel) const {
+   uint8_t RGBPixel::operator[](const RGBChannel& channel) const {
       switch (channel)
       {
       case RGBChannel::RED:
@@ -50,28 +50,28 @@ namespace raytracer {
    }
 
    /** Operators */
-   RGBPixel RGBPixel::operator+(RGBPixel rhs) const {
+   RGBPixel RGBPixel::operator+(const RGBPixel& rhs) const {
       return RGBPixel(
          clampChannel(_red + rhs._red),
          clampChannel(_green + rhs._green),
          clampChannel(_blue + rhs._blue)
       );
    }
-   RGBPixel& RGBPixel::operator+=(RGBPixel rhs) {
+   RGBPixel& RGBPixel::operator+=(const RGBPixel& rhs) {
       _red = clampChannel(_red + rhs._red);
       _green = clampChannel(_green + rhs._green);
       _blue = clampChannel(_blue + rhs._blue);
 
       return *this;
    }
-   RGBPixel RGBPixel::operator-(RGBPixel rhs) const {
+   RGBPixel RGBPixel::operator-(const RGBPixel& rhs) const {
       return RGBPixel(
          clampChannel(_red - rhs._red),
          clampChannel(_green - rhs._green),
          clampChannel(_blue - rhs._blue)
       );
    }
-   RGBPixel& RGBPixel::operator-=(RGBPixel rhs) {
+   RGBPixel& RGBPixel::operator-=(const RGBPixel& rhs) {
       _red = clampChannel(_red - rhs._red);
       _green = clampChannel(_green - rhs._green);
       _blue = clampChannel(_blue - rhs._blue);
@@ -79,7 +79,8 @@ namespace raytracer {
       return *this;
    }
    RGBPixel RGBPixel::operator*(double scale) const {
-      if (scale < 0) throw std::invalid_argument("Scale factor must be a positive value");
+      if (scale < 0) 
+         throw std::invalid_argument("Scale factor must be a positive value");
 
       return RGBPixel(
          clampChannel(static_cast<int>(std::round(_red * scale))),
@@ -88,7 +89,8 @@ namespace raytracer {
       );
    }
    RGBPixel& RGBPixel::operator*=(double scale) {
-      if (scale < 0) throw std::invalid_argument("Scale factor must be a positive value");
+      if (scale < 0) 
+         throw std::invalid_argument("Scale factor must be a positive value");
 
       _red = clampChannel(static_cast<int>(std::round(_red * scale)));
       _green = clampChannel(static_cast<int>(std::round(_green * scale)));
@@ -97,7 +99,8 @@ namespace raytracer {
       return *this;
    }
    RGBPixel RGBPixel::operator/(double scale) const {
-      if (scale <= 0) throw std::invalid_argument("Scale factor must be a positive value");
+      if (scale <= 0) 
+         throw std::invalid_argument("Scale factor must be a positive value");
 
       return RGBPixel(
          clampChannel(static_cast<int>(std::round(_red / scale))),
@@ -106,12 +109,23 @@ namespace raytracer {
       );
    }
    RGBPixel& RGBPixel::operator/=(double scale) {
-      if (scale <= 0) throw std::invalid_argument("Scale factor must be a positive value");
+      if (scale <= 0) 
+         throw std::invalid_argument("Scale factor must be a positive value");
 
       _red = clampChannel(static_cast<int>(std::round(_red / scale)));
       _green = clampChannel(static_cast<int>(std::round(_green / scale)));
       _blue = clampChannel(static_cast<int>(std::round(_blue / scale)));
 
       return *this;
+   }
+
+   /** Conversion functions */
+   RGBPixel RGBPixel::toGrayScale() const {
+      uint8_t grayValue = std::round(
+        0.299 * _red +
+        0.587 * _green +
+        0.114 * _blue
+      );
+      return RGBPixel(grayValue, grayValue, grayValue);
    }
 }

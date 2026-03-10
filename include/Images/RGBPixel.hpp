@@ -1,5 +1,5 @@
-#ifndef RGBPixel_HPP
-#define RGBPixel_HPP
+#ifndef RGB_PIXEL_HPP
+#define RGB_PIXEL_HPP
 
 #include <cstdint>
 
@@ -37,19 +37,23 @@ namespace raytracer {
          void setBlue(uint8_t blue);
 
          /** Access operator */
-         uint8_t operator[](RGBChannel channel) const;
+         uint8_t operator[](const RGBChannel& channel) const;
 
          /** Operators */
-         RGBPixel operator+(RGBPixel rhs) const;
-         RGBPixel& operator+=(RGBPixel rhs);
-         RGBPixel operator-(RGBPixel rhs) const;
-         RGBPixel& operator-=(RGBPixel rhs);
+         RGBPixel operator+(const RGBPixel& rhs) const;
+         RGBPixel& operator+=(const RGBPixel& rhs);
+         RGBPixel operator-(const RGBPixel& rhs) const;
+         RGBPixel& operator-=(const RGBPixel& rhs);
          RGBPixel operator*(double scale) const;
          RGBPixel& operator*=(double scale);
          RGBPixel operator/(double scale) const;
          RGBPixel& operator/=(double scale);
+
+         /** Conversion functions */
+         RGBPixel toGrayScale() const;
    };
 
+   /** PIXELS CONSTANTS */
    constexpr const RGBPixel PIXEL_BLACK {0, 0, 0};
    constexpr const RGBPixel PIXEL_WHITE {255, 255, 255};
    constexpr const RGBPixel PIXEL_RED {255, 0, 0};
@@ -60,4 +64,4 @@ namespace raytracer {
    constexpr const RGBPixel PIXEL_CYAN {0, 255, 255};
 }
 
-#endif // !RGBPixel_HPP
+#endif // !RGB_PIXEL_HPP

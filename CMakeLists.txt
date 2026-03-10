@@ -9,6 +9,8 @@ include(CTest)
 
 add_library(raytracer_core
 	include/Images/RGBPixel.cpp
+	include/Images/Image.cpp
+	include/Utils/NetpbmUtils.cpp
 )
 target_include_directories(raytracer_core
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
