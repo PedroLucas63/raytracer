@@ -1,9 +1,12 @@
 #include "NetpbmUtils.hpp"
+#include <cctype>
 #include <fstream>
 
 namespace raytracer {
    namespace netpbm {
       Image loadImage(std::string pathfile, NetpbmType type) {
+         // TODO: Allow comments on the image
+         // TODO: Allow other image types
          // VALIDATE TYPE
          if (type != P3 && type != P6)
             throw std::invalid_argument("Only P3 (ASCII RGB) and P6 (Binary RGB) Netpbm formats are supported");
@@ -28,29 +31,46 @@ namespace raytracer {
             throw std::runtime_error("Netpbm type mismatch: expected " + std::to_string(type) + ", got " + magicNumber);
 
          // GET WIDTH, HEIGHT AND MAX COLOR VALUE
-         uint16_t width, height;
-         uint8_t maxColorValue;
+         int width, height, maxColorValue;
 
          file >> width >> height >> maxColorValue;
 
          if (maxColorValue != 255)
             throw std::runtime_error("Unsupported max color value: " + std::to_string(maxColorValue) + ". Only 255 is supported.");
 
+         if (type == P6) {
+            char separator;
+            file.get(separator);
+
+            if (!file || !std::isspace(static_cast<unsigned char>(separator)))
+               throw std::runtime_error("Invalid P6 header separator");
+         }
+
          // READ PIXELS
          Image image(width, height, 3);
          for (int row = 0; row < height; ++row) {
             for (int col = 0; col < width; ++col) {
-               uint8_t r, g, b;
-
                if (type == P3) {
+                  int r, g, b;
+
                   file >> r >> g >> b;
+
+                  if (!file)
+                     throw std::runtime_error("Could not read P3 pixel data");
+
+                  image.setPixel(RGBPixel(r, g, b), row, col);
                } else {
+                  uint8_t r, g, b;
+
                   file.read(reinterpret_cast<char*>(&r), sizeof(uint8_t));
                   file.read(reinterpret_cast<char*>(&g), sizeof(uint8_t));
                   file.read(reinterpret_cast<char*>(&b), sizeof(uint8_t));
-               }
 
-               image.setPixel(RGBPixel(r, g, b), row, col);
+                  if (!file)
+                     throw std::runtime_error("Could not read P6 pixel data");
+
+                  image.setPixel(RGBPixel(r, g, b), row, col);
+               }
             }
          }
 
