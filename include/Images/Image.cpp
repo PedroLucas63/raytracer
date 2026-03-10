@@ -59,10 +59,10 @@ namespace raytracer {
       return _pixels[pos];
    }
    void Image::setPixel(const RGBPixel& pixel, uint16_t row, uint16_t col) {
-      if (row >= _width)
-         throw std::out_of_range("Row index out of bounds");
-      if (col >= _height)
+      if (col >= _width)
          throw std::out_of_range("Column index out of bounds");
+      if (row >= _height)
+         throw std::out_of_range("Row index out of bounds");
 
       size_t pos = row * _width + col;
       _pixels[pos] = pixel;
