@@ -25,10 +25,10 @@ namespace raytracer {
       setWidth(width);
       setHeight(height);
       setChannels(channels);
-      _pixels = new RGBPixel[width * height];
+      _pixels = new RGBColor[width * height];
    }
    Image::Image(
-      RGBPixel* pixels, 
+      RGBColor* pixels, 
       uint16_t width, 
       uint16_t height, 
       uint8_t channels
@@ -54,11 +54,13 @@ namespace raytracer {
    uint8_t Image::getChannels() const {
       return _channels;
    }
-   RGBPixel Image::getPixel(uint16_t row, uint16_t col) const {
+   RGBColor Image::getPixel(uint16_t row, uint16_t col) const {
       size_t pos = row * _width + col;
-      return _pixels[pos];
+      
+      if (_channels == 1) return _pixels[pos].toGrayScale();
+      else return _pixels[pos];
    }
-   void Image::setPixel(const RGBPixel& pixel, uint16_t row, uint16_t col) {
+   void Image::setPixel(const RGBColor& pixel, uint16_t row, uint16_t col) {
       if (col >= _width)
          throw std::out_of_range("Column index out of bounds");
       if (row >= _height)
@@ -69,7 +71,7 @@ namespace raytracer {
    }
 
    /** Access Operator */
-   RGBPixel Image::operator()(uint16_t row, uint16_t col) {
+   RGBColor Image::operator()(uint16_t row, uint16_t col) {
       return getPixel(row, col);
    }
 
@@ -78,8 +80,8 @@ namespace raytracer {
       Image grayImage(_width, _height, 3); // TODO: This will create a grayscale image with 3 channels (RGB), but all channels will have the same value.
       for (uint16_t row = 0; row < _height; row++) {
          for (uint16_t col = 0; col < _width; col++) {
-            RGBPixel pixel = getPixel(row, col);
-            RGBPixel grayPixel = pixel.toGrayScale();
+            RGBColor pixel = getPixel(row, col);
+            RGBColor grayPixel = pixel.toGrayScale();
             grayImage.setPixel(grayPixel, row, col);
          }
       }
