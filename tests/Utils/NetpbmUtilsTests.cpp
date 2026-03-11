@@ -14,7 +14,7 @@
 
 namespace {
    void requirePixel(
-      const raytracer::RGBPixel& pixel,
+      const raytracer::RGBColor& pixel,
       uint8_t red,
       uint8_t green,
       uint8_t blue
@@ -71,8 +71,8 @@ TEST_CASE("Netpbm saveImage default overload writes a P3 file") {
    const auto outputPath = temporaryDirectory.path() / "sample.ppm";
 
    raytracer::Image image {2, 1, 3};
-   image.setPixel(raytracer::RGBPixel {255, 0, 0}, 0, 0);
-   image.setPixel(raytracer::RGBPixel {0, 255, 0}, 0, 1);
+   image.setPixel(raytracer::RGBColor {255, 0, 0}, 0, 0);
+   image.setPixel(raytracer::RGBColor {0, 255, 0}, 0, 1);
 
    raytracer::netpbm::saveImage(image, outputPath.string());
 
@@ -86,8 +86,8 @@ TEST_CASE("Netpbm saveImage writes a P6 file when requested") {
    const auto outputPath = temporaryDirectory.path() / "sample_binary.ppm";
 
    raytracer::Image image {2, 1, 3};
-   image.setPixel(raytracer::RGBPixel {255, 0, 0}, 0, 0);
-   image.setPixel(raytracer::RGBPixel {0, 255, 0}, 0, 1);
+   image.setPixel(raytracer::RGBColor {255, 0, 0}, 0, 0);
+   image.setPixel(raytracer::RGBColor {0, 255, 0}, 0, 1);
 
    raytracer::netpbm::saveImage(image, outputPath.string(), raytracer::netpbm::P6);
 

@@ -1,4 +1,4 @@
-#include "RGBPixel.hpp"
+#include "RGBColor.hpp"
 #include <limits>
 #include <algorithm>
 #include <cmath>
@@ -6,7 +6,7 @@
 
 namespace raytracer {
    /** Private helper function */
-   uint8_t RGBPixel::clampChannel(int value) const {
+   uint8_t RGBColor::clampChannel(int value) const {
       const int MIN_VALUE = std::numeric_limits<uint8_t>::min();
       const int MAX_VALUE = std::numeric_limits<uint8_t>::max();
       return static_cast<uint8_t>(
@@ -15,27 +15,27 @@ namespace raytracer {
    }
 
    /** Getters and Setters */
-   uint8_t RGBPixel::getRed() const {
+   uint8_t RGBColor::getRed() const {
       return _red;
    }
-   uint8_t RGBPixel::getGreen() const {
+   uint8_t RGBColor::getGreen() const {
       return _green;
    }
-   uint8_t RGBPixel::getBlue() const {
+   uint8_t RGBColor::getBlue() const {
       return _blue;
    }
-   void RGBPixel::setRed(uint8_t red) {
+   void RGBColor::setRed(uint8_t red) {
       _red = red;
    }
-   void RGBPixel::setGreen(uint8_t green) {
+   void RGBColor::setGreen(uint8_t green) {
       _green = green;
    }
-   void RGBPixel::setBlue(uint8_t blue) {
+   void RGBColor::setBlue(uint8_t blue) {
       _blue = blue;
    }
 
    /** Access operator */
-   uint8_t RGBPixel::operator[](const RGBChannel& channel) const {
+   uint8_t RGBColor::operator[](const RGBChannel& channel) const {
       switch (channel)
       {
       case RGBChannel::RED:
@@ -50,45 +50,45 @@ namespace raytracer {
    }
 
    /** Operators */
-   RGBPixel RGBPixel::operator+(const RGBPixel& rhs) const {
-      return RGBPixel(
+   RGBColor RGBColor::operator+(const RGBColor& rhs) const {
+      return RGBColor(
          clampChannel(_red + rhs._red),
          clampChannel(_green + rhs._green),
          clampChannel(_blue + rhs._blue)
       );
    }
-   RGBPixel& RGBPixel::operator+=(const RGBPixel& rhs) {
+   RGBColor& RGBColor::operator+=(const RGBColor& rhs) {
       _red = clampChannel(_red + rhs._red);
       _green = clampChannel(_green + rhs._green);
       _blue = clampChannel(_blue + rhs._blue);
 
       return *this;
    }
-   RGBPixel RGBPixel::operator-(const RGBPixel& rhs) const {
-      return RGBPixel(
+   RGBColor RGBColor::operator-(const RGBColor& rhs) const {
+      return RGBColor(
          clampChannel(_red - rhs._red),
          clampChannel(_green - rhs._green),
          clampChannel(_blue - rhs._blue)
       );
    }
-   RGBPixel& RGBPixel::operator-=(const RGBPixel& rhs) {
+   RGBColor& RGBColor::operator-=(const RGBColor& rhs) {
       _red = clampChannel(_red - rhs._red);
       _green = clampChannel(_green - rhs._green);
       _blue = clampChannel(_blue - rhs._blue);
 
       return *this;
    }
-   RGBPixel RGBPixel::operator*(double scale) const {
+   RGBColor RGBColor::operator*(double scale) const {
       if (scale < 0) 
          throw std::invalid_argument("Scale factor must be a positive value");
 
-      return RGBPixel(
+      return RGBColor(
          clampChannel(static_cast<int>(std::round(_red * scale))),
          clampChannel(static_cast<int>(std::round(_green * scale))),
          clampChannel(static_cast<int>(std::round(_blue * scale)))
       );
    }
-   RGBPixel& RGBPixel::operator*=(double scale) {
+   RGBColor& RGBColor::operator*=(double scale) {
       if (scale < 0) 
          throw std::invalid_argument("Scale factor must be a positive value");
 
@@ -98,17 +98,17 @@ namespace raytracer {
 
       return *this;
    }
-   RGBPixel RGBPixel::operator/(double scale) const {
+   RGBColor RGBColor::operator/(double scale) const {
       if (scale <= 0) 
          throw std::invalid_argument("Scale factor must be a positive value");
 
-      return RGBPixel(
+      return RGBColor(
          clampChannel(static_cast<int>(std::round(_red / scale))),
          clampChannel(static_cast<int>(std::round(_green / scale))),
          clampChannel(static_cast<int>(std::round(_blue / scale)))
       );
    }
-   RGBPixel& RGBPixel::operator/=(double scale) {
+   RGBColor& RGBColor::operator/=(double scale) {
       if (scale <= 0) 
          throw std::invalid_argument("Scale factor must be a positive value");
 
@@ -120,12 +120,12 @@ namespace raytracer {
    }
 
    /** Conversion functions */
-   RGBPixel RGBPixel::toGrayScale() const {
+   RGBColor RGBColor::toGrayScale() const {
       uint8_t grayValue = std::round(
         0.299 * _red +
         0.587 * _green +
         0.114 * _blue
       );
-      return RGBPixel(grayValue, grayValue, grayValue);
+      return RGBColor(grayValue, grayValue, grayValue);
    }
 }

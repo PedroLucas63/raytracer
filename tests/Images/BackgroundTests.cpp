@@ -7,7 +7,7 @@
 
 namespace {
    void requirePixel(
-      const raytracer::RGBPixel& pixel,
+      const raytracer::RGBColor& pixel,
       uint8_t red,
       uint8_t green,
       uint8_t blue
@@ -21,10 +21,10 @@ namespace {
 // ── Corners ─────────────────────────────────────────────────────────────────
 
 TEST_CASE("Background sampleUV returns exact corner colors") {
-   const raytracer::RGBPixel tl {255, 0,   0  };
-   const raytracer::RGBPixel tr {0,   255, 0  };
-   const raytracer::RGBPixel bl {0,   0,   255};
-   const raytracer::RGBPixel br {255, 255, 0  };
+   const raytracer::RGBColor tl {255, 0,   0  };
+   const raytracer::RGBColor tr {0,   255, 0  };
+   const raytracer::RGBColor bl {0,   0,   255};
+   const raytracer::RGBColor br {255, 255, 0  };
 
    const raytracer::Background bkg {tl, tr, bl, br};
 
@@ -105,10 +105,10 @@ TEST_CASE("Background samplePixel maps pixel coordinates to correct UV") {
 }
 
 TEST_CASE("Background samplePixel corner pixels match sampleUV corner colors") {
-   const raytracer::RGBPixel tl {10, 20, 30};
-   const raytracer::RGBPixel tr {40, 50, 60};
-   const raytracer::RGBPixel bl {70, 80, 90};
-   const raytracer::RGBPixel br {100, 110, 120};
+   const raytracer::RGBColor tl {10, 20, 30};
+   const raytracer::RGBColor tr {40, 50, 60};
+   const raytracer::RGBColor bl {70, 80, 90};
+   const raytracer::RGBColor br {100, 110, 120};
 
    const raytracer::Background bkg {tl, tr, bl, br};
    const uint16_t W = 4, H = 3;

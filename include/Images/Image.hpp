@@ -1,14 +1,14 @@
 #ifndef IMAGE_HPP
 #define IMAGE_HPP
 
-#include "RGBPixel.hpp"
+#include "RGBColor.hpp"
 #include <cstdint>
 #include <utility>
 
 namespace raytracer {
    class Image {
       private:
-         RGBPixel* _pixels;
+         RGBColor* _pixels;
          uint16_t _width;
          uint16_t _height;
          uint8_t _channels;
@@ -20,7 +20,7 @@ namespace raytracer {
       public:
          /** Constructors */
          Image(uint16_t width, uint16_t height, uint8_t channels);
-         Image(RGBPixel* pixels, uint16_t width, uint16_t height, uint8_t channels);
+         Image(RGBColor* pixels, uint16_t width, uint16_t height, uint8_t channels);
 
          /** Destructor */
          ~Image();
@@ -29,11 +29,11 @@ namespace raytracer {
          uint16_t getWidth() const;
          uint16_t getHeight() const;
          uint8_t getChannels() const;
-         RGBPixel getPixel(uint16_t row, uint16_t col) const;
-         void setPixel(const RGBPixel& pixel, uint16_t row, uint16_t col);
+         RGBColor getPixel(uint16_t row, uint16_t col) const;
+         void setPixel(const RGBColor& pixel, uint16_t row, uint16_t col);
 
          /** Access Operator */
-         RGBPixel operator()(uint16_t row, uint16_t col);
+         RGBColor operator()(uint16_t row, uint16_t col);
 
          /** Conversion functions */
          Image toGrayScale() const;

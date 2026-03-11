@@ -58,7 +58,7 @@ namespace raytracer {
                   if (!file)
                      throw std::runtime_error("Could not read P3 pixel data");
 
-                  image.setPixel(RGBPixel(r, g, b), row, col);
+                  image.setPixel(RGBColor(r, g, b), row, col);
                } else {
                   uint8_t r, g, b;
 
@@ -69,7 +69,7 @@ namespace raytracer {
                   if (!file)
                      throw std::runtime_error("Could not read P6 pixel data");
 
-                  image.setPixel(RGBPixel(r, g, b), row, col);
+                  image.setPixel(RGBColor(r, g, b), row, col);
                }
             }
          }
@@ -106,7 +106,7 @@ namespace raytracer {
          // WRITE PIXELS
          for (int row = 0; row < image.getHeight(); ++row) {
             for (int col = 0; col < image.getWidth(); ++col) {
-               RGBPixel pixel = image.getPixel(row, col);
+               RGBColor pixel = image.getPixel(row, col);
                uint8_t r = pixel.getRed();
                uint8_t g = pixel.getGreen();
                uint8_t b = pixel.getBlue();
