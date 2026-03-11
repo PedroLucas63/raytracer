@@ -1,34 +1,26 @@
 #include <print>
 #include <numeric>
+#include "Utils/ImageUtils.hpp"
+#include "Utils/NetpbmUtils.hpp"
+#include "Images/Image.hpp"
+#include "Images/Background.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+using namespace raytracer;
 
 int main(int, char**) {
     std::println("Hello, Raytracer!");
-
-    int width, height, channels;
-    auto image = stbi_load("assets/images/panda.jpg", &width, &height, &channels, 0);
     
-    if (!image) {
-        std::println("Erro ao carregar imagem: {}", stbi_failure_reason());
-        return 1;
-    }
+    auto bg_solid = Background::solid(PIXEL_RED);
+    auto bg_horizontal = Background::horizontalGradient(PIXEL_GREEN, PIXEL_BLUE);
+    auto bg_vertical = Background::verticalGradient(PIXEL_BLACK, PIXEL_WHITE);
+    auto bg_diagonal_tlbr = Background::diagonalGradientTLBR(PIXEL_CYAN, PIXEL_MAGENTA);
+    auto bg_diagonal_trbl = Background::diagonalGradientTRBL(PIXEL_YELLOW, PIXEL_RED);
 
-    std::println("Imagem carregada!");
-    std::println("Width: {}", width);
-    std::println("Height: {}", height);
-    std::println("Channels: {}", channels);
+    save_image(bg_solid.toImage(512, 256), "background_solid.png", ImageType::PNG);
+    save_image(bg_horizontal.toImage(512, 256), "background_horizontal.bmp", ImageType::BMP);
+    save_image(bg_vertical.toImage(512, 256), "background_vertical.tga", ImageType::TGA);
+    save_image(bg_diagonal_tlbr.toImage(512, 256), "background_diagonal_tlbr.jpg", ImageType::JPG);
+    netpbm::saveImage(bg_diagonal_trbl.toImage(512, 256), "background_diagonal_trbl.ppm", netpbm::NetpbmType::P3);
 
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            int index = (y * width + x) * channels;
-            int mean =  std::accumulate(image + index, image + index + channels, 0) / channels;
-            std::print("{}", mean > 128 ? '.' : '#');
-        }
-        std::println();
-    }
-
-    stbi_image_free(image);
     return EXIT_SUCCESS;
 }

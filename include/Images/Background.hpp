@@ -1,7 +1,8 @@
 #ifndef BACKGROUND_HPP
 #define BACKGROUND_HPP
 
-#include "RGBPixel.hpp"
+#include "RGBColor.hpp"
+#include "Image.hpp"
 #include <cstdint>
 #include <array>
 #include <stdexcept>
@@ -12,29 +13,34 @@ namespace raytracer {
 
    class Background{
       private:
-         std::array<RGBPixel, 4> _corners;
+         std::array<RGBColor, 4> _corners;
 
-         RGBPixel lerp(const RGBPixel& A, const RGBPixel& B, float t) const;
+         static RGBColor lerp(const RGBColor& A, const RGBColor& B, float t);
 
          float clampCoordinate(float coordinate) const;
 
       public:
 
          Background(
-            const RGBPixel& tl, const RGBPixel& tr,
-            const RGBPixel& bl, const RGBPixel& br
+            const RGBColor& tl, const RGBColor& tr,
+            const RGBColor& bl, const RGBColor& br
          ) : _corners{tl, tr, bl, br} {}
 
          ~Background(){};
 
-         static Background solid(const RGBPixel& color) {
-            return Background(color, color, color, color);
-         }
+         static Background solid(const RGBColor& color);
+         static Background horizontalGradient(const RGBColor& left, const RGBColor& right);
+         static Background verticalGradient(const RGBColor& top, const RGBColor& bottom);
+         static Background diagonalGradientTLBR(const RGBColor& tl, const RGBColor& br);
+         static Background diagonalGradientTRBL(const RGBColor& tr, const RGBColor& bl);
 
-         RGBPixel sampleUV(float u, float v) const;
 
-         RGBPixel samplePixel(uint16_t col, uint16_t row,
+         RGBColor sampleUV(float u, float v) const;
+
+         RGBColor samplePixel(uint16_t col, uint16_t row,
                               uint16_t width, uint16_t height) const;
+         
+         Image toImage(uint16_t width, uint16_t height) const;
    };
 };
 
