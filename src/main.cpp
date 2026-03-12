@@ -16,10 +16,10 @@ int main(int, char**) {
     auto bg_diagonal_tlbr = Background::diagonalGradientTLBR(PIXEL_CYAN, PIXEL_MAGENTA);
     auto bg_diagonal_trbl = Background::diagonalGradientTRBL(PIXEL_YELLOW, PIXEL_RED);
 
-    save_image(bg_solid.toImage(512, 256), "background_solid.png", ImageType::PNG);
-    save_image(bg_horizontal.toImage(512, 256), "background_horizontal.bmp", ImageType::BMP);
-    save_image(bg_vertical.toImage(512, 256), "background_vertical.tga", ImageType::TGA);
-    save_image(bg_diagonal_tlbr.toImage(512, 256), "background_diagonal_tlbr.jpg", ImageType::JPG);
+    saveImage(bg_solid.toImage(512, 256), "background_solid.png", ImageType::PNG);
+    saveImage(bg_horizontal.toImage(512, 256), "background_horizontal.bmp", ImageType::BMP);
+    saveImage(bg_vertical.toImage(512, 256), "background_vertical.tga", ImageType::TGA);
+    saveImage(bg_diagonal_tlbr.toImage(512, 256), "background_diagonal_tlbr.jpg", ImageType::JPG);
     netpbm::saveImage(bg_diagonal_trbl.toImage(512, 256), "background_diagonal_trbl.ppm", netpbm::NetpbmType::P3);
 
     return EXIT_SUCCESS;
