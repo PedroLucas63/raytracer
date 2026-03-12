@@ -15,15 +15,19 @@ namespace raytracer {
          uint8_t _red;
          uint8_t _green;
          uint8_t _blue;
+
+         /** Constants */
+         static constexpr uint8_t MAX_CHANNEL_VALUE = 255;
          
          /** Private helper function */
-         uint8_t clampChannel(int value) const;
+         static uint8_t clampChannel(int value);
       public:
          /** Constructors */
          constexpr RGBColor(): _red(0), _green(0), _blue(0) {}
          constexpr RGBColor(
             uint8_t red, uint8_t green, uint8_t blue
          ): _red(red), _green(green), _blue(blue) {}
+         static RGBColor fromNormalized(float red, float green, float blue);
 
          /** Destructor */
          ~RGBColor() = default;
@@ -32,9 +36,15 @@ namespace raytracer {
          uint8_t getRed() const;
          uint8_t getGreen() const;
          uint8_t getBlue() const;
+         float getRedNormalized() const;
+         float getGreenNormalized() const;
+         float getBlueNormalized() const;
          void setRed(uint8_t red);
          void setGreen(uint8_t green);
          void setBlue(uint8_t blue);
+         void setRedNormalized(float red);
+         void setGreenNormalized(float green);
+         void setBlueNormalized(float blue);
 
          /** Access operator */
          uint8_t operator[](const RGBChannel& channel) const;

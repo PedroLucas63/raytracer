@@ -6,12 +6,29 @@
 
 namespace raytracer {
    /** Private helper function */
-   uint8_t RGBColor::clampChannel(int value) const {
+   uint8_t RGBColor::clampChannel(int value) {
       const int MIN_VALUE = std::numeric_limits<uint8_t>::min();
-      const int MAX_VALUE = std::numeric_limits<uint8_t>::max();
       return static_cast<uint8_t>(
-         std::max(MIN_VALUE, std::min(value, MAX_VALUE))
+         std::max(
+            MIN_VALUE, 
+            std::min(value, static_cast<int>(MAX_CHANNEL_VALUE))
+         )
       );   
+   }
+
+   /** Constructors */
+   RGBColor RGBColor::fromNormalized(float red, float green, float blue) {
+      return RGBColor(
+         clampChannel(static_cast<int>(
+            std::round(red * MAX_CHANNEL_VALUE)
+         )),
+         clampChannel(static_cast<int>(
+            std::round(green * MAX_CHANNEL_VALUE)
+         )),
+         clampChannel(static_cast<int>(
+            std::round(blue * MAX_CHANNEL_VALUE)
+         ))
+      );
    }
 
    /** Getters and Setters */
@@ -24,6 +41,15 @@ namespace raytracer {
    uint8_t RGBColor::getBlue() const {
       return _blue;
    }
+   float RGBColor::getRedNormalized() const {
+      return static_cast<float>(_red) / MAX_CHANNEL_VALUE;
+   }
+   float RGBColor::getGreenNormalized() const {
+      return static_cast<float>(_green) / MAX_CHANNEL_VALUE;
+   }
+   float RGBColor::getBlueNormalized() const {
+      return static_cast<float>(_blue) / MAX_CHANNEL_VALUE;
+   }
    void RGBColor::setRed(uint8_t red) {
       _red = red;
    }
@@ -32,6 +58,21 @@ namespace raytracer {
    }
    void RGBColor::setBlue(uint8_t blue) {
       _blue = blue;
+   }
+   void RGBColor::setRedNormalized(float red) {
+      _red = clampChannel(static_cast<int>(
+         std::round(red * MAX_CHANNEL_VALUE)
+      ));
+   }
+   void RGBColor::setGreenNormalized(float green) {
+      _green = clampChannel(static_cast<int>(
+         std::round(green * MAX_CHANNEL_VALUE)
+      ));
+   }
+   void RGBColor::setBlueNormalized(float blue) {
+      _blue = clampChannel(static_cast<int>(
+         std::round(blue * MAX_CHANNEL_VALUE)
+      ));
    }
 
    /** Access operator */
