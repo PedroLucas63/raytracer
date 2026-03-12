@@ -2,6 +2,7 @@ add_executable(raytracer_tests
    Images/RGBColorTests.cpp
    Images/ImageTests.cpp
    Images/BackgroundTests.cpp
+   Utils/ImageUtilsTests.cpp
    Utils/NetpbmUtilsTests.cpp
 )
 

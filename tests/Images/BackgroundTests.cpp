@@ -44,6 +44,58 @@ TEST_CASE("Background solid factory returns the same color everywhere") {
    requirePixel(bkg.sampleUV(1.0f, 1.0f), 100, 150, 200);
 }
 
+TEST_CASE("Background horizontalGradient factory creates a left-to-right gradient") {
+   const raytracer::Background bkg = raytracer::Background::horizontalGradient(
+      {10, 20, 30},
+      {110, 120, 130}
+   );
+
+   requirePixel(bkg.sampleUV(0.0f, 0.0f), 10, 20, 30);
+   requirePixel(bkg.sampleUV(0.0f, 1.0f), 10, 20, 30);
+   requirePixel(bkg.sampleUV(1.0f, 0.0f), 110, 120, 130);
+   requirePixel(bkg.sampleUV(1.0f, 1.0f), 110, 120, 130);
+   requirePixel(bkg.sampleUV(0.5f, 0.25f), 60, 70, 80);
+}
+
+TEST_CASE("Background verticalGradient factory creates a top-to-bottom gradient") {
+   const raytracer::Background bkg = raytracer::Background::verticalGradient(
+      {10, 20, 30},
+      {110, 120, 130}
+   );
+
+   requirePixel(bkg.sampleUV(0.0f, 0.0f), 10, 20, 30);
+   requirePixel(bkg.sampleUV(1.0f, 0.0f), 10, 20, 30);
+   requirePixel(bkg.sampleUV(0.0f, 1.0f), 110, 120, 130);
+   requirePixel(bkg.sampleUV(1.0f, 1.0f), 110, 120, 130);
+   requirePixel(bkg.sampleUV(0.25f, 0.5f), 60, 70, 80);
+}
+
+TEST_CASE("Background diagonalGradientTLBR factory uses the midpoint color on opposite corners") {
+   const raytracer::Background bkg = raytracer::Background::diagonalGradientTLBR(
+      {0, 0, 0},
+      {255, 255, 255}
+   );
+
+   requirePixel(bkg.sampleUV(0.0f, 0.0f), 0, 0, 0);
+   requirePixel(bkg.sampleUV(1.0f, 0.0f), 128, 128, 128);
+   requirePixel(bkg.sampleUV(0.0f, 1.0f), 128, 128, 128);
+   requirePixel(bkg.sampleUV(1.0f, 1.0f), 255, 255, 255);
+   requirePixel(bkg.sampleUV(0.5f, 0.5f), 128, 128, 128);
+}
+
+TEST_CASE("Background diagonalGradientTRBL factory uses the midpoint color on opposite corners") {
+   const raytracer::Background bkg = raytracer::Background::diagonalGradientTRBL(
+      {255, 255, 255},
+      {0, 0, 0}
+   );
+
+   requirePixel(bkg.sampleUV(0.0f, 0.0f), 128, 128, 128);
+   requirePixel(bkg.sampleUV(1.0f, 0.0f), 255, 255, 255);
+   requirePixel(bkg.sampleUV(0.0f, 1.0f), 0, 0, 0);
+   requirePixel(bkg.sampleUV(1.0f, 1.0f), 128, 128, 128);
+   requirePixel(bkg.sampleUV(0.5f, 0.5f), 128, 128, 128);
+}
+
 // ── Linear interpolation ─────────────────────────────────────────────────────
 
 TEST_CASE("Background sampleUV interpolates horizontally at the top edge") {
@@ -132,4 +184,26 @@ TEST_CASE("Background sampleUV clamps out-of-range UV to valid colors") {
    REQUIRE_NOTHROW(bkg.sampleUV(1.1f,  0.5f));
    REQUIRE_NOTHROW(bkg.sampleUV(0.5f, -0.1f));
    REQUIRE_NOTHROW(bkg.sampleUV(0.5f,  1.1f));
+}
+
+// ── toImage ──────────────────────────────────────────────────────────────────
+
+TEST_CASE("Background toImage generates an image with sampled pixels") {
+   const raytracer::Background bkg = raytracer::Background::horizontalGradient(
+      {0, 0, 0},
+      {255, 255, 255}
+   );
+
+   const raytracer::Image image = bkg.toImage(3, 2);
+
+   REQUIRE(image.getWidth() == 3);
+   REQUIRE(image.getHeight() == 2);
+   REQUIRE(image.getChannels() == 3);
+
+   requirePixel(image.getPixel(0, 0), 0, 0, 0);
+   requirePixel(image.getPixel(0, 1), 128, 128, 128);
+   requirePixel(image.getPixel(0, 2), 255, 255, 255);
+   requirePixel(image.getPixel(1, 0), 0, 0, 0);
+   requirePixel(image.getPixel(1, 1), 128, 128, 128);
+   requirePixel(image.getPixel(1, 2), 255, 255, 255);
 }
