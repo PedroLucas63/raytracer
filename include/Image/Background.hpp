@@ -7,6 +7,7 @@
 #include <array>
 #include <stdexcept>
 
+
 namespace raytracer {  
 
    enum Corners{ TopLeft = 0, TopRight, BottomLeft, BottomRight };

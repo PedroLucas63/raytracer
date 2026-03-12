@@ -8,11 +8,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(CTest)
 
 add_library(raytracer_core
-	include/Images/RGBColor.cpp
-	include/Images/Image.cpp
-   include/Images/Background.cpp
+	include/Image/RGBColor.cpp
+	include/Image/Image.cpp
+   include/Image/Background.cpp
+   include/Core/ParamSet.cpp
 	include/Utils/NetpbmUtils.cpp
 	include/Utils/ImageUtils.cpp
+   external/tinyxml2/tinyxml2.cpp
 )
 target_include_directories(raytracer_core
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include

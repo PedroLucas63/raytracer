@@ -2,8 +2,8 @@
 #include <numeric>
 #include "Utils/ImageUtils.hpp"
 #include "Utils/NetpbmUtils.hpp"
-#include "Images/Image.hpp"
-#include "Images/Background.hpp"
+#include "Image/Image.hpp"
+#include "Image/Background.hpp"
 
 using namespace raytracer;
 

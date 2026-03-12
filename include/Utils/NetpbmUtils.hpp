@@ -1,7 +1,7 @@
 #ifndef NETPBM_UTILS_HPP
 #define NETPBM_UTILS_HPP
 
-#include "Images/Image.hpp"
+#include "Image/Image.hpp"
 #include <string>
 
 namespace raytracer {

@@ -1,7 +1,7 @@
 #ifndef IMAGE_UTILS_HPP
 #define IMAGE_UTILS_HPP
 
-#include "Images/Image.hpp"
+#include "Image/Image.hpp"
 #include <string>
 
 #define STB_IMAGE_IMPLEMENTATION

@@ -1,9 +1,10 @@
 add_executable(raytracer_tests
-   Images/RGBColorTests.cpp
-   Images/ImageTests.cpp
-   Images/BackgroundTests.cpp
+   Image/RGBColorTests.cpp
+   Image/ImageTests.cpp
+   Image/BackgroundTests.cpp
    Utils/ImageUtilsTests.cpp
    Utils/NetpbmUtilsTests.cpp
+   Core/ParamSetTests.cpp
 )
 
 target_link_libraries(raytracer_tests

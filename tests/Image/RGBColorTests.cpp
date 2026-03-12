@@ -4,7 +4,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "Images/RGBColor.hpp"
+#include "Image/RGBColor.hpp"
 
 namespace {
    void requirePixel(

@@ -3,7 +3,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "Images/Image.hpp"
+#include "Image/Image.hpp"
 
 namespace {
    void requirePixel(
