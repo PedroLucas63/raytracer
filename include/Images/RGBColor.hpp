@@ -51,6 +51,7 @@ namespace raytracer {
 
          /** Conversion functions */
          RGBColor toGrayScale() const;
+         RGBColor interpolate(const RGBColor& other, double t) const;
    };
 
    /** PIXELS CONSTANTS */

@@ -7,7 +7,7 @@ namespace raytracer{
    RGBColor Background::lerp(const RGBColor& A, const RGBColor& B, float t) {
       if (t < 0.0f || t > 1.0f)
          throw std::invalid_argument("t must be in [0, 1]");
-      return A * (1.0f - t) + B * t;
+      return B.interpolate(A, t);
    }
 
    float Background::clampCoordinate(float coordinate) const {

@@ -128,4 +128,15 @@ namespace raytracer {
       );
       return RGBColor(grayValue, grayValue, grayValue);
    }
+
+   RGBColor RGBColor::interpolate(const RGBColor& other, double t) const {
+      if (t < 0 || t > 1) 
+         throw std::invalid_argument("t must be in [0, 1]");
+
+      return RGBColor(
+         std::round(_red * t + other._red * (1 - t)),
+         std::round(_green * t + other._green * (1 - t)),
+         std::round(_blue * t + other._blue * (1 - t))
+      );
+   }
 }

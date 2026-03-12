@@ -163,6 +163,52 @@ TEST_CASE("RGBColor division rejects non-positive scales") {
    REQUIRE_THROWS_AS(mutablePixel /= -1.0, std::invalid_argument);
 }
 
+TEST_CASE("RGBColor interpolate returns the other color at t equals zero") {
+   const raytracer::RGBColor source {10, 20, 30};
+   const raytracer::RGBColor target {110, 120, 130};
+
+   const raytracer::RGBColor interpolated = source.interpolate(target, 0.0);
+
+   requirePixel(interpolated, 110, 120, 130);
+}
+
+TEST_CASE("RGBColor interpolate returns the source color at t equals one") {
+   const raytracer::RGBColor source {10, 20, 30};
+   const raytracer::RGBColor target {110, 120, 130};
+
+   const raytracer::RGBColor interpolated = source.interpolate(target, 1.0);
+
+   requirePixel(interpolated, 10, 20, 30);
+}
+
+TEST_CASE("RGBColor interpolate weighs the source by t with rounding") {
+   const raytracer::RGBColor source {0, 0, 0};
+   const raytracer::RGBColor target {255, 255, 255};
+
+   requirePixel(source.interpolate(target, 0.25), 191, 191, 191);
+   requirePixel(source.interpolate(target, 0.50), 128, 128, 128);
+   requirePixel(source.interpolate(target, 0.75), 64, 64, 64);
+}
+
+TEST_CASE("RGBColor interpolate does not mutate either color") {
+   const raytracer::RGBColor source {15, 25, 35};
+   const raytracer::RGBColor target {115, 125, 135};
+
+   const raytracer::RGBColor interpolated = source.interpolate(target, 0.5);
+
+   requirePixel(interpolated, 65, 75, 85);
+   requirePixel(source, 15, 25, 35);
+   requirePixel(target, 115, 125, 135);
+}
+
+TEST_CASE("RGBColor interpolate rejects interpolation factors outside the unit interval") {
+   const raytracer::RGBColor source {10, 20, 30};
+   const raytracer::RGBColor target {110, 120, 130};
+
+   REQUIRE_THROWS_AS(source.interpolate(target, -0.1), std::invalid_argument);
+   REQUIRE_THROWS_AS(source.interpolate(target, 1.1), std::invalid_argument);
+}
+
 TEST_CASE("RGBColor toGrayScale converts a pixel using the luminance formula") {
    const raytracer::RGBColor pixel {10, 20, 30};
 
