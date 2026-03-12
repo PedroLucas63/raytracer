@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstdint>
 #include <stdexcept>
 
@@ -16,6 +17,10 @@ namespace {
       REQUIRE(static_cast<int>(pixel.getGreen()) == static_cast<int>(green));
       REQUIRE(static_cast<int>(pixel.getBlue()) == static_cast<int>(blue));
    }
+
+   void requireFloatNear(float actual, float expected, float epsilon = 0.0001f) {
+      REQUIRE(std::fabs(actual - expected) <= epsilon);
+   }
 }
 
 TEST_CASE("RGBColor default constructor initializes a black pixel") {
@@ -30,6 +35,26 @@ TEST_CASE("RGBColor constructor stores the informed channels") {
    requirePixel(pixel, 12, 34, 56);
 }
 
+TEST_CASE("RGBColor fromNormalized converts normalized channels into byte channels") {
+   const raytracer::RGBColor pixel = raytracer::RGBColor::fromNormalized(0.0f, 0.5f, 1.0f);
+
+   requirePixel(pixel, 0, 128, 255);
+}
+
+TEST_CASE("RGBColor fromNormalized clamps normalized channels outside the valid range") {
+   const raytracer::RGBColor pixel = raytracer::RGBColor::fromNormalized(-0.1f, 0.0f, 1.5f);
+
+   requirePixel(pixel, 0, 0, 255);
+}
+
+TEST_CASE("RGBColor normalized getters expose channels in the unit interval") {
+   const raytracer::RGBColor pixel {0, 128, 255};
+
+   requireFloatNear(pixel.getRedNormalized(), 0.0f);
+   requireFloatNear(pixel.getGreenNormalized(), 128.0f / 255.0f);
+   requireFloatNear(pixel.getBlueNormalized(), 1.0f);
+}
+
 TEST_CASE("RGBColor setters update channels independently") {
    raytracer::RGBColor pixel {};
 
@@ -38,6 +63,26 @@ TEST_CASE("RGBColor setters update channels independently") {
    pixel.setBlue(30);
 
    requirePixel(pixel, 10, 20, 30);
+}
+
+TEST_CASE("RGBColor normalized setters update channels independently") {
+   raytracer::RGBColor pixel {};
+
+   pixel.setRedNormalized(0.0f);
+   pixel.setGreenNormalized(0.5f);
+   pixel.setBlueNormalized(1.0f);
+
+   requirePixel(pixel, 0, 128, 255);
+}
+
+TEST_CASE("RGBColor normalized setters clamp values outside the unit interval") {
+   raytracer::RGBColor pixel {10, 20, 30};
+
+   pixel.setRedNormalized(-0.25f);
+   pixel.setGreenNormalized(1.25f);
+   pixel.setBlueNormalized(0.0f);
+
+   requirePixel(pixel, 0, 255, 0);
 }
 
 TEST_CASE("RGBColor channel operator returns the selected channel") {
