@@ -25,7 +25,7 @@ ctest --test-dir build --output-on-failure
 ```
 
 ## TODO:
-- [ ] Define a standard for names, methods, and classes.
 - [ ] Implement loading and saving for all Netpbm formats.
 - [ ] Unify the image upload and save library.
 - [ ] Add a gradient option with multiple color points.
+- [ ] Vector3: add methods based in Godot (https://docs.godotengine.org/en/stable/classes/class_vector3.html)
