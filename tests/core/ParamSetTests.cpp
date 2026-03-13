@@ -4,7 +4,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "Core/ParamSet.hpp"
+#include "core/ParamSet.hpp"
 #include "Image/RGBColor.hpp"
 
 namespace {

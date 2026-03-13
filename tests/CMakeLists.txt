@@ -4,7 +4,7 @@ add_executable(raytracer_tests
    Image/BackgroundTests.cpp
    Utils/ImageUtilsTests.cpp
    Utils/NetpbmUtilsTests.cpp
-   Core/ParamSetTests.cpp
+   core/ParamSetTests.cpp
 )
 
 target_link_libraries(raytracer_tests

@@ -11,7 +11,7 @@ add_library(raytracer_core
 	include/Image/RGBColor.cpp
 	include/Image/Image.cpp
    include/Image/Background.cpp
-   include/Core/ParamSet.cpp
+   include/core/ParamSet.cpp
 	include/Utils/NetpbmUtils.cpp
 	include/Utils/ImageUtils.cpp
    external/tinyxml2/tinyxml2.cpp
