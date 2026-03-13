@@ -4,6 +4,7 @@ add_executable(raytracer_tests
    Image/BackgroundTests.cpp
    Utils/ImageUtilsTests.cpp
    Utils/NetpbmUtilsTests.cpp
+   Utils/RunningOptionsTests.cpp
    core/ParamSetTests.cpp
 )
 
