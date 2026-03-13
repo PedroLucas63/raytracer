@@ -1,14 +1,8 @@
 #include "RunningOptions.hpp"
-#include <CLI/CLI.hpp>
 #include <filesystem>
 
 namespace raytracer {
-   bool RunningOptions::parse(int argc, char** argv) {
-      // Create cli app
-      CLI::App app("A simple raytracer implemented in C++");
-      argv = app.ensure_utf8(argv);
-
-      // Added options
+   void RunningOptions::configureCLI(CLI::App& app) {
       app.add_option("input_scene_file", _inputSceneFile, "Input scene file.")
          ->type_name("<input_scene_file>")
          ->required()
@@ -28,8 +22,13 @@ namespace raytracer {
                }
                return std::string{};
          });
+      
+   }
 
-      // Try parsing the command line arguments, if there is a problem return false
+   bool RunningOptions::parse(int argc, char** argv) {
+      CLI::App app("A simple raytracer implemented in C++");
+      configureCLI(app);
+
       try {
          app.parse(argc, argv);
          return true;

@@ -3,6 +3,7 @@
 
 #include <tuple>
 #include <string>
+#include <CLI/CLI.hpp>
 #include <optional>
 
 namespace raytracer {
@@ -15,6 +16,7 @@ namespace raytracer {
          bool _quick = false;
          std::string _output = "output.png";
 
+         void configureCLI(CLI::App& app);
       public:
          RunningOptions() = default;
          ~RunningOptions() = default;
