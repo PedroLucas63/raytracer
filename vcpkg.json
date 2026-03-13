@@ -1,6 +1,7 @@
 {
    "dependencies": [
       "catch2",
-      "stb"
+      "stb",
+      "cli11"
    ]
 }

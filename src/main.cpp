@@ -1,26 +1,20 @@
+#include "Utils/RunningOptions.hpp"
 #include <print>
-#include <numeric>
-#include "Utils/ImageUtils.hpp"
-#include "Utils/NetpbmUtils.hpp"
-#include "Image/Image.hpp"
-#include "Image/Background.hpp"
 
-using namespace raytracer;
+int main(int argc, char** argv) {
+    auto options = raytracer::RunningOptions{};
 
-int main(int, char**) {
-    std::println("Hello, Raytracer!");
-    
-    auto bg_solid = Background::solid(PIXEL_RED);
-    auto bg_horizontal = Background::horizontalGradient(PIXEL_GREEN, PIXEL_BLUE);
-    auto bg_vertical = Background::verticalGradient(PIXEL_BLACK, PIXEL_WHITE);
-    auto bg_diagonal_tlbr = Background::diagonalGradientTLBR(PIXEL_CYAN, PIXEL_MAGENTA);
-    auto bg_diagonal_trbl = Background::diagonalGradientTRBL(PIXEL_YELLOW, PIXEL_RED);
+    if (!options.parse(argc, argv)) {
+        return EXIT_FAILURE;
+    }
 
-    saveImage(bg_solid.toImage(512, 256), "background_solid.png", ImageType::PNG);
-    saveImage(bg_horizontal.toImage(512, 256), "background_horizontal.bmp", ImageType::BMP);
-    saveImage(bg_vertical.toImage(512, 256), "background_vertical.tga", ImageType::TGA);
-    saveImage(bg_diagonal_tlbr.toImage(512, 256), "background_diagonal_tlbr.jpg", ImageType::JPG);
-    netpbm::saveImage(bg_diagonal_trbl.toImage(512, 256), "background_diagonal_trbl.ppm", netpbm::NetpbmType::P3);
+    if (options.getCropwindow()) {
+        const auto& [x0, x1, y0, y1] = *options.getCropwindow();
+        std::println("Crop window: ({}, {}, {}, {})", x0, x1, y0, y1);
+    }
+    std::println("Quick render: {}", options.isQuick());
+    std::println("Output file: {}", options.getOutput());
+    std::println("Input scene file: {}", options.getInputSceneFile());
 
     return EXIT_SUCCESS;
 }

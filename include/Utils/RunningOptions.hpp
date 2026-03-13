@@ -1,0 +1,31 @@
+#ifndef RUNNING_OPTIONS_HPP
+#define RUNNING_OPTIONS_HPP
+
+#include <tuple>
+#include <string>
+#include <optional>
+
+namespace raytracer {
+   class RunningOptions {
+      private:
+         using cropwindow_t = std::tuple<int, int, int, int>;
+
+         std::string _inputSceneFile;
+         std::optional<cropwindow_t> _cropwindow;
+         bool _quick = false;
+         std::string _output = "output.png";
+
+      public:
+         RunningOptions() = default;
+         ~RunningOptions() = default;
+
+         bool parse(int argc, char** argv);
+
+         const std::string& getInputSceneFile() const;
+         const std::optional<cropwindow_t>& getCropwindow() const;
+         bool isQuick() const;
+         const std::string& getOutput() const;
+   };
+}
+
+#endif // !RUNNING_OPTIONS_HPP

@@ -14,6 +14,7 @@ add_library(raytracer_core
    include/core/ParamSet.cpp
 	include/Utils/NetpbmUtils.cpp
 	include/Utils/ImageUtils.cpp
+	include/Utils/RunningOptions.cpp
    external/tinyxml2/tinyxml2.cpp
 )
 target_include_directories(raytracer_core
@@ -26,6 +27,10 @@ target_link_libraries(raytracer PRIVATE raytracer_core)
 find_package(Stb REQUIRED)
 target_include_directories(raytracer PRIVATE ${Stb_INCLUDE_DIR})
 target_include_directories(raytracer_core PRIVATE ${Stb_INCLUDE_DIR})
+
+find_package(CLI11 CONFIG REQUIRED)
+target_link_libraries(raytracer PRIVATE CLI11::CLI11)
+target_link_libraries(raytracer_core PRIVATE CLI11::CLI11)
 
 if(BUILD_TESTING)
 	find_package(Catch2 3 CONFIG REQUIRED)
