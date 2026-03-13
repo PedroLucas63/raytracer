@@ -2,6 +2,7 @@
    "dependencies": [
       "catch2",
       "stb",
-      "cli11"
+      "cli11",
+      "tinyxml2"
    ]
 }

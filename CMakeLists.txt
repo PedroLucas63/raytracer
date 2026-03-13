@@ -11,11 +11,10 @@ add_library(raytracer_core
 	include/Image/RGBColor.cpp
 	include/Image/Image.cpp
    include/Image/Background.cpp
-   include/core/ParamSet.cpp
+   include/Core/ParamSet.cpp
 	include/Utils/NetpbmUtils.cpp
 	include/Utils/ImageUtils.cpp
 	include/Utils/RunningOptions.cpp
-   external/tinyxml2/tinyxml2.cpp
 )
 target_include_directories(raytracer_core
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -31,6 +30,11 @@ target_include_directories(raytracer_core PRIVATE ${Stb_INCLUDE_DIR})
 find_package(CLI11 CONFIG REQUIRED)
 target_link_libraries(raytracer PRIVATE CLI11::CLI11)
 target_link_libraries(raytracer_core PRIVATE CLI11::CLI11)
+
+find_package(tinyxml2 CONFIG REQUIRED)
+
+target_link_libraries(raytracer PRIVATE tinyxml2::tinyxml2)
+target_link_libraries(raytracer_core PRIVATE tinyxml2::tinyxml2)
 
 if(BUILD_TESTING)
 	find_package(Catch2 3 CONFIG REQUIRED)
