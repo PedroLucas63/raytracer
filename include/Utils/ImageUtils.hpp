@@ -12,11 +12,27 @@ namespace raytracer {
       PNG,
       BMP,
       TGA,
-      JPG
+      JPG,
+      NETPBM_P3,
+      NETPBM_P6
    };
 
-   Image loadImage(std::string filename);
-   void saveImage(const Image& image, std::string filename, ImageType type = PNG);
+   class ImageUtils {
+   private:
+      ImageUtils() = default; // Private constructor to prevent instantiation
+
+      static std::string getFileNameExtension(const std::string& filename);
+      static ImageType determineImageType(const std::string& filename);
+
+      static Image loadNetpbmImage(const std::string& filename, ImageType type);
+      static Image loadStandardImage(const std::string& filename);
+
+      static void saveStandardImage(const Image& image, const std::string& filename, ImageType type);
+      static void saveNetpbmImage(const Image& image, const std::string& filename, ImageType type);
+   public:
+      static Image loadImage(const std::string filename);
+      static void saveImage(const Image& image, const std::string filename, ImageType type = PNG);
+   };
 }
 
 #endif // !IMAGE_UTILS_HPP
