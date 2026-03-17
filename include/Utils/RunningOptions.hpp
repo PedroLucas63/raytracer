@@ -14,19 +14,22 @@ namespace raytracer {
          std::string _inputSceneFile;
          std::optional<cropwindow_t> _cropwindow;
          bool _quick = false;
-         std::string _output = "output.png";
+         std::string _output;
 
          void configureCLI(CLI::App& app);
+         std::string validateOutputPath(std::string filename) const;
+         std::string validateOutputExtension(std::string filename) const;
       public:
          RunningOptions() = default;
          ~RunningOptions() = default;
 
          bool parse(int argc, char** argv);
 
-         const std::string& getInputSceneFile() const;
-         const std::optional<cropwindow_t>& getCropwindow() const;
+         std::string getInputSceneFile() const;
+         std::optional<cropwindow_t> getCropwindow() const;
          bool isQuick() const;
-         const std::string& getOutput() const;
+         std::string getOutput() const;
+         bool hasOutput() const;
    };
 }
 
