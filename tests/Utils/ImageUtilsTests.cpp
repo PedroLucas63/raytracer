@@ -82,15 +82,15 @@ TEST_CASE("ImageUtils saveImage and loadImage round-trip lossless formats") {
 
    auto verifyRoundTrip = [&](const std::filesystem::path& outputPath, bool useDefaultType, raytracer::ImageType type) {
       if (useDefaultType) {
-         raytracer::saveImage(image, outputPath.string());
+         raytracer::ImageUtils::saveImage(image, outputPath.string());
       } else {
-         raytracer::saveImage(image, outputPath.string(), type);
+         raytracer::ImageUtils::saveImage(image, outputPath.string(), type);
       }
 
       REQUIRE(std::filesystem::exists(outputPath));
       REQUIRE(std::filesystem::file_size(outputPath) > 0);
 
-      const raytracer::Image loaded = raytracer::loadImage(outputPath.string());
+      const raytracer::Image loaded = raytracer::ImageUtils::loadImage(outputPath.string());
       requirePopulatedRgbImage(loaded);
    };
 
@@ -105,6 +105,15 @@ TEST_CASE("ImageUtils saveImage and loadImage round-trip lossless formats") {
    SECTION("TGA") {
       verifyRoundTrip(temporaryDirectory.path() / "sample.tga", false, raytracer::TGA);
    }
+
+   SECTION("NETPBM P3") {
+      verifyRoundTrip(temporaryDirectory.path() / "sample.ppm", false, raytracer::NETPBM_P3);
+   }
+
+   SECTION("NETPBM P6") {
+      // Uppercase extension maps to NETPBM_P6 in ImageUtils::determineImageType.
+      verifyRoundTrip(temporaryDirectory.path() / "sample.PPM", false, raytracer::NETPBM_P6);
+   }
 }
 
 TEST_CASE("ImageUtils saveImage and loadImage preserve grayscale images") {
@@ -115,9 +124,9 @@ TEST_CASE("ImageUtils saveImage and loadImage preserve grayscale images") {
    image.setPixel(raytracer::RGBColor {30, 30, 30}, 0, 0);
    image.setPixel(raytracer::RGBColor {220, 220, 220}, 0, 1);
 
-   raytracer::saveImage(image, outputPath.string());
+   raytracer::ImageUtils::saveImage(image, outputPath.string());
 
-   const raytracer::Image loaded = raytracer::loadImage(outputPath.string());
+   const raytracer::Image loaded = raytracer::ImageUtils::loadImage(outputPath.string());
 
    REQUIRE(loaded.getWidth() == 2);
    REQUIRE(loaded.getHeight() == 1);
@@ -137,12 +146,12 @@ TEST_CASE("ImageUtils saveImage writes JPEG files that can be loaded back") {
       }
    }
 
-   raytracer::saveImage(image, outputPath.string(), raytracer::JPG);
+   raytracer::ImageUtils::saveImage(image, outputPath.string(), raytracer::JPG);
 
    REQUIRE(std::filesystem::exists(outputPath));
    REQUIRE(std::filesystem::file_size(outputPath) > 0);
 
-   const raytracer::Image loaded = raytracer::loadImage(outputPath.string());
+   const raytracer::Image loaded = raytracer::ImageUtils::loadImage(outputPath.string());
 
    REQUIRE(loaded.getWidth() == 8);
    REQUIRE(loaded.getHeight() == 8);
@@ -155,7 +164,7 @@ TEST_CASE("ImageUtils loadImage throws when the file cannot be loaded") {
    TemporaryDirectory temporaryDirectory;
    const auto missingPath = temporaryDirectory.path() / "missing.png";
 
-   REQUIRE_THROWS_AS(raytracer::loadImage(missingPath.string()), std::runtime_error);
+   REQUIRE_THROWS_AS(raytracer::ImageUtils::loadImage(missingPath.string()), std::runtime_error);
 }
 
 TEST_CASE("ImageUtils saveImage rejects unsupported formats") {
@@ -166,7 +175,7 @@ TEST_CASE("ImageUtils saveImage rejects unsupported formats") {
    image.setPixel(raytracer::RGBColor {1, 2, 3}, 0, 0);
 
    REQUIRE_THROWS_AS(
-      raytracer::saveImage(image, outputPath.string(), static_cast<raytracer::ImageType>(999)),
+      raytracer::ImageUtils::saveImage(image, outputPath.string(), static_cast<raytracer::ImageType>(999)),
       std::invalid_argument
    );
 }

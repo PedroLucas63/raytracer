@@ -74,14 +74,17 @@ TEST_CASE("RunningOptions parse succeeds with required input scene") {
    REQUIRE(options.getInputSceneFile() == scenePath.string());
    REQUIRE_FALSE(options.getCropwindow().has_value());
    REQUIRE_FALSE(options.isQuick());
-   REQUIRE(options.getOutput() == "output.png");
+   REQUIRE_FALSE(options.hasOutput());
+   REQUIRE(options.getOutput().empty());
 }
 
 TEST_CASE("RunningOptions parse accepts cropwindow quick and output options") {
    TemporaryDirectory temporaryDirectory;
    const auto scenePath = createSceneFile(temporaryDirectory.path());
 
-   const auto outputPath = temporaryDirectory.path() / "images" / "render.png";
+   const auto outputDirectory = temporaryDirectory.path() / "images";
+   std::filesystem::create_directories(outputDirectory);
+   const auto outputPath = outputDirectory / "render.JPG";
 
    raytracer::RunningOptions options;
    ArgvBuilder args {
@@ -104,8 +107,44 @@ TEST_CASE("RunningOptions parse accepts cropwindow quick and output options") {
    REQUIRE(y1 == 4);
 
    REQUIRE(options.isQuick());
+   REQUIRE(options.hasOutput());
    REQUIRE(options.getOutput() == outputPath.string());
    REQUIRE(std::filesystem::exists(outputPath.parent_path()));
+}
+
+TEST_CASE("RunningOptions parse creates output directory when needed") {
+   TemporaryDirectory temporaryDirectory;
+   const auto scenePath = createSceneFile(temporaryDirectory.path());
+   const auto outputPath = temporaryDirectory.path() / "new" / "nested" / "render.ppm";
+
+   REQUIRE_FALSE(std::filesystem::exists(outputPath.parent_path()));
+
+   raytracer::RunningOptions options;
+   ArgvBuilder args {
+      "raytracer",
+      scenePath.string(),
+      "--output", outputPath.string()
+   };
+
+   REQUIRE(options.parse(args.argc(), args.argv()));
+   REQUIRE(options.hasOutput());
+   REQUIRE(options.getOutput() == outputPath.string());
+   REQUIRE(std::filesystem::exists(outputPath.parent_path()));
+}
+
+TEST_CASE("RunningOptions parse fails for unsupported output extension") {
+   TemporaryDirectory temporaryDirectory;
+   const auto scenePath = createSceneFile(temporaryDirectory.path());
+   const auto outputPath = temporaryDirectory.path() / "images" / "render.gif";
+
+   raytracer::RunningOptions options;
+   ArgvBuilder args {
+      "raytracer",
+      scenePath.string(),
+      "--output", outputPath.string()
+   };
+
+   REQUIRE_FALSE(options.parse(args.argc(), args.argv()));
 }
 
 TEST_CASE("RunningOptions parse fails without required input scene") {

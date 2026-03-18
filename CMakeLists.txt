@@ -12,7 +12,6 @@ add_library(raytracer_core
 	include/Image/Image.cpp
    include/Image/Background.cpp
    include/Core/ParamSet.cpp
-	include/Utils/NetpbmUtils.cpp
 	include/Utils/ImageUtils.cpp
 	include/Utils/RunningOptions.cpp
 )
