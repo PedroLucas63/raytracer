@@ -2,6 +2,7 @@
 #define IMAGE_HPP
 
 #include "RGBColor.hpp"
+#include "Math/Point2.hpp"
 #include <cstdint>
 #include <utility>
 
@@ -34,6 +35,7 @@ namespace raytracer {
 
          /** Access Operator */
          RGBColor operator()(uint16_t row, uint16_t col);
+         RGBColor operator[](Point2 position);
 
          /** Conversion functions */
          Image toGrayScale() const;

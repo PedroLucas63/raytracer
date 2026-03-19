@@ -10,10 +10,15 @@ include(CTest)
 add_library(raytracer_core
 	include/Image/RGBColor.cpp
 	include/Image/Image.cpp
-    include/Image/Background.cpp
-    include/Core/ParamSet.cpp
+   include/Scene/Background.cpp
+   include/Scene/Camera.cpp
+   include/Scene/Film.cpp
+   include/Core/ParamSet.cpp
+   include/Math/Vector3.cpp
+   include/Math/Point2.cpp
 	include/Utils/ImageUtils.cpp
 	include/Utils/RunningOptions.cpp
+	include/Api/Api.cpp
 )
 target_include_directories(raytracer_core
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include

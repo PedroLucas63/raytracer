@@ -56,11 +56,13 @@ namespace raytracer {
 
       try {
          app.parse(argc, argv);
-         return true;
+         fail = false;
       } catch (const CLI::ParseError &e) {
          app.exit(e);
-         return false;
+         fail = true;
       }
+
+      return !fail;
    }
 
    std::string RunningOptions::getInputSceneFile() const {
@@ -81,5 +83,9 @@ namespace raytracer {
 
    bool RunningOptions::hasOutput() const {
       return !_output.empty();
+   }
+
+   bool RunningOptions::isFail() const {
+      return fail;
    }
 }

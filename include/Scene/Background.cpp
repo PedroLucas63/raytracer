@@ -1,5 +1,6 @@
 #include "Background.hpp"
 #include <algorithm>  
+#include <cmath>
 
 namespace raytracer{
 
@@ -48,6 +49,14 @@ namespace raytracer{
       float u = static_cast<float>(col) / (width - 1);
       float v = static_cast<float>(row) / (height - 1);
       return sampleUV(u, v);
+   }
+
+   RGBColor Background::samplePixel(
+      Point2 position, uint16_t width, uint16_t height
+   ) const {
+      uint16_t col = static_cast<uint16_t>(std::round(position.getX()));
+      uint16_t row = static_cast<uint16_t>(std::round(position.getY()));
+      return samplePixel(col, row, width, height);
    }
 
    Image Background::toImage(uint16_t width, uint16_t height) const {

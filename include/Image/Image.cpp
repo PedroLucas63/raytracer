@@ -1,6 +1,7 @@
 #include "Image.hpp"
 #include <stddef.h>
 #include <stdexcept>
+#include <cmath>
 
 namespace raytracer {
    /** Private setters methods */
@@ -72,6 +73,12 @@ namespace raytracer {
 
    /** Access Operator */
    RGBColor Image::operator()(uint16_t row, uint16_t col) {
+      return getPixel(row, col);
+   }
+
+   RGBColor Image::operator[](Point2 position) {
+      uint16_t col = static_cast<uint16_t>(std::round(position.getX()));
+      uint16_t row = static_cast<uint16_t>(std::round(position.getY()));
       return getPixel(row, col);
    }
 
