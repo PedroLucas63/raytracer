@@ -64,12 +64,20 @@ namespace raytracer{
          return derived->get();
       }
 
-         bool has(const std::string& key) const;    
+      template <typename T>
+      T resolveOrDefault(const std::string& key, const T& defaultValue = T{}) const {
+         if (!has(key)) {
+            return defaultValue;
+         }
+         return resolve<T>(key);
+      }
 
-         void remove(const std::string& key);
-         void clear();
-         bool isEmpty() const;
-         size_t size()  const;
+      bool has(const std::string& key) const;    
+
+      void remove(const std::string& key);
+      void clear();
+      bool isEmpty() const;
+      size_t size()  const;
    };
 
 }
