@@ -6,6 +6,8 @@
 #include <type_traits>
 #include <istream>
 #include <vector>
+#include <sstream>  
+#include <algorithm>
 #include "Core/ParamSet.hpp"
 
 using ConvertFunction = std::function<bool(const std::string&, const std::string&, raytracer::ParamSet*)>;

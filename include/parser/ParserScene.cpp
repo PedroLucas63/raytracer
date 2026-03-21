@@ -4,86 +4,51 @@
 #include <string>
 #include <cctype>
 #include <iostream>
-#include "RGBColor.hpp"
-// #include "ConverterFunction.hpp"
+#include <filesystem>
+#include "Utils/ConvertFunction.hpp"
+#include "Image/RGBColor.hpp"
 
 namespace raytracer{
-   std::unordered_map<std::string, std::vector<std::string>> elementList{
-      {
-      "background",
-      {
-         "type",
-         "filename",
-         "mapping",
-         "color",
-         "tl",
-         "tr",
-         "bl",
-         "br",
-      },
-   },
-   {
-      "film",
-      {
-         "type",
-         "filename",
-         "img_type",
-         "x_res",
-         "y_res",
-         "w_res",
-         "h_res",
-         "crop_window",
-         "gamma_corrected",
-      },
-   },
-   {
-      "world_begin",
-      { "" },  // no attributes
-   },
-   {
-      "world_end",
-      { "" },  // no attributes
-   },
+
+   // ── maps ──────────────────────────────────────────────────────────────────
+
+   std::unordered_map<std::string, std::vector<std::string>> elementList {
+      { "background", { "type", "filename", "mapping", "color", "tl", "tr", "bl", "br" } },
+      { "film",       { "type", "filename", "img_type", "x_res", "y_res",
+                        "w_res", "h_res", "crop_window", "gamma_corrected" } },
+      { "include",    { "filename" } },
+      { "world_begin",{} },
+      { "world_end",  {} },
    };
 
-   template <typename T>
-   bool convert(std::string_view attrName, std::string_view attrValue, raytracer::ParamSet* ps){
-      (void)attrName;
-      (void)attrValue;
-      (void)ps;
-      return true;
-   }
+   std::unordered_map<std::string, ConvertFunction> converters {
+      { "type",            convert<std::string> },
+      { "name",            convert<std::string> },
+      { "filename",        convert<std::string> },
+      { "img_type",        convert<std::string> },
+      { "mapping",         convert<std::string> },
 
-   // With erro, because dependes of the convertFunction
-   std::unordered_map<std::string, ConverterFunction> converters{
-      { "type", convert<std::string> },  
-      { "name", convert<std::string> },  
-      //
-      { "color", convert<raytracer::RGBColor, 3> },  
-      { "flip", convert<bool> },
+      { "color",           convert<RGBColor, std::uint8_t, 3> },
+      { "bl",              convert<RGBColor, std::uint8_t, 3> },
+      { "tl",              convert<RGBColor, std::uint8_t, 3> },
+      { "tr",              convert<RGBColor, std::uint8_t, 3> },
+      { "br",              convert<RGBColor, std::uint8_t, 3> },
 
-      { "mapping", convert<std::string> },
-      { "bl", convert<raytracer::RGBColor, 3> },
-      { "tl", convert<raytracer::RGBColor, 3> },
-      { "tr", convert<raytracer::RGBColor, 3> },
-      { "br", convert<raytracer::RGBColor, 3> },
-      
-      { "x_res", convert<int> },
-      { "y_res", convert<int> },
-      { "w_res", convert<int> },
-      { "h_res", convert<int> },
-      { "filename", convert<std::string> },
-      { "img_type", convert<std::string> },
+      { "x_res",           convert<int> },
+      { "y_res",           convert<int> },
+      { "w_res",           convert<int> },
+      { "h_res",           convert<int> },
+
+      { "flip",            convert<bool> },
       { "gamma_corrected", convert<bool> },
-      };
+   };
 
 
    std::unordered_map<std::string, std::function<void(const raytracer::ParamSet&)>> apiFunctions{
-      // { "background",  },
-      // { "world_begin",  },
-      // { "world_end",  },
-      // { "film", },
+      { "film", raytracer::Api::film },
    };
+
+   // ── helpers ──────────────────────────────────────────────────────────────────
 
       
    bool ParserScene::isValidElement(std::string_view elementName) {
@@ -91,94 +56,98 @@ namespace raytracer{
       return element != elementList.end();
    }
 
-   bool ParserScene::isValidAttributte(std::string_view attrName) {
-      auto attrList = elementList[(std::string) attrName];
-      auto attr = std::find(attrList.begin(), attrList.end(), attrName);
-      return attr != attrList.end();
+   bool ParserScene::isValidAttribute(std::string_view elementName, std::string_view attrName) {
+      auto it = elementList.find(std::string(elementName));
+      if (it == elementList.end()) return false;
+      const auto& attrs = it->second;
+      return std::find(attrs.begin(), attrs.end(), attrName) != attrs.end();
    }
-
 
    std::string ParserScene::stringToLower(std::string s) {
       std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::tolower(c); });
       return s;
    }
 
-   
-   void ParserScene::parserAttributte(std::string_view attrName, std::string_view attrValue, raytracer::ParamSet* ps){
+   void ParserScene::parseAttribute(std::string_view attrName, std::string_view attrValue, ParamSet* ps) {
       auto it = converters.find(std::string(attrName));
-      if(it == converters.end()){
-         std::cerr << "No converter for attribute: " << attrName << '\n';
+      if (it == converters.end()) {
+         std::cerr << "[Parser] No converter for attribute: " << attrName << '\n';
          return;
       }
-
-      bool result = it->second(std::string(attrName), std::string(attrValue), ps);
-      if(!result){
-         std::cerr << "Fail to convert attribute: " << attrName << " value=" << attrValue << '\n';
-      }
+      if (!it->second(std::string(attrName), std::string(attrValue), ps))
+         std::cerr << "[Parser] Failed to convert: " << attrName << " = " << attrValue << '\n';
    }
 
-   void ParserScene::parserScene(const char* filename){
+   // ── main parsing functions ──────────────────────────────────────────────────────────────────
+   
+   void ParserScene::parseScene(const char* filename) {
       tinyxml2::XMLDocument doc;
 
-      if(doc.LoadFile(filename) != tinyxml2::XML_SUCCESS) {
-         std::cerr << "Error loading the XML file!" << '\n';
+      if (doc.LoadFile(filename) != tinyxml2::XML_SUCCESS) {
+         std::cerr << "[Parser] Failed to load XML: " << filename << '\n';
          return;
       }
 
       tinyxml2::XMLElement* root = doc.RootElement();
-
-      if(root == nullptr) {
-         std::cerr << "Root node of the XML tree was not found!" << '\n';
+      if (!root) {
+         std::cerr << "[Parser] XML has no root element.\n";
          return;
       }
 
+      for (auto* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
+         const std::string element = stringToLower(node->Name());
 
-      for(tinyxml2::XMLElement* childNode = root->FirstChildElement(); childNode != nullptr;  
-         childNode = childNode->NextSiblingElement()){
-      
-         std::string element = stringToLower(childNode->Name());
-
-         if(!isValidElement(element)){
-            std::cerr << "The elemente " <<  element << "is not valid." << '\n';
+         if (!isValidElement(element)) {
+            std::cerr << "[Parser] Unknown element: <" << element << ">\n";
             continue;
          }
 
-         raytracer::ParamSet ps;
+         ParamSet ps;
 
-         for (const tinyxml2::XMLAttribute* attribute = childNode->FirstAttribute(); attribute != nullptr; 
-            attribute = attribute->Next()){
-            
-            std::string attrName = stringToLower(attribute->Name());
-            if(!isValidAttributte(attrName)){
-               std::cerr << "The elemente " << element << "doesn't have an attribute " << attrName << '\n';
+         for (auto* attr = node->FirstAttribute(); attr; attr = attr->Next()) {
+            const std::string attrName = stringToLower(attr->Name());
+
+            if (!isValidAttribute(element, attrName)) {
+               std::cerr << "[Parser] <" << element << "> has no attribute '" << attrName << "'\n";
                continue;
             }
 
-            auto completeAtrrbuteName = element + "." + attrName;
-            parserAttributte(completeAtrrbuteName, attribute->Value(), &ps);
-            // parserAttributte(attrName, attribute->Value(), &ps);
-
-            // Recursive schena with element include
-
-            if(attrName == "include"){
-               auto filename = ps.resolve<std::string>("filename");
-               if(filename.empty()){
-                  std::cerr << "Include element must have a filename attribute." << '\n';
-               } else {
-                  parserScene(filename.c_str());
-               }
+            auto it = converters.find(attrName);
+            if (it == converters.end()) {
+               std::cerr << "[Parser] No converter for attribute: " << attrName << '\n';
+               continue;
             }
 
-            // call the api
+            if (!it->second(attrName, attr->Value(), &ps))
+               std::cerr << "[Parser] Failed to convert: " << attrName << " = " << attr->Value() << '\n';
          }
 
+         if (element == "include") {
+            const auto incFile = ps.retrieve<std::string>("filename");
+            if (incFile.empty()) {
+               std::cerr << "[Parser] <include> is missing 'filename'.\n";
+               continue;
+            }
+            if (!std::filesystem::exists(incFile)) {
+               std::cerr << "[Parser] Included file not found: " << incFile << '\n';
+               continue;
+            }
+            parseScene(incFile.c_str());
+            continue;
+         }
 
+         auto it = apiFunctions.find(element);
+         if (it == apiFunctions.end()) {
+            std::cerr << "[Parser] No API function for element: <" << element << ">\n";
+            continue;
+         }
 
-         
-
+         std::cout << "[Parser] Calling API for <" << element << ">.\n";
+         it->second(ps);
       }
-      
    }
 
 
-}
+   
+
+};

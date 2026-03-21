@@ -11,21 +11,21 @@ TEST_CASE("convert<T> stores a valid integer value") {
    raytracer::ParamSet ps;
 
    REQUIRE(convert<int>("samples", "42", &ps));
-   REQUIRE(ps.resolve<int>("samples") == 42);
+   REQUIRE(ps.retrieve<int>("samples") == 42);
 }
 
 TEST_CASE("convert<T> stores a valid floating point value") {
    raytracer::ParamSet ps;
 
    REQUIRE(convert<float>("gamma", "2.2", &ps));
-   REQUIRE(ps.resolve<float>("gamma") == Catch::Approx(2.2f));
+   REQUIRE(ps.retrieve<float>("gamma") == Catch::Approx(2.2f));
 }
 
 TEST_CASE("convert<T> parses boolean values with boolalpha") {
    raytracer::ParamSet ps;
 
    REQUIRE(convert<bool>("quick", "true", &ps));
-   REQUIRE(ps.resolve<bool>("quick"));
+   REQUIRE(ps.retrieve<bool>("quick"));
 }
 
 TEST_CASE("convert<T> throws for empty content") {
@@ -60,7 +60,7 @@ TEST_CASE("convert<T,K,N> stores a valid fixed-size vector") {
 
    REQUIRE(convert<std::vector<int>, int, 3>("rgb", "10 20 30", &ps));
 
-   const auto rgb = ps.resolve<std::vector<int>>("rgb");
+   const auto rgb = ps.retrieve<std::vector<int>>("rgb");
    REQUIRE(rgb.size() == 3);
    REQUIRE(rgb[0] == 10);
    REQUIRE(rgb[1] == 20);
@@ -72,7 +72,7 @@ TEST_CASE("convert<T,K,N> stores a valid fixed-size boolean vector") {
 
    REQUIRE(convert<std::vector<bool>, bool, 3>("flags", "1 0 1", &ps));
 
-   const auto flags = ps.resolve<std::vector<bool>>("flags");
+   const auto flags = ps.retrieve<std::vector<bool>>("flags");
    REQUIRE(flags.size() == 3);
    REQUIRE(flags[0]);
    REQUIRE_FALSE(flags[1]);

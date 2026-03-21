@@ -24,4 +24,9 @@ namespace raytracer {
       // Clean up any resources if necessary
       _options = RunningOptions(); // Reset options to default
    }
+
+   void Api::film(const raytracer::ParamSet& ps) {
+      // Implementation for film function
+   }
+
 }
