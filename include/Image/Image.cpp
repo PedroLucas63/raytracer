@@ -40,6 +40,70 @@ namespace raytracer {
       }
    }
 
+   Image::Image(const Image& other):
+      _pixels(nullptr),
+      _width(other._width),
+      _height(other._height),
+      _channels(other._channels) {
+      const size_t numPixels = static_cast<size_t>(_width) * _height;
+      _pixels = new RGBColor[numPixels];
+
+      for (size_t i = 0; i < numPixels; ++i) {
+         _pixels[i] = other._pixels[i];
+      }
+   }
+
+   Image::Image(Image&& other) noexcept:
+      _pixels(other._pixels),
+      _width(other._width),
+      _height(other._height),
+      _channels(other._channels) {
+      other._pixels = nullptr;
+      other._width = 0;
+      other._height = 0;
+      other._channels = 0;
+   }
+
+   Image& Image::operator=(const Image& other) {
+      if (this == &other) {
+         return *this;
+      }
+
+      const size_t numPixels = static_cast<size_t>(other._width) * other._height;
+      RGBColor* newPixels = new RGBColor[numPixels];
+
+      for (size_t i = 0; i < numPixels; ++i) {
+         newPixels[i] = other._pixels[i];
+      }
+
+      delete[] _pixels;
+      _pixels = newPixels;
+      _width = other._width;
+      _height = other._height;
+      _channels = other._channels;
+
+      return *this;
+   }
+
+   Image& Image::operator=(Image&& other) noexcept {
+      if (this == &other) {
+         return *this;
+      }
+
+      delete[] _pixels;
+      _pixels = other._pixels;
+      _width = other._width;
+      _height = other._height;
+      _channels = other._channels;
+
+      other._pixels = nullptr;
+      other._width = 0;
+      other._height = 0;
+      other._channels = 0;
+
+      return *this;
+   }
+
    /** Destructor */
    Image::~Image() {
       delete[] _pixels;

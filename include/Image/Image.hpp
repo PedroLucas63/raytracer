@@ -22,6 +22,12 @@ namespace raytracer {
          /** Constructors */
          Image(uint16_t width, uint16_t height, uint8_t channels);
          Image(RGBColor* pixels, uint16_t width, uint16_t height, uint8_t channels);
+         Image(const Image& other);
+         Image(Image&& other) noexcept;
+
+         /** Assignment operators */
+         Image& operator=(const Image& other);
+         Image& operator=(Image&& other) noexcept;
 
          /** Destructor */
          ~Image();
