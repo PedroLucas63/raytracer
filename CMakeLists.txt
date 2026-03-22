@@ -19,7 +19,7 @@ add_library(raytracer_core
 	include/Utils/ImageUtils.cpp
 	include/Utils/RunningOptions.cpp
 	include/Utils/ProgressBar.cpp
-	include/parser/ParserScene.cpp
+	include/Parser/ParserScene.cpp
 	include/Api/Api.cpp
 )
 target_include_directories(raytracer_core

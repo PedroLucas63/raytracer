@@ -6,6 +6,7 @@ add_executable(raytracer_tests
    Utils/RunningOptionsTests.cpp
    Utils/ConvertFunctionTests.cpp
    Core/ParamSetTests.cpp
+   Parser/ParserSceneTests.cpp
 )
 
 target_link_libraries(raytracer_tests

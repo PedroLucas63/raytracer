@@ -13,6 +13,7 @@ namespace raytracer{
    // ── maps ──────────────────────────────────────────────────────────────────
 
    std::unordered_map<std::string, std::vector<std::string>> elementList {
+      { "camera",     { "type"} },
       { "background", { "type", "filename", "mapping", "color", "tl", "tr", "bl", "br" } },
       { "film",       { "type", "filename", "img_type", "x_res", "y_res",
                         "w_res", "h_res", "crop_window", "gamma_corrected" } },
@@ -28,11 +29,11 @@ namespace raytracer{
       { "img_type",        convert<std::string> },
       { "mapping",         convert<std::string> },
 
-      { "color",           convert<RGBColor, std::uint8_t, 3> },
-      { "bl",              convert<RGBColor, std::uint8_t, 3> },
-      { "tl",              convert<RGBColor, std::uint8_t, 3> },
-      { "tr",              convert<RGBColor, std::uint8_t, 3> },
-      { "br",              convert<RGBColor, std::uint8_t, 3> },
+      { "color",           convert<std::vector<std::uint8_t>, std::uint8_t, 3> },
+      { "bl",              convert<std::vector<std::uint8_t>, std::uint8_t, 3> },
+      { "tl",              convert<std::vector<std::uint8_t>, std::uint8_t, 3> },
+      { "tr",              convert<std::vector<std::uint8_t>, std::uint8_t, 3> },
+      { "br",              convert<std::vector<std::uint8_t>, std::uint8_t, 3> },
 
       { "x_res",           convert<int> },
       { "y_res",           convert<int> },
@@ -78,15 +79,37 @@ namespace raytracer{
          std::cerr << "[Parser] Failed to convert: " << attrName << " = " << attrValue << '\n';
    }
 
-   // ── main parsing functions ──────────────────────────────────────────────────────────────────
+   // ── parsing functions ──────────────────────────────────────────────────────────────────
    
+   /**
+    * @param filename The path to the XML file to parse
+    * @brief Load document from file and delegate to parseDocument
+    */
    void ParserScene::parseScene(const char* filename) {
       tinyxml2::XMLDocument doc;
-
       if (doc.LoadFile(filename) != tinyxml2::XML_SUCCESS) {
          std::cerr << "[Parser] Failed to load XML: " << filename << '\n';
          return;
       }
+      parseDocument(doc);
+   }
+
+   /**
+    * @param xmlContent The XML content as a string
+    * @param fromString A boolean flag to differentiate this overload (not used in logic)
+    * @brief Load document from string and delegate to parseDocument (useful for testing)
+    */
+   void ParserScene::parseScene(const char* xmlContent, bool fromString) {
+      tinyxml2::XMLDocument doc;
+      if (doc.Parse(xmlContent) != tinyxml2::XML_SUCCESS) {
+         std::cerr << "[Parser] Failed to parse XML string.\n";
+         return;
+      }
+      parseDocument(doc);
+   }
+
+
+   void ParserScene::parseDocument(tinyxml2::XMLDocument& doc) {
 
       tinyxml2::XMLElement* root = doc.RootElement();
       if (!root) {
