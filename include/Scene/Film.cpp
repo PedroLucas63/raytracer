@@ -3,6 +3,38 @@
 
 namespace raytracer {
    /** Constructors */
+   Film::Film(const ParamSets& params): _image(1, 1, 3) { // Default to a 1x1 image until properly initialized
+      auto it = params.find("film");
+      if (it == params.end())
+         throw std::invalid_argument("ParamSets does not contain 'film' parameters.");
+
+      const ParamSet& filmParams = it->second;
+      std::string type = filmParams.retrieveOrDefault<std::string>("type", "image");
+
+      if (type == "image") {
+         _type = FilmType::TypeImage;
+
+          // Check for resolution parameters
+         if (filmParams.has("filename")) {
+            _filename = filmParams.retrieve<std::string>("filename");
+         }
+
+         if (filmParams.has("x_res") && filmParams.has("y_res")) {
+            int x_res = filmParams.retrieve<int>("x_res");
+            int y_res = filmParams.retrieve<int>("y_res");
+            _image = Image(x_res, y_res, 3);
+         } else if (filmParams.has("w_res") && filmParams.has("h_res")) {
+            int w_res = filmParams.retrieve<int>("w_res");
+            int h_res = filmParams.retrieve<int>("h_res");
+            _image = Image(w_res, h_res, 3);
+         } else {
+            throw std::invalid_argument("Film parameters must include either (x_res and y_res) or (w_res and h_res) for image type.");
+         }
+      } else {
+         throw std::invalid_argument("Unsupported film type: " + type);
+      }
+   }
+
    Film Film::load(std::string filename) {
       Image image = ImageUtils::loadImage(filename);
       return Film(image, filename);
@@ -29,6 +61,9 @@ namespace raytracer {
    }
    FilmType Film::getType() const {
       return _type;
+   }
+   void Film::setImage(const Image& image) {
+      _image = image;
    }
    void Film::setFilename(const std::string& filename) {
       _filename = filename;

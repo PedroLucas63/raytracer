@@ -2,6 +2,7 @@
 #define CAMERA_HPP
 
 #include "Film.hpp"
+#include "Parser/ParserScene.hpp"
 
 namespace raytracer {
    enum CameraType {
@@ -16,6 +17,7 @@ namespace raytracer {
 
          Camera(const Film& film, CameraType type):
             film(film), type(type) {}
+         Camera(const ParamSets& params);
          ~Camera() = default;
 
          Image capture() const;

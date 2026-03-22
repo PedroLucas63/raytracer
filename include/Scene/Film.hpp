@@ -2,6 +2,7 @@
 #define FILM_HPP
 
 #include "Image/Image.hpp"
+#include "Parser/ParserScene.hpp"
 #include <string>
 
 namespace raytracer {
@@ -27,6 +28,7 @@ namespace raytracer {
             _image(width, height, channels), _filename(filename) {}
          Film(RGBColor* pixels, uint16_t width, uint16_t height, uint8_t channels, std::string filename):
             _image(pixels, width, height, channels), _filename(filename) {}
+         Film(const ParamSets& params);
          static Film load(std::string filename);
 
          /** Destructor */
@@ -40,6 +42,7 @@ namespace raytracer {
          std::string getFilename() const;
          Image getImage() const;
          FilmType getType() const;
+         void setImage(const Image& image);
          void setFilename(const std::string& filename);
          void setPixel(const RGBColor& pixel, uint16_t row, uint16_t col);
 

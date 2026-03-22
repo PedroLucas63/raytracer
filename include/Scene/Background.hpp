@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <array>
 #include <stdexcept>
+#include "Parser/ParserScene.hpp"
 
 
 namespace raytracer {  
@@ -27,6 +28,8 @@ namespace raytracer {
             const RGBColor& tl, const RGBColor& tr,
             const RGBColor& bl, const RGBColor& br
          ) : _corners{tl, tr, bl, br} {}
+
+         Background(const ParamSets& params);
 
          ~Background(){};
 
