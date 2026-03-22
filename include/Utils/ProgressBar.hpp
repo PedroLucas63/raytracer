@@ -17,8 +17,6 @@
 
 class ProgressBar {
    private:
-      using uint = unsigned int;
-
       class GenericType {
          public:
             virtual ~GenericType() = default;
@@ -60,10 +58,14 @@ class ProgressBar {
                init(init), end(end) {}
             ProgressAxis(uint init, uint end, const std::string& title):
                init(init), end(end), title(title) {}
+            ProgressAxis(uint end, const std::string& title):
+               init(0), end(end), title(title) {}
             ProgressAxis(std::tuple<uint, uint> range):
                init(std::get<0>(range)), end(std::get<1>(range)) {}
             ProgressAxis(std::tuple<uint, uint, std::string> data):
                init(std::get<0>(data)), end(std::get<1>(data)), title(std::get<2>(data)) {}
+            ProgressAxis(std::tuple<uint, std::string> data):
+               init(0), end(std::get<0>(data)), title(std::get<1>(data)) {}
       };
 
       class Iterator {
@@ -159,6 +161,7 @@ class ProgressBar {
 
       using AttrPtr = std::shared_ptr<GenericType>;
       using AxisRange = std::tuple<uint, uint>;
+      using AxisDataU = std::tuple<uint, std::string>;
       using AxisData = std::tuple<uint, uint, std::string>;
       static const uint8_t MIN_BAR_WIDTH = 1;
       static const uint8_t FREE_SPACE_IN_BAR_ROW = 10;
@@ -179,6 +182,13 @@ class ProgressBar {
 
       template <typename AxisType>
       void constructor(std::initializer_list<AxisType> axis) {
+         static_assert(
+            std::is_same_v<AxisType, AxisData> ||
+            std::is_same_v<AxisType, AxisDataU> ||
+            std::is_same_v<AxisType, AxisRange>,
+            "Invalid axis type for ProgressBar constructor"
+         );
+
          _total_progress = 1;
          int axis_index = 0;
 
@@ -189,8 +199,16 @@ class ProgressBar {
          std::vector<ProgressAxis> axis_vector;
 
          for (const auto& tuple : axis) {
-            auto range_init = std::get<0>(tuple);
-            auto range_end = std::get<1>(tuple);
+            uint range_init, range_end;
+
+            if constexpr (std::is_same_v<AxisType, AxisDataU>) {
+               range_init = 0;
+               range_end = std::get<0>(tuple);
+            }
+            else {
+               range_init = std::get<0>(tuple);
+               range_end = std::get<1>(tuple);
+            }
 
             if (range_end <= range_init) {
                throw std::invalid_argument("Axis " + std::to_string(axis_index) + " end must be greater than init");
@@ -219,6 +237,7 @@ class ProgressBar {
       ProgressBar(uint init, uint end);
       ProgressBar(uint init, uint end, const std::string& axis_title);
       ProgressBar(std::initializer_list<AxisRange> ranges);
+      ProgressBar(std::initializer_list<AxisDataU> data);
       ProgressBar(std::initializer_list<AxisData> data);
    
       template <typename T>

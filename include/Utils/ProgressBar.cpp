@@ -217,6 +217,10 @@ ProgressBar::ProgressBar(std::initializer_list<AxisRange> ranges) {
    constructor(ranges);
 }
 
+ProgressBar::ProgressBar(std::initializer_list<AxisDataU> data) {
+   constructor(data);
+}
+
 ProgressBar::ProgressBar(std::initializer_list<AxisData> data) {
    constructor(data);
 }
