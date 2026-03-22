@@ -1,6 +1,9 @@
 #include "Api.hpp"
 
 namespace raytracer {
+   // Define the static member variable
+   RunningOptions Api::_options;
+
    void Api::render() {
       // Initialize camera, film, and background static objects
       // Render the scene

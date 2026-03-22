@@ -1,11 +1,9 @@
-#include "tinyxml2.h"
 #include "ParserScene.hpp"
 #include <algorithm>
 #include <string>
 #include <cctype>
 #include <iostream>
 #include <filesystem>
-#include "Utils/ConvertFunction.hpp"
 #include "Image/RGBColor.hpp"
 
 namespace raytracer{

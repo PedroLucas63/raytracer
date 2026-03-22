@@ -7,7 +7,7 @@
 namespace raytracer {
    class Api {
       private:
-         static RunningOptions& _options;
+         static RunningOptions _options;
 
          Api() = default;
          ~Api() = default;

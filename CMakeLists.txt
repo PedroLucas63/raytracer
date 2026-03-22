@@ -18,6 +18,7 @@ add_library(raytracer_core
 	include/Math/Point2.cpp
 	include/Utils/ImageUtils.cpp
 	include/Utils/RunningOptions.cpp
+	include/Utils/ConvertFunction.cpp
 	include/Utils/ProgressBar.cpp
 	include/Parser/ParserScene.cpp
 	include/Api/Api.cpp

@@ -10,21 +10,21 @@
 TEST_CASE("convert<T> stores a valid integer value") {
    raytracer::ParamSet ps;
 
-   REQUIRE(convert<int>("samples", "42", &ps));
+   REQUIRE(raytracer::convert<int>("samples", "42", &ps));
    REQUIRE(ps.retrieve<int>("samples") == 42);
 }
 
 TEST_CASE("convert<T> stores a valid floating point value") {
    raytracer::ParamSet ps;
 
-   REQUIRE(convert<float>("gamma", "2.2", &ps));
+   REQUIRE(raytracer::convert<float>("gamma", "2.2", &ps));
    REQUIRE(ps.retrieve<float>("gamma") == Catch::Approx(2.2f));
 }
 
 TEST_CASE("convert<T> parses boolean values with boolalpha") {
    raytracer::ParamSet ps;
 
-   REQUIRE(convert<bool>("quick", "true", &ps));
+   REQUIRE(raytracer::convert<bool>("quick", "true", &ps));
    REQUIRE(ps.retrieve<bool>("quick"));
 }
 
@@ -32,7 +32,7 @@ TEST_CASE("convert<T> throws for empty content") {
    raytracer::ParamSet ps;
 
    REQUIRE_THROWS_AS(
-      convert<int>("samples", "", &ps),
+      raytracer::convert<int>("samples", "", &ps),
       std::invalid_argument
    );
 }
