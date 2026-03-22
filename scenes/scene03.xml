@@ -1,0 +1,8 @@
+<RT3>
+   <camera type="orthographic" />
+   <film type="image" x_res="800" y_res="600" filename="output.png" img_type="png" />
+   <world_begin/>
+      <!-- This defines an interpolated background -->
+      <background type="2_colors_l_r" l="0 0 51" r="255 255 51" />
+   <world_end/>
+</RT3>
