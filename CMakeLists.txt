@@ -10,17 +10,12 @@ include(CTest)
 add_library(raytracer_core
 	include/Image/RGBColor.cpp
 	include/Image/Image.cpp
-<<<<<<< HEAD
-   include/Image/Background.cpp
-   include/core/ParamSet.cpp
-=======
 	include/Scene/Background.cpp
 	include/Scene/Camera.cpp
 	include/Scene/Film.cpp
 	include/Core/ParamSet.cpp
 	include/Math/Vector3.cpp
 	include/Math/Point2.cpp
->>>>>>> feat/paramset
 	include/Utils/ImageUtils.cpp
 	include/Utils/RunningOptions.cpp
 	include/Utils/ConvertFunction.cpp

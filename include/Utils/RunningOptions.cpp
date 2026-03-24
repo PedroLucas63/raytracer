@@ -84,11 +84,8 @@ namespace raytracer {
    bool RunningOptions::hasOutput() const {
       return !_output.empty();
    }
-<<<<<<< HEAD
-=======
 
    bool RunningOptions::isFail() const {
       return fail;
    }
->>>>>>> feat/paramset
 }
