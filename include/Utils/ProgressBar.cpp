@@ -1,6 +1,7 @@
 #include "ProgressBar.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <iomanip>
 #include <iostream>
 
@@ -108,7 +109,7 @@ ProgressBar::Iterator& ProgressBar::Iterator::operator++() {
    if (_owner != nullptr) {
       _owner->syncIteratorState(*this);
       if (_render_on_step) {
-         _owner->render();
+         _owner->renderIfDue();
       }
    }
 
@@ -131,7 +132,7 @@ ProgressBar::Iterator& ProgressBar::Iterator::operator--() {
       if (_owner != nullptr) {
          _owner->syncIteratorState(*this);
          if (_render_on_step) {
-            _owner->render();
+            _owner->renderIfDue();
          }
       }
 
@@ -147,7 +148,7 @@ ProgressBar::Iterator& ProgressBar::Iterator::operator--() {
    if (_owner != nullptr) {
       _owner->syncIteratorState(*this);
       if (_render_on_step && !_is_end) {
-         _owner->render();
+         _owner->renderIfDue();
       }
    }
 
@@ -247,6 +248,15 @@ uint8_t ProgressBar::getBarWidth() const {
    return _bar_width;
 }
 
+ProgressBar& ProgressBar::setRenderIntervalMs(uint32_t interval_ms) {
+   _render_interval = std::chrono::milliseconds(interval_ms);
+   return *this;
+}
+
+uint32_t ProgressBar::getRenderIntervalMs() const {
+   return static_cast<uint32_t>(_render_interval.count());
+}
+
 uint8_t ProgressBar::getTerminalWidth() const {
    uint8_t cols = 80;
 
@@ -299,6 +309,20 @@ void ProgressBar::syncIteratorState(const Iterator& iterator) {
    _current_progress = static_cast<int>(iterator.step());
    if (_current_progress > _total_progress) {
       _current_progress = _total_progress;
+   }
+}
+
+void ProgressBar::renderIfDue(bool force) {
+   const auto now = std::chrono::steady_clock::now();
+
+   if (force ||
+       _render_interval.count() == 0 ||
+       !_has_render_time ||
+       (now - _last_render_time) >= _render_interval ||
+       _current_progress >= _total_progress) {
+      render();
+      _last_render_time = now;
+      _has_render_time = true;
    }
 }
 
@@ -400,7 +424,7 @@ bool ProgressBar::isComplete() const {
 ProgressBar::Iterator ProgressBar::begin() {
    Iterator iterator(_axis, true, this, true);
    syncIteratorState(iterator);
-   render();
+   renderIfDue(true);
    return iterator;
 }
 
@@ -411,7 +435,7 @@ ProgressBar::Iterator ProgressBar::end() {
 ProgressBar::Iterator ProgressBar::rbegin() {
    Iterator iterator(_axis, false, this, true);
    syncIteratorState(iterator);
-   render();
+   renderIfDue(true);
    return iterator;
 }
 

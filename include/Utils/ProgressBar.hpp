@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <cstdint>
+#include <chrono>
 #include <initializer_list>
 #include <iterator>
 #include <memory>
@@ -175,10 +176,14 @@ class ProgressBar {
       int _total_progress = 0;
       bool _verbose = false;
       mutable size_t _last_rendered_lines = 0;
+      std::chrono::milliseconds _render_interval{100};
+      std::chrono::steady_clock::time_point _last_render_time{};
+      bool _has_render_time = false;
 
       uint8_t getTerminalWidth() const;
       void clearPreviousRender() const;
       void syncIteratorState(const Iterator& iterator);
+      void renderIfDue(bool force = false);
 
       template <typename AxisType>
       void constructor(std::initializer_list<AxisType> axis) {
@@ -230,6 +235,7 @@ class ProgressBar {
          _progress_iterator = Iterator(_axis);
          _current_progress = 0;
          _last_rendered_lines = 0;
+         _has_render_time = false;
       }
 
    public:
@@ -279,6 +285,9 @@ class ProgressBar {
 
       ProgressBar& setBarWidth(uint8_t width);
       uint8_t getBarWidth() const;
+
+      ProgressBar& setRenderIntervalMs(uint32_t interval_ms);
+      uint32_t getRenderIntervalMs() const;
 
       void render() const;
       void step();
