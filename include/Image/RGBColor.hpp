@@ -2,6 +2,7 @@
 #define RGB_COLOR_HPP
 
 #include <cstdint>
+#include <iterator>
 
 namespace raytracer {
    enum RGBChannel {
@@ -27,6 +28,21 @@ namespace raytracer {
          constexpr RGBColor(
             uint8_t red, uint8_t green, uint8_t blue
          ): _red(red), _green(green), _blue(blue) {}
+         template <std::input_iterator Iter>
+         requires std::same_as<std::iter_value_t<Iter>, uint8_t>
+         constexpr RGBColor(Iter begin, Iter end) {
+            auto it = begin;
+
+            if (it == end) throw std::invalid_argument("RGBColor needs at least 3 values");
+            _red = *it++;
+
+            if (it == end) throw std::invalid_argument("RGBColor needs at least 3 values");
+            _green = *it++;
+
+
+            if (it == end) throw std::invalid_argument("RGBColor needs at least 3 values");
+            _blue = *it++;
+         }
          static RGBColor fromNormalized(float red, float green, float blue);
 
          /** Destructor */

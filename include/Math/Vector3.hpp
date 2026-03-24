@@ -3,14 +3,9 @@
 
 #include <stddef.h>
 #include <limits>
+#include "Axis.hpp"
 
 namespace raytracer {
-   enum Axis {
-      X = 0,
-      Y = 1,
-      Z = 2
-   };
-
    class Vector3 {
       private:
          double _x, _y, _z;

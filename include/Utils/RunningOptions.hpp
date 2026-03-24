@@ -8,13 +8,17 @@
 
 namespace raytracer {
    class RunningOptions {
-      private:
+      private:         
          using cropwindow_t = std::tuple<int, int, int, int>;
 
          std::string _inputSceneFile;
          std::optional<cropwindow_t> _cropwindow;
          bool _quick = false;
          std::string _output;
+<<<<<<< HEAD
+=======
+         bool fail = true;
+>>>>>>> feat/paramset
 
          void configureCLI(CLI::App& app);
          std::string validateOutputPath(std::string filename) const;
@@ -30,6 +34,10 @@ namespace raytracer {
          bool isQuick() const;
          std::string getOutput() const;
          bool hasOutput() const;
+<<<<<<< HEAD
+=======
+         bool isFail() const;
+>>>>>>> feat/paramset
    };
 }
 

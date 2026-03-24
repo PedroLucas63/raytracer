@@ -52,7 +52,7 @@ namespace raytracer{
        * Resolve (get) the parameter value of type `T`.
        */
       template <typename T>
-      T resolve(const std::string& key) const{
+      T retrieve(const std::string& key) const{
          auto base_ptr = find(key);
 
          auto derived = std::dynamic_pointer_cast<ValueType<T>>(base_ptr);
@@ -64,12 +64,20 @@ namespace raytracer{
          return derived->get();
       }
 
-         bool has(const std::string& key) const;    
+      template <typename T>
+      T retrieveOrDefault(const std::string& key, const T& defaultValue = T{}) const {
+         if (!has(key)) {
+            return defaultValue;
+         }
+         return retrieve<T>(key);
+      }
 
-         void remove(const std::string& key);
-         void clear();
-         bool isEmpty() const;
-         size_t size()  const;
+      bool has(const std::string& key) const;    
+
+      void remove(const std::string& key);
+      void clear();
+      bool isEmpty() const;
+      size_t size()  const;
    };
 
 }

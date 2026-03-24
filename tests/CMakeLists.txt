@@ -4,7 +4,9 @@ add_executable(raytracer_tests
    Image/BackgroundTests.cpp
    Utils/ImageUtilsTests.cpp
    Utils/RunningOptionsTests.cpp
-   core/ParamSetTests.cpp
+   Utils/ConvertFunctionTests.cpp
+   Core/ParamSetTests.cpp
+   Parser/ParserSceneTests.cpp
 )
 
 target_link_libraries(raytracer_tests

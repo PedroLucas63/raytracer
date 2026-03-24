@@ -1,11 +1,13 @@
 #ifndef BACKGROUND_HPP
 #define BACKGROUND_HPP
 
-#include "RGBColor.hpp"
-#include "Image.hpp"
+#include "Image/RGBColor.hpp"
+#include "Image/Image.hpp"
+#include "Math/Point2.hpp"
 #include <cstdint>
 #include <array>
 #include <stdexcept>
+#include "Parser/ParserScene.hpp"
 
 
 namespace raytracer {  
@@ -27,6 +29,8 @@ namespace raytracer {
             const RGBColor& bl, const RGBColor& br
          ) : _corners{tl, tr, bl, br} {}
 
+         Background(const ParamSets& params);
+
          ~Background(){};
 
          static Background solid(const RGBColor& color);
@@ -40,6 +44,8 @@ namespace raytracer {
 
          RGBColor samplePixel(uint16_t col, uint16_t row,
                               uint16_t width, uint16_t height) const;
+            
+         RGBColor samplePixel(Point2 position, uint16_t width, uint16_t height) const;
          
          Image toImage(uint16_t width, uint16_t height) const;
    };
