@@ -1,5 +1,5 @@
-#ifndef BACKGROUND_HPP
-#define BACKGROUND_HPP
+#ifndef BACKGROUND_COLOR_HPP
+#define BACKGROUND_COLOR_HPP
 
 #include "Image/RGBColor.hpp"
 #include "Image/Image.hpp"
@@ -8,36 +8,33 @@
 #include <array>
 #include <stdexcept>
 #include "Parser/ParserScene.hpp"
+#include "Background.hpp"
 
 
 namespace raytracer {  
-
    enum Corners{ TopLeft = 0, TopRight, BottomLeft, BottomRight };
 
-   class Background{
+   class BackgroundColor : public Background {
       private:
          std::array<RGBColor, 4> _corners;
-
          static RGBColor lerp(const RGBColor& A, const RGBColor& B, float t);
-
          float clampCoordinate(float coordinate) const;
-
       public:
 
-         Background(
+         BackgroundColor(
             const RGBColor& tl, const RGBColor& tr,
             const RGBColor& bl, const RGBColor& br
          ) : _corners{tl, tr, bl, br} {}
 
-         Background(const ParamSets& params);
+         BackgroundColor(const ParamSets& params);
 
-         ~Background(){};
+         ~BackgroundColor() {};
 
-         static Background solid(const RGBColor& color);
-         static Background horizontalGradient(const RGBColor& left, const RGBColor& right);
-         static Background verticalGradient(const RGBColor& top, const RGBColor& bottom);
-         static Background diagonalGradientTLBR(const RGBColor& tl, const RGBColor& br);
-         static Background diagonalGradientTRBL(const RGBColor& tr, const RGBColor& bl);
+         static BackgroundColor solid(const RGBColor& color);
+         static BackgroundColor horizontalGradient(const RGBColor& left, const RGBColor& right);
+         static BackgroundColor verticalGradient(const RGBColor& top, const RGBColor& bottom);
+         static BackgroundColor diagonalGradientTLBR(const RGBColor& tl, const RGBColor& br);
+         static BackgroundColor diagonalGradientTRBL(const RGBColor& tr, const RGBColor& bl);
 
 
          RGBColor sampleUV(float u, float v) const;
@@ -51,4 +48,4 @@ namespace raytracer {
    };
 };
 
-#endif //BACKGROUND_HPP
+#endif //BACKGROUND_COLOR_HPP

@@ -11,6 +11,8 @@ namespace raytracer {
 
       if (typeParam == "orthographic")
          type = CameraType::Orthographic;
+      else if (typeParam == "perspective")
+         type = CameraType::Perspective;
       else
          throw std::invalid_argument("Unsupported camera type: " + type);
 

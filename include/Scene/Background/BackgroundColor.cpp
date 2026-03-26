@@ -1,22 +1,22 @@
-#include "Background.hpp"
+#include "BackgroundColor.hpp"
 #include <algorithm>  
 #include <cmath>
 
 namespace raytracer{
 
    /** Private helper methods */
-   RGBColor Background::lerp(const RGBColor& A, const RGBColor& B, float t) {
+   RGBColor BackgroundColor::lerp(const RGBColor& A, const RGBColor& B, float t) {
       if (t < 0.0f || t > 1.0f)
          throw std::invalid_argument("t must be in [0, 1]");
       return B.interpolate(A, t);
    }
 
-   float Background::clampCoordinate(float coordinate) const {
+   float BackgroundColor::clampCoordinate(float coordinate) const {
       return std::clamp(coordinate, 0.0f, 1.0f);
    }
 
    /** Constructor from parameter set */
-   Background::Background(const ParamSets& params) {
+   BackgroundColor::BackgroundColor(const ParamSets& params) {
       auto it = params.find("background");
       if (it == params.end()) {
          throw std::invalid_argument("Background parameters not found");
@@ -49,7 +49,7 @@ namespace raytracer{
          RGBColor tr = bgParams.retrieve<RGBColor>("tr");
          RGBColor bl = bgParams.retrieve<RGBColor>("bl");
          RGBColor br = bgParams.retrieve<RGBColor>("br");
-         *this = Background(tl, tr, bl, br);
+         *this = BackgroundColor(tl, tr, bl, br);
       } else {
          throw std::invalid_argument("Invalid background type: " + type);
       }
@@ -57,26 +57,26 @@ namespace raytracer{
 
 
    /** Static build methods */
-   Background Background::solid(const RGBColor& color) {
-      return Background(color, color, color, color);
+   BackgroundColor BackgroundColor::solid(const RGBColor& color) {
+      return BackgroundColor(color, color, color, color);
    }
-   Background Background::horizontalGradient(const RGBColor& left, const RGBColor& right) {
-      return Background(left, right, left, right);
+   BackgroundColor BackgroundColor::horizontalGradient(const RGBColor& left, const RGBColor& right) {
+      return BackgroundColor(left, right, left, right);
    }
-   Background Background::verticalGradient(const RGBColor& top, const RGBColor& bottom) {
-      return Background(top, top, bottom, bottom);
+   BackgroundColor BackgroundColor::verticalGradient(const RGBColor& top, const RGBColor& bottom) {
+      return BackgroundColor(top, top, bottom, bottom);
    }          
-   Background Background::diagonalGradientTLBR(const RGBColor& tl, const RGBColor& br) {
+   BackgroundColor BackgroundColor::diagonalGradientTLBR(const RGBColor& tl, const RGBColor& br) {
       RGBColor other = lerp(tl, br, 0.5f);
-      return Background(tl, other, other, br);
+      return BackgroundColor(tl, other, other, br);
    }
-   Background Background::diagonalGradientTRBL(const RGBColor& tr, const RGBColor& bl) {
+   BackgroundColor BackgroundColor::diagonalGradientTRBL(const RGBColor& tr, const RGBColor& bl) {
       RGBColor other = lerp(tr, bl, 0.5f);
-      return Background(other, tr, bl, other);
+      return BackgroundColor(other, tr, bl, other);
    }
 
    /** Sampling methods */
-   RGBColor Background::sampleUV(float u, float v) const {
+   RGBColor BackgroundColor::sampleUV(float u, float v) const {
       u = clampCoordinate(u);
       v = clampCoordinate(v);
       RGBColor top = lerp(_corners[TopLeft], _corners[TopRight], u);
@@ -84,14 +84,16 @@ namespace raytracer{
       return lerp(top, bottom, v);
    }
 
-   RGBColor Background::samplePixel(uint16_t col, uint16_t row,
-                                    uint16_t width, uint16_t height) const {
+   RGBColor BackgroundColor::samplePixel(
+      uint16_t col, uint16_t row,
+      uint16_t width, uint16_t height
+   ) const {
       float u = static_cast<float>(col) / (width - 1);
       float v = static_cast<float>(row) / (height - 1);
       return sampleUV(u, v);
    }
 
-   RGBColor Background::samplePixel(
+   RGBColor BackgroundColor::samplePixel(
       Point2 position, uint16_t width, uint16_t height
    ) const {
       uint16_t col = static_cast<uint16_t>(std::round(position.getX()));
@@ -99,7 +101,7 @@ namespace raytracer{
       return samplePixel(col, row, width, height);
    }
 
-   Image Background::toImage(uint16_t width, uint16_t height) const {
+   Image BackgroundColor::toImage(uint16_t width, uint16_t height) const {
       Image image(width, height, 3);
       for (uint16_t row = 0; row < height; row++) {
          for (uint16_t col = 0; col < width; col++) {
@@ -108,5 +110,4 @@ namespace raytracer{
       }
       return image;
    }
-
 };

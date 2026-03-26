@@ -1,6 +1,6 @@
 #include "Api.hpp"
 #include "Scene/Camera.hpp"
-#include "Scene/Background.hpp"
+#include "Scene/Background/BackgroundFactory.hpp"
 #include "Utils/ProgressBar.hpp"
 
 namespace raytracer {
@@ -11,7 +11,7 @@ namespace raytracer {
    void Api::render() {
       // Initialize camera, film, and background static objects
       Camera camera(_sceneData);
-      Background background(_sceneData);
+      auto background = BackgroundFactory::build(_sceneData);
 
       // Render the scene
       ProgressBar progress(
@@ -26,8 +26,8 @@ namespace raytracer {
          auto row = it[0], col = it[1];
 
          // Sample the background color for the current pixel
-         auto color = background.samplePixel(
-            {static_cast<double>(col), static_cast<double>(row)}, 
+         auto color = background->samplePixel(
+            col, row, 
             camera.film.getWidth(), 
             camera.film.getHeight()
          );
