@@ -12,11 +12,13 @@ namespace raytracer{
    // ── maps ──────────────────────────────────────────────────────────────────
 
    std::unordered_map<std::string, std::vector<std::string>> elementList {
-      { "camera",     { "type"} },
+      { "camera",     { "type", "screen_window"} },
+      { "lookat",    { "look_from", "look_at", "up" } },
       { "background", { "type", "filename", "mapping", "color", "tl", "tr", "bl", "br", "t", "b", "l", "r" } },
       { "film",       { "type", "filename", "img_type", "x_res", "y_res",
                         "w_res", "h_res", "crop_window", "gamma_corrected" } },
       { "include",    { "filename" } },
+      { "integrator", { "type" } },
       { "world_begin",{} },
       { "world_end",  {} },
    };

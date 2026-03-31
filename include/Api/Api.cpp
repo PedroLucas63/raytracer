@@ -9,36 +9,30 @@ namespace raytracer {
    ParamSets Api::_sceneData;
 
    void Api::render() {
-      // Initialize camera, film, and background static objects
-      Camera camera(_sceneData);
+      auto film = std::make_shared<Film>(_sceneData["film"]); 
+      // auto camera = CameraFactory::build(film, _sceneData); 
       auto background = BackgroundFactory::build(_sceneData);
 
-      // Render the scene
+      int w = film->getWidth();
+      int h = film->getHeight();
+
       ProgressBar progress(
          {
-            {camera.film.getHeight(), "Rows"},
-            {camera.film.getWidth(), "Cols"}
+            {h, "Rows"}, 
+            {w, "Cols"}
          }
       );
-      progress.setTitle("Rendering Scene");
+      progress.setTitle("Ray Tracing Scene");
 
       for (auto it : progress) {
          auto row = it[0], col = it[1];
 
-         // Sample the background color for the current pixel
-         auto color = background->samplePixel(
-            col, row, 
-            camera.film.getWidth(), 
-            camera.film.getHeight()
-         );
-         
-         // Set the pixel color in the film
-         camera.film.setPixel(color, row, col);
+         //todo: generate ray for current pixel using camera
+
       }
 
-      // Save the rendered image
-      camera.film.save();
-   }  
+      film->save();
+   }
    
    void Api::initEngine(const RunningOptions& options) {
       if (options.isFail()) {

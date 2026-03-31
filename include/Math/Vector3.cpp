@@ -1,5 +1,7 @@
 #include "Vector3.hpp"
 #include <stdexcept>
+#include <cmath>
+
 
 namespace raytracer {
    /** Getters and Setters method */
@@ -184,5 +186,30 @@ namespace raytracer {
    }
    bool Vector3::operator!=(const Vector3& other) const {
       return !(*this == other);
+   }
+
+
+   /** Math Methods */
+   double Vector3::lengthSquared() const {
+      return _x*_x + _y*_y + _z*_z;
+   }
+   double Vector3::length() const {
+      return std::sqrt(lengthSquared());
+   }
+   Vector3 Vector3::normalize() const {
+      double len = length();
+      if (len == 0.0)
+         throw std::invalid_argument("Cannot normalize a zero-length vector");
+      return Vector3(_x/len, _y/len, _z/len);
+   }
+   double Vector3::dot(const Vector3& other) const {
+      return _x*other._x + _y*other._y + _z*other._z;
+   }
+   Vector3 Vector3::cross(const Vector3& other) const {
+      return Vector3(
+         _y*other._z - _z*other._y,
+         _z*other._x - _x*other._z,
+         _x*other._y - _y*other._x
+      );
    }
 }

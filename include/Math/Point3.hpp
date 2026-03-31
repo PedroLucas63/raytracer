@@ -34,6 +34,26 @@ namespace raytracer {
 
          /** Access operator */
          double operator[](Axis axis) const;
+
+         // Point + vector → deslocated point
+         Point3 operator+(const Vector3& v) const {
+            return Point3(_x + v.getX(), _y + v.getY(), _z + v.getZ());
+         }
+         // Point - vector → deslocated point
+         Point3 operator-(const Vector3& v) const {
+            return Point3(_x - v.getX(), _y - v.getY(), _z - v.getZ());
+         }
+         // Point - point → vector between the two points
+         Vector3 operator-(const Point3& other) const {
+            return Vector3(_x - other._x, _y - other._y, _z - other._z);
+         }
+ 
+         bool operator==(const Point3& other) const {
+            return _x == other._x && _y == other._y && _z == other._z;
+         }
+         bool operator!=(const Point3& other) const {
+            return !(*this == other);
+         }
    };
 }
 

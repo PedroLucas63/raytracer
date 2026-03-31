@@ -2,7 +2,10 @@
 #define CAMERA_HPP
 
 #include "Film.hpp"
+#include "Math/Ray.hpp"
 #include "Parser/ParserScene.hpp"
+#include "Math/Vector3.hpp"
+#include "Math/Point3.hpp"
 
 namespace raytracer {
    enum CameraType {
@@ -10,18 +13,79 @@ namespace raytracer {
       Orthographic
    };
 
-   class Camera {
-      public:
-         Film film;
-         CameraType type;
-
-         Camera(const Film& film, CameraType type):
-            film(film), type(type) {}
-         Camera(const ParamSets& params);
-         ~Camera() = default;
-
-         Image capture() const;
+   struct ScreenWindow {
+      float l, r, b, t;
    };
+
+   // class Camera {
+   //    public:
+   //       Film film;
+   //       CameraType type;
+   //       Vector3 u, v, w; // Camera coordinate system basis vectors
+   //       Point3 eye;
+   //       ScreenWindow screenWindow;
+
+
+   //       Camera(const Film& film, CameraType type):
+   //          film(film), type(type) {}
+   //       Camera(const ParamSets& params);
+   //       ~Camera() = default;
+
+   //       Image capture() const;
+   // };
+
+   class Camera {
+      protected:
+         Point3  _eye;
+         Vector3 _u, _v, _w;
+         double  _l, _r, _b, _t; // screen window parameters
+         std::shared_ptr<Film> _film;
+ 
+         void buildFrame(const Point3& look_from, const Point3& look_at, const Vector3& vup);
+         void pixelToScreenUV(int i, int j, double& u, double& v) const;
+ 
+      public:
+         Camera(std::shared_ptr<Film> film,
+                const Point3& look_from, const Point3& look_at, const Vector3& vup,
+                double l, double r, double b, double t);
+ 
+         virtual ~Camera() = default;
+ 
+         virtual Ray generate_ray(int i, int j) const = 0;
+ 
+         Film&       film()       { return *_film; }
+         const Film& film() const { return *_film; }
+   };
+
+
+   // ── Orthographic Camera ────────────────────────────────────────────────────
+ 
+   class OrthographicCamera : public Camera {
+      public:
+         OrthographicCamera(std::shared_ptr<Film> film,
+                            const Point3& look_from, const Point3& look_at, const Vector3& vup,
+                            double l, double r, double b, double t)
+            : Camera(film, look_from, look_at, vup, l, r, b, t) {}
+ 
+         Ray generate_ray(int i, int j) const override;
+   };
+ 
+
+   // ── Perspective Camera ────────────────────────────────────────────────────
+   class PerspectiveCamera : public Camera {
+      private:
+         double _fd;
+ 
+      public:
+         PerspectiveCamera(std::shared_ptr<Film> film,
+                           const Point3& look_from, const Point3& look_at, const Vector3& vup,
+                           double l, double r, double b, double t,
+                           double focal_distance = 1.0)
+            : Camera(film, look_from, look_at, vup, l, r, b, t), _fd(focal_distance) {}
+ 
+         Ray generate_ray(int i, int j) const override;
+   };
+ 
 }
 
 #endif // !CAMERA_HPP

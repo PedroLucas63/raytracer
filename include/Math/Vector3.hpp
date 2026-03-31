@@ -39,6 +39,13 @@ namespace raytracer {
          double max() const;
          Axis minAxis() const;
          Axis maxAxis() const;
+
+         /** Math Methods */
+         double  length() const;
+         double  lengthSquared() const;
+         Vector3 normalize() const;
+         double  dot(const Vector3& other) const;
+         Vector3 cross(const Vector3& other) const;
          
          /** Access operator */
          double operator[](Axis axis) const;
