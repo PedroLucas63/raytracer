@@ -4,6 +4,7 @@
 #include "Math/Point3.hpp"
 #include "Math/Vector3.hpp"
 #include <limits>
+#include <ostream>
 
 namespace raytracer {
     class Ray {

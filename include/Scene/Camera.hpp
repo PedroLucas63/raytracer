@@ -44,11 +44,8 @@ namespace raytracer {
          void buildFrame(const Point3& look_from, const Point3& look_at, const Vector3& vup);
          void pixelToScreenUV(int i, int j, double& u, double& v) const;
  
-      public:
-         Camera(std::shared_ptr<Film> film,
-                const Point3& look_from, const Point3& look_at, const Vector3& vup,
-                double l, double r, double b, double t);
- 
+      public: 
+         Camera(const ParamSets& params);
          virtual ~Camera() = default;
  
          virtual Ray generate_ray(int i, int j) const = 0;
@@ -62,11 +59,7 @@ namespace raytracer {
  
    class OrthographicCamera : public Camera {
       public:
-         OrthographicCamera(std::shared_ptr<Film> film,
-                            const Point3& look_from, const Point3& look_at, const Vector3& vup,
-                            double l, double r, double b, double t)
-            : Camera(film, look_from, look_at, vup, l, r, b, t) {}
- 
+         OrthographicCamera(const ParamSets& params) : Camera(params) {}
          Ray generate_ray(int i, int j) const override;
    };
  
@@ -75,15 +68,19 @@ namespace raytracer {
    class PerspectiveCamera : public Camera {
       private:
          double _fd;
+         int _fovy;
  
       public:
-         PerspectiveCamera(std::shared_ptr<Film> film,
-                           const Point3& look_from, const Point3& look_at, const Vector3& vup,
-                           double l, double r, double b, double t,
-                           double focal_distance = 1.0)
-            : Camera(film, look_from, look_at, vup, l, r, b, t), _fd(focal_distance) {}
- 
+         PerspectiveCamera(const ParamSets& params);
          Ray generate_ray(int i, int j) const override;
+   };
+
+   class CameraFactory {
+      private:
+         static std::string getAndValidateCameraType(const ParamSets& params);
+
+      public:
+         static std::unique_ptr<Camera> build(const ParamSets& params);
    };
  
 }

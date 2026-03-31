@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <limits>
 #include "Axis.hpp"
+#include <iterator>
+#include <ostream>
 
 namespace raytracer {
    class Vector3 {
@@ -14,6 +16,21 @@ namespace raytracer {
          constexpr Vector3(): _x(0.0), _y(0.0), _z(0.0) {}
          constexpr Vector3(double x, double y, double z):
             _x(x), _y(y), _z(z) {}
+         template <std::input_iterator Iter>
+         requires std::same_as<std::iter_value_t<Iter>, double>
+         constexpr Vector3(Iter begin, Iter end) {
+            auto it = begin;
+
+            if (it == end) throw std::invalid_argument("Vector3 needs at least 3 values");
+            _x = *it++;
+
+            if (it == end) throw std::invalid_argument("Vector3 needs at least 3 values");
+            _y = *it++;
+
+            if (it == end) throw std::invalid_argument("Vector3 needs at least 3 values");
+            _z = *it++;
+         }
+         
          
          /** Destructor */
          ~Vector3() = default;

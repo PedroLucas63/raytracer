@@ -6,13 +6,15 @@
 #include <filesystem>
 #include "Image/RGBColor.hpp"
 #include <unordered_map>
+#include "Math/Point3.hpp"
+#include "Math/Vector3.hpp"
 
 namespace raytracer{
 
    // ── maps ──────────────────────────────────────────────────────────────────
 
    std::unordered_map<std::string, std::vector<std::string>> elementList {
-      { "camera",     { "type", "screen_window"} },
+      { "camera",     { "type", "screen_window", "fovy"} },
       { "lookat",    { "look_from", "look_at", "up" } },
       { "background", { "type", "filename", "mapping", "color", "tl", "tr", "bl", "br", "t", "b", "l", "r" } },
       { "film",       { "type", "filename", "img_type", "x_res", "y_res",
@@ -29,6 +31,8 @@ namespace raytracer{
       { "filename",        convert<std::string> },
       { "img_type",        convert<std::string> },
       { "mapping",         convert<std::string> },
+      { "fovy",            convert<int> },
+
 
       { "color",           convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "bl",              convert<raytracer::RGBColor, std::uint8_t, 3> },
@@ -39,6 +43,7 @@ namespace raytracer{
       { "b",              convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "r",              convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "l",              convert<raytracer::RGBColor, std::uint8_t, 3> },
+      { "screen_window",   convert<std::vector<float>, float, 4> },
 
       { "x_res",           convert<int> },
       { "y_res",           convert<int> },
@@ -47,6 +52,10 @@ namespace raytracer{
 
       { "flip",            convert<bool> },
       { "gamma_corrected", convert<bool> },
+
+      { "look_from",       convert<raytracer::Point3, double, 3> },
+      { "look_at",         convert<raytracer::Point3, double, 3> },
+      { "up",              convert<raytracer::Vector3, double, 3> }
    };
 
    // ── helpers ──────────────────────────────────────────────────────────────────

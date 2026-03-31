@@ -4,6 +4,8 @@
 #include "Point2.hpp"
 #include "Vector3.hpp"
 #include "Axis.hpp"
+#include <iterator>
+#include <ostream>
 
 namespace raytracer {
    class Point3 {
@@ -20,6 +22,21 @@ namespace raytracer {
             _x(point.getX()), _y(point.getY()), _z(z) {};
          Point3(const Point3& other): 
             _x(other._x), _y(other._y), _z(other._z) {};
+         
+         template <std::input_iterator Iter>
+         requires std::same_as<std::iter_value_t<Iter>, double>
+         constexpr Point3(Iter begin, Iter end) {
+            auto it = begin;
+
+            if (it == end) throw std::invalid_argument("Point3 needs at least 3 values");
+            _x = *it++;
+
+            if (it == end) throw std::invalid_argument("Point3 needs at least 3 values");
+            _y = *it++;
+
+            if (it == end) throw std::invalid_argument("Point3 needs at least 3 values");
+            _z = *it++;
+         }
          
          /** Destructor */
          ~Point3() = default;

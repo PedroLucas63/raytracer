@@ -2,6 +2,7 @@
 #include "Scene/Camera.hpp"
 #include "Scene/Background/BackgroundFactory.hpp"
 #include "Utils/ProgressBar.hpp"
+#include <iostream>
 
 namespace raytracer {
    // Define the static member variable
@@ -9,29 +10,37 @@ namespace raytracer {
    ParamSets Api::_sceneData;
 
    void Api::render() {
-      auto film = std::make_shared<Film>(_sceneData["film"]); 
-      // auto camera = CameraFactory::build(film, _sceneData); 
+      auto camera = CameraFactory::build(_sceneData); 
       auto background = BackgroundFactory::build(_sceneData);
+      auto film = camera->film();
 
-      int w = film->getWidth();
-      int h = film->getHeight();
+      int w = film.getWidth();
+      int h = film.getHeight();
 
       ProgressBar progress(
          {
-            {h, "Rows"}, 
-            {w, "Cols"}
+            {w, "Cols"},
+            {h, "Rows"}
          }
       );
-      progress.setTitle("Ray Tracing Scene");
+      progress.setTitle("Ray Tracing Scene").render();
 
       for (auto it : progress) {
-         auto row = it[0], col = it[1];
+         auto col = it[0], row = it[1];
 
-         //todo: generate ray for current pixel using camera
+         auto i = col;
+         auto j = h - 1 - row;
 
+         Ray ray = camera->generate_ray(i, j);
+
+         float u_norm = static_cast<float>(i) / (w - 1);
+         float v_norm = static_cast<float>(j) / (h - 1);
+
+         auto color = background->sampleUV(u_norm, v_norm);
+         film.setPixel(color, j, i);
       }
 
-      film->save();
+      film.save();
    }
    
    void Api::initEngine(const RunningOptions& options) {
