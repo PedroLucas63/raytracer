@@ -65,8 +65,8 @@ namespace raytracer {
    }
 
    void Api::AddSphere() {
-      auto center = Point3(-1.0f, 0.0f, 1.0f);
-      auto sphere = std::make_shared<Sphere>(center, 0.8f);
+      auto center = Point3(0.0f, 0.0f, 1.0f);
+      auto sphere = std::make_shared<Sphere>(center, 0.8);
       _scene.addPrimitive(sphere);
    }
 
