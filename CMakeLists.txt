@@ -15,6 +15,8 @@ add_library(raytracer_core
 	include/Scene/Background/BackgroundColor.cpp
 	include/Scene/Camera.cpp
 	include/Scene/Film.cpp
+	include/Scene/Scene.cpp
+	include/Objects/Shapes/Sphere.cpp
 	include/Core/ParamSet.cpp
 	include/Math/Vector3.cpp
 	include/Math/Point3.cpp

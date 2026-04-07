@@ -3,11 +3,13 @@
 #include "Scene/Background/BackgroundFactory.hpp"
 #include "Utils/ProgressBar.hpp"
 #include <iostream>
+#include "Objects/Shapes/Sphere.hpp"
 
 namespace raytracer {
    // Define the static member variable
    RunningOptions Api::_options;
    ParamSets Api::_sceneData;
+   Scene Api::_scene;
 
    void Api::render() {
       auto camera = CameraFactory::build(_sceneData); 
@@ -33,6 +35,17 @@ namespace raytracer {
 
          Ray ray = camera->generate_ray(i, j);
 
+         auto intersection = false;
+         for (const auto& primitive : _scene.getPrimitives()) {
+            if (primitive->intersect(ray)) {
+               film.setPixel(RGBColor(255, 0, 0), j, i);
+               intersection = true;
+               break;
+            }
+         }
+
+         if (intersection) continue;
+
          float u_norm = static_cast<float>(i) / (w - 1);
          float v_norm = static_cast<float>(j) / (h - 1);
 
@@ -51,6 +64,12 @@ namespace raytracer {
       _options = options;
    }
 
+   void Api::AddSphere() {
+      auto center = Point3(-1.0f, 0.0f, 1.0f);
+      auto sphere = std::make_shared<Sphere>(center, 0.8f);
+      _scene.addPrimitive(sphere);
+   }
+
    void Api::run() {
       // Parse data and save static Tags ParamSet
       _sceneData = ParserScene::parseScene(_options.getInputSceneFile().c_str());
@@ -63,9 +82,11 @@ namespace raytracer {
          _sceneData["film"].add<std::string>("filename", outputPath);
       }
 
+
       // Find world_end tag and call render() when found
       auto worldEndIt = _sceneData.find("world_end");
       if (worldEndIt != _sceneData.end()) {
+         AddSphere();
          render();
       } else {
          std::cerr << "[Api] Warning: <world_end> tag not found. Rendering skipped.\n";

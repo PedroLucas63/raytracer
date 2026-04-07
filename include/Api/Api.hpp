@@ -4,17 +4,21 @@
 #include "Utils/RunningOptions.hpp"
 #include "Core/ParamSet.hpp"
 #include "Parser/ParserScene.hpp"
+#include "Scene/Scene.hpp"
 
 namespace raytracer {
    class Api {
       private:
          static RunningOptions _options;
          static ParamSets _sceneData;
+         static Scene _scene;
 
          Api() = default;
          ~Api() = default;
 
          static void render();
+
+         static void AddSphere();
          
       public:
          static void initEngine(const RunningOptions& options);
