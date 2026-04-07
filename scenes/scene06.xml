@@ -1,9 +1,9 @@
 <RT3>
-    <lookat look_from="0 0 1" look_at="0 0 0" up="0 1 0" />
-    <camera type="perspective" screen_window="-5.3 5.3 -4 4" fovy="30"/>
+    <lookat look_from="0 0 4" look_at="0 0 0" up="0 1 0" />
+    <camera type="perspective" screen_window="-8 8 -4 4" fovy="15"/>
     <integrator type="flat" />
     <film type="image" w_res="200" h_res="100" filename="simple_bkg.png" img_type="png" />
     <world_begin/>
-        <background type="single_color" color="153 204 255"/>
+        <background type="single_color" color="255 255 255"/>
     <world_end/>
 </RT3>
