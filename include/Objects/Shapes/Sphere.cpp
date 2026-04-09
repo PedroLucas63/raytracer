@@ -43,7 +43,28 @@ namespace raytracer {
    }
 
    bool Sphere::intersectWithSurfel(const Ray& ray, Surfel* sf) const {
-      // TODO: Update surfel
-      return intersect(ray);
+      auto [t1, t2] = calculateIntersectPoints(ray);
+
+      auto result = (t1 >= ray.t_min && t1 <= ray.t_max) || 
+         (t2 >= ray.t_min && t2 <= ray.t_max);
+      
+      if (!result) return false;
+
+      auto t = -1.0f;
+      bool setT = false;
+      if (t1 >= ray.t_min && t1 <= ray.t_max) {
+         t = t1;
+         setT = true;
+      }
+      
+      if (t2 >= ray.t_min && t2 <= ray.t_max) {
+         t = setT && t2 < t ? t2 : t;
+      }
+
+      if (sf) {
+         *sf = Surfel(t, _material);
+      }
+
+      return true;
    }
 }

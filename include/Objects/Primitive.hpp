@@ -8,7 +8,7 @@
 
 namespace raytracer {
    class Primitive {
-      private:
+      protected:
          std::shared_ptr<Material> _material;
 
       public:

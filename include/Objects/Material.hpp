@@ -7,7 +7,7 @@
 
 namespace raytracer {
    class Material {
-      private:
+      protected:
          std::string _name;
 
       public:

@@ -4,16 +4,18 @@
 #include "Utils/ProgressBar.hpp"
 #include <iostream>
 #include "Objects/Shapes/Sphere.hpp"
+#include "Objects/Surfel.hpp"
 
 namespace raytracer {
    // Define the static member variable
    RunningOptions Api::_options;
-   ParamSets Api::_sceneData;
    Scene Api::_scene;
 
    void Api::render() {
-      auto camera = CameraFactory::build(_sceneData); 
-      auto background = BackgroundFactory::build(_sceneData);
+      const auto& params = _scene.getParams();
+
+      auto camera = CameraFactory::build(params); 
+      auto background = BackgroundFactory::build(params);
       auto film = camera->film();
 
       int w = film.getWidth();
@@ -35,16 +37,25 @@ namespace raytracer {
 
          Ray ray = camera->generate_ray(i, j);
 
-         auto intersection = false;
+         std::vector<Surfel*> intersections;
          for (const auto& primitive : _scene.getPrimitives()) {
-            if (primitive->intersect(ray)) {
-               film.setPixel(RGBColor(255, 0, 0), j, i);
-               intersection = true;
-               break;
+            Surfel* sf = nullptr;
+            if (primitive->intersectWithSurfel(ray, sf)) {
+               intersections.push_back(sf);
             }
          }
 
-         if (intersection) continue;
+         if (intersections.size() > 0) {
+            auto closestSurfel = *std::min_element(intersections.begin(), intersections.end(),
+               [](const Surfel* a, const Surfel* b) {
+                  return a->t < b->t;
+               }
+            );
+
+            auto color = closestSurfel->material->getColor();
+            film.setPixel(color, j, i);
+            continue;
+         }
 
          float u_norm = static_cast<float>(i) / (w - 1);
          float v_norm = static_cast<float>(j) / (h - 1);
@@ -64,29 +75,22 @@ namespace raytracer {
       _options = options;
    }
 
-   void Api::AddSphere() {
-      auto center = Point3(0.0f, 0.0f, 1.0f);
-      auto sphere = std::make_shared<Sphere>(center, 0.8);
-      _scene.addPrimitive(sphere);
-   }
-
    void Api::run() {
       // Parse data and save static Tags ParamSet
-      _sceneData = ParserScene::parseScene(_options.getInputSceneFile().c_str());
+      _scene = ParserScene::parseScene(_options.getInputSceneFile().c_str());
+      const auto& params = _scene.getParams();
 
-      if (_sceneData.find("film") == _sceneData.end())
+      if (params.find("film") == params.end())
          throw std::runtime_error("Scene data must contain 'film' parameters.");
       
       if (_options.hasOutput()) {
          std::string outputPath = _options.getOutput();
-         _sceneData["film"].add<std::string>("filename", outputPath);
+         params["film"].add<std::string>("filename", outputPath);
       }
 
-
       // Find world_end tag and call render() when found
-      auto worldEndIt = _sceneData.find("world_end");
-      if (worldEndIt != _sceneData.end()) {
-         AddSphere();
+      auto worldEndIt = params.find("world_end");
+      if (worldEndIt != params.end()) {
          render();
       } else {
          std::cerr << "[Api] Warning: <world_end> tag not found. Rendering skipped.\n";
@@ -95,6 +99,6 @@ namespace raytracer {
 
    void Api::cleanUp() {
       _options = RunningOptions(); // Reset options to default
-      _sceneData.clear(); // Clear scene data
+      _scene = Scene(); // Reset scene to default
    }
 }

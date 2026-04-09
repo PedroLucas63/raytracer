@@ -10,16 +10,12 @@ namespace raytracer {
    class Api {
       private:
          static RunningOptions _options;
-         static ParamSets _sceneData;
          static Scene _scene;
 
          Api() = default;
          ~Api() = default;
 
-         static void render();
-
-         static void AddSphere();
-         
+         static void render();         
       public:
          static void initEngine(const RunningOptions& options);
          static void run();
