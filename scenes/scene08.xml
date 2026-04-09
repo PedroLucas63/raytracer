@@ -1,0 +1,11 @@
+<RT3>
+    <lookat look_from="0 0 -7" look_at="0 0 0" up="0 1 0" />
+    <camera type="orthographic" screen_window="-3 3 -2 2" />
+    <film type="image" w_res="800" h_res="600" filename="output/scene08.png" img_type="png" />
+
+    <world_begin/>
+        <background type="single_color" color="240 240 240"/>
+        <material name="red" type="color" color="255 0 0"/>
+        <object type="sphere" center="0 0 0" radius="1.2" material="red" />
+    <world_end/>
+</RT3>

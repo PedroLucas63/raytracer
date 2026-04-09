@@ -1,8 +1,9 @@
 <RT3>
+    <lookat look_from="0 0 -7" look_at="0 0 0" up="0 1 0" />
     <camera type="orthographic" />
-    <film type="image" x_res="800" y_res="600" filename="interpolated_bkg.png" img_type="png" />
+    <film type="image" x_res="800" y_res="600" filename="output/assets_scene02.png" img_type="png" />
     <world_begin/>
         <!-- This defines an interpolated background -->
-        <background type="colors" mapping="screen" bl="0 0 51" tl="0 255 51" tr="255 255 51" br="255 0 51" />
+        <background type="4_colors" mapping="screen" bl="0 0 51" tl="0 255 51" tr="255 255 51" br="255 0 51" />
     <world_end/>
 </RT3>

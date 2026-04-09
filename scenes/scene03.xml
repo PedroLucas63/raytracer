@@ -1,6 +1,7 @@
 <RT3>
+   <lookat look_from="0 0 -7" look_at="0 0 0" up="0 1 0" />
    <camera type="orthographic" />
-   <film type="image" x_res="800" y_res="600" filename="output.png" img_type="png" />
+   <film type="image" x_res="800" y_res="600" filename="output/scene03.png" img_type="png" />
    <world_begin/>
       <!-- This defines an interpolated background -->
       <background type="2_colors_l_r" l="0 0 51" r="255 255 51" />

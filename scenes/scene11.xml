@@ -1,0 +1,19 @@
+<RT3>
+    <lookat look_from="-15 8 -10" look_at="6 -2 8" up="0 1 0" />
+    <camera type="orthographic" screen_window="-6 6 -3.5 3.5" />
+    <film type="image" w_res="1280" h_res="720" filename="output/scene11.png" img_type="png" />
+
+    <world_begin/>
+        <background type="single_color" color="242 242 242"/>
+
+        <material name="green" type="color" color="0 180 70"/>
+        <material name="blue" type="color" color="40 90 255"/>
+        <material name="cyan" type="color" color="0 210 220"/>
+        <material name="magenta" type="color" color="220 40 180"/>
+
+        <object type="sphere" center="-2.2 0 3.5" radius="2.2" material="green" />
+        <object type="sphere" center="-2.2 0 6.0" radius="1.2" material="blue" />
+        <object type="sphere" center="2.2 0 3.5" radius="0.95" material="cyan" />
+        <object type="sphere" center="2.2 0 6.0" radius="2.0" material="magenta" />
+    <world_end/>
+</RT3>
