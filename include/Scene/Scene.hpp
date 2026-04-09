@@ -9,6 +9,7 @@ namespace raytracer {
    class Scene {
       private:
          std::vector<std::shared_ptr<Primitive>> _primitives;
+         
       public:
          Scene() = default;
          ~Scene() = default;
