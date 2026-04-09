@@ -12,6 +12,7 @@ namespace raytracer {
          std::shared_ptr<Material> _material;
 
       public:
+         Primitive(std::shared_ptr<Material> material) : _material(material) {}
          virtual ~Primitive() = default;
          virtual bool intersect(const Ray& ray) const = 0;
          virtual bool intersectWithSurfel(const Ray& ray, Surfel* sf) const = 0;

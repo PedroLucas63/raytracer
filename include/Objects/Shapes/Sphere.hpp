@@ -14,8 +14,9 @@ namespace raytracer {
          std::pair<float, float> calculateIntersectPoints(const Ray& ray) const;
 
       public:
-         Sphere(const Point3& center, float radius): 
-            _center(center), _radius(radius) {}
+         Sphere(const Point3& center, float radius, std::shared_ptr<Material> material): 
+            Primitive(material), _center(center), _radius(radius) {}
+         Sphere(const ParamSet& params, std::shared_ptr<Material> material);
          ~Sphere() = default;
 
          bool intersect(const Ray& ray) const override;

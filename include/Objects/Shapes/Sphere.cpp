@@ -3,6 +3,18 @@
 
 namespace raytracer {
 
+   Sphere::Sphere(const ParamSet& params, std::shared_ptr<Material> material) : Primitive(material) {
+      if (!params.has("center")) {
+         throw std::invalid_argument("Sphere requires a 'center' parameter");
+      }
+      if (!params.has("radius")) {
+         throw std::invalid_argument("Sphere requires a 'radius' parameter");
+      }
+
+      _center = params.retrieve<Point3>("center");
+      _radius = params.retrieve<float>("radius");
+   }
+
    std::pair<float, float> Sphere::calculateIntersectPoints(const Ray& ray) const {
       auto oc = ray.origin - _center;
 

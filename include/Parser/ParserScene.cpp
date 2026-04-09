@@ -59,7 +59,7 @@ namespace raytracer{
       { "look_at",         convert<raytracer::Point3, double, 3> },
       { "up",              convert<raytracer::Vector3, double, 3> },
 
-      { "radius",          convert<double> },
+      { "radius",          convert<float> },
       { "center",          convert<raytracer::Point3, double, 3> },
       { "material",        convert<std::string> }
    };

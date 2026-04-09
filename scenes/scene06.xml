@@ -3,7 +3,11 @@
     <camera type="perspective" screen_window="-8 8 -4 4" fovy="15"/>
     <integrator type="flat" />
     <film type="image" w_res="200" h_res="100" filename="simple_bkg.png" img_type="png" />
+
+
     <world_begin/>
         <background type="single_color" color="255 255 255"/>
+        <material name="red" type="flat" color="255 0 0"/>
+        <object type="sphere" center="0 0 0" radius="1" material="red" />
     <world_end/>
 </RT3>

@@ -1,6 +1,7 @@
 #ifndef OBJECT_FACTORY_HPP
 
 #include "Primitive.hpp"
+#include "Scene/Scene.hpp"
 #include <memory>
 
 namespace raytracer {
@@ -9,7 +10,9 @@ namespace raytracer {
          ObjectFactory() = default;
 
       public:
-         static std::shared_ptr<Primitive> buildPrimitive(const ParamSet& params);
+         static std::shared_ptr<Primitive> buildPrimitive(
+            const ParamSet& params, const Scene& scene
+         );
    };
 }
 
