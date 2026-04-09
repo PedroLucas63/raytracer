@@ -37,22 +37,23 @@ namespace raytracer {
 
          Ray ray = camera->generate_ray(i, j);
 
-         std::vector<Surfel*> intersections;
+         std::vector<Surfel> intersections;
          for (const auto& primitive : _scene.getPrimitives()) {
-            Surfel* sf = nullptr;
-            if (primitive->intersectWithSurfel(ray, sf)) {
+            Surfel sf(0.0f, nullptr);
+            if (primitive->intersectWithSurfel(ray, &sf)) {
                intersections.push_back(sf);
             }
          }
 
          if (intersections.size() > 0) {
-            auto closestSurfel = *std::min_element(intersections.begin(), intersections.end(),
-               [](const Surfel* a, const Surfel* b) {
-                  return a->t < b->t;
+            auto closestSurfel = *std::min_element(
+               intersections.begin(), intersections.end(),
+               [](const Surfel& a, const Surfel& b) {
+                  return a.t < b.t;
                }
             );
 
-            auto color = closestSurfel->material->getColor();
+            auto color = closestSurfel.material->getColor();
             film.setPixel(color, j, i);
             continue;
          }
@@ -78,7 +79,7 @@ namespace raytracer {
    void Api::run() {
       // Parse data and save static Tags ParamSet
       _scene = ParserScene::parseScene(_options.getInputSceneFile().c_str());
-      const auto& params = _scene.getParams();
+      auto& params = _scene.getParams();
 
       if (params.find("film") == params.end())
          throw std::runtime_error("Scene data must contain 'film' parameters.");

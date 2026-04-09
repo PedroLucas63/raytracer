@@ -15,10 +15,10 @@ namespace raytracer {
       return _primitives;
    }
 
-   Material* Scene::getMaterialAt(const std::string& name) const{
+   std::shared_ptr<Material> Scene::getMaterialAt(const std::string& name) const{
       auto it = _materialMap.find(name);
       if (it != _materialMap.end()) {
-         return it->second.get();
+         return it->second;
       }
       throw std::runtime_error("Material not found: " + name);
    }
@@ -35,5 +35,13 @@ namespace raytracer {
       _params[key] = value;
    }
 
+   ParamSets& Scene::getParams() { return _params; }
 
+   void Scene::include(const Scene& other) {
+      _params.insert(other._params.begin(), other._params.end());
+      _materialMap.insert(other._materialMap.begin(), other._materialMap.end());
+      _primitives.insert(
+         _primitives.end(), other._primitives.begin(), other._primitives.end()
+      );
+   }
 }

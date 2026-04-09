@@ -9,7 +9,7 @@ namespace raytracer {
          MaterialFactory() = default;
 
       public:
-         static std::shared_ptr<Material> build(const ParamSet& params);
+         static std::shared_ptr<Material> create(const ParamSet& params);
    };
 }
 

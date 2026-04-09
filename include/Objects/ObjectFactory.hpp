@@ -10,7 +10,7 @@ namespace raytracer {
          ObjectFactory() = default;
 
       public:
-         static std::shared_ptr<Primitive> buildPrimitive(
+         static std::shared_ptr<Primitive> createPrimitive(
             const ParamSet& params, const Scene& scene
          );
    };

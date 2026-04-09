@@ -2,7 +2,7 @@
 #include "MaterialFactory.hpp"
 
 namespace raytracer {
-   std::shared_ptr<Material> MaterialFactory::build(const ParamSet& params) {
+   std::shared_ptr<Material> MaterialFactory::create(const ParamSet& params) {
       if (!params.has("type")) {
          throw std::invalid_argument("MaterialFactory requires a 'type' parameter");
       }

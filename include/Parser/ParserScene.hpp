@@ -13,17 +13,16 @@
 #include "Core/ParamSet.hpp"
 #include "tinyxml2.h"
 #include "Utils/ConvertFunction.hpp"
+#include "Scene/Scene.hpp"
 
 namespace raytracer {
-    using ParamSets = std::unordered_map<std::string, ParamSet>;
-
     class ParserScene{
         public:
-            static ParamSets parseScene(const char* filename);
-            static ParamSets parseScene(const char* xmlContent, bool fromString);
+            static Scene parseScene(const char* filename);
+            static Scene parseScene(const char* xmlContent, bool fromString);
         
         private:
-            static ParamSets parseDocument(tinyxml2::XMLDocument& doc);
+            static Scene parseDocument(tinyxml2::XMLDocument& doc);
             static std::string stringToLower(std::string s);
             static bool isValidElement(std::string_view);
             static bool isValidAttribute(std::string_view elementName, std::string_view attrName);

@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include "Math/Point3.hpp"
 #include "Math/Vector3.hpp"
+#include "Objects/MaterialFactory.hpp"
+#include "Objects/ObjectFactory.hpp"
 
 namespace raytracer{
 
@@ -100,11 +102,11 @@ namespace raytracer{
     * @param filename The path to the XML file to parse
     * @brief Load document from file and delegate to parseDocument
     */
-   ParamSets ParserScene::parseScene(const char* filename) {
+   Scene ParserScene::parseScene(const char* filename) {
       tinyxml2::XMLDocument doc;
       if (doc.LoadFile(filename) != tinyxml2::XML_SUCCESS) {
          std::cerr << "[Parser] Failed to load XML: " << filename << '\n';
-         return ParamSets();
+         return Scene();
       }
       return parseDocument(doc);
    }
@@ -114,23 +116,23 @@ namespace raytracer{
     * @param fromString A boolean flag to differentiate this overload (not used in logic)
     * @brief Load document from string and delegate to parseDocument (useful for testing)
     */
-   ParamSets ParserScene::parseScene(const char* xmlContent, bool fromString) {
+   Scene ParserScene::parseScene(const char* xmlContent, bool fromString) {
       tinyxml2::XMLDocument doc;
       if (doc.Parse(xmlContent) != tinyxml2::XML_SUCCESS) {
          std::cerr << "[Parser] Failed to parse XML string.\n";
-         return ParamSets();
+         return Scene();
       }
       return parseDocument(doc);
    }
 
 
-   ParamSets ParserScene::parseDocument(tinyxml2::XMLDocument& doc) {
+   Scene ParserScene::parseDocument(tinyxml2::XMLDocument& doc) {
       tinyxml2::XMLElement* root = doc.RootElement();
       if (!root) {
          throw std::runtime_error("XML document has no root element.");
       }
 
-      ParamSets paramSets;
+      Scene scene;
 
       for (auto* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
          const std::string element = stringToLower(node->Name());
@@ -171,14 +173,27 @@ namespace raytracer{
                continue;
             }
 
-            auto includedSets = parseScene(incFile.c_str());
-            paramSets.insert(includedSets.begin(), includedSets.end());
-            continue;
+            auto includedScene = parseScene(incFile.c_str());
+            scene.include(includedScene);
+         } else if (element == "material") {
+            try {
+               auto material = MaterialFactory::create(ps);
+               scene.addMaterial(material);
+            } catch (const std::exception& e) {
+               std::cerr << "[Parser] Failed to create material: " << e.what() << '\n';
+            }
+         } else if (element == "object") {
+            try {
+               auto object = ObjectFactory::createPrimitive(ps, scene);
+               scene.addPrimitive(object);
+            } catch (const std::exception& e) {
+               std::cerr << "[Parser] Failed to create object: " << e.what() << '\n';
+            }
+         } else {
+            scene.setParam(element, ps);
          }
-
-         paramSets[element] = ps;
       }
 
-      return paramSets;
+      return scene;
    }
 };
