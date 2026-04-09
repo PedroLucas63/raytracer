@@ -1,13 +1,14 @@
 #include <catch2/catch_test_macros.hpp>
 #include "Core/ParamSet.hpp"
+#include "Image/RGBColor.hpp"
 #include "Parser/ParserScene.hpp"
 
 // ── helper ────────────────────────────────────────────────────────────────────
 static raytracer::ParamSet parseElementOrFail(const char* xml, const std::string& element) {
     const auto parsed = raytracer::ParserScene::parseScene(xml, true);
-    const auto it = parsed.find(element);
-    REQUIRE(it != parsed.end());
-    return it->second;
+    raytracer::ParamSet elementPs;
+    REQUIRE_NOTHROW(elementPs = parsed.getParam(element));
+    return elementPs;
 }
 
 // ── <film> ────────────────────────────────────────────────────────────────────
@@ -47,11 +48,10 @@ TEST_CASE("parseScene stores background color") {
     const char* xml = R"(<scene><background color="100 149 237"/></scene>)";
     const auto backgroundPs = parseElementOrFail(xml, "background");
 
-    const auto color = backgroundPs.retrieve<std::vector<std::uint8_t>>("color");
-    REQUIRE(color.size() == 3);
-    REQUIRE(color[0] == 100);
-    REQUIRE(color[1] == 149);
-    REQUIRE(color[2] == 237);
+    const auto color = backgroundPs.retrieve<raytracer::RGBColor>("color");
+    REQUIRE(color.getRed() == 100);
+    REQUIRE(color.getGreen() == 149);
+    REQUIRE(color.getBlue() == 237);
 }
 
 TEST_CASE("parseScene stores background corner colors") {
@@ -62,15 +62,15 @@ TEST_CASE("parseScene stores background corner colors") {
     )";
     const auto backgroundPs = parseElementOrFail(xml, "background");
 
-    const auto tl = backgroundPs.retrieve<std::vector<std::uint8_t>>("tl");
-    const auto tr = backgroundPs.retrieve<std::vector<std::uint8_t>>("tr");
-    const auto bl = backgroundPs.retrieve<std::vector<std::uint8_t>>("bl");
-    const auto br = backgroundPs.retrieve<std::vector<std::uint8_t>>("br");
+    const auto tl = backgroundPs.retrieve<raytracer::RGBColor>("tl");
+    const auto tr = backgroundPs.retrieve<raytracer::RGBColor>("tr");
+    const auto bl = backgroundPs.retrieve<raytracer::RGBColor>("bl");
+    const auto br = backgroundPs.retrieve<raytracer::RGBColor>("br");
 
-    REQUIRE(tl[0] == 255); REQUIRE(tl[1] == 0);   REQUIRE(tl[2] == 0);
-    REQUIRE(tr[0] == 0);   REQUIRE(tr[1] == 255);  REQUIRE(tr[2] == 0);
-    REQUIRE(bl[0] == 0);   REQUIRE(bl[1] == 0);    REQUIRE(bl[2] == 255);
-    REQUIRE(br[0] == 255); REQUIRE(br[1] == 255);  REQUIRE(br[2] == 0);
+    REQUIRE(tl.getRed() == 255); REQUIRE(tl.getGreen() == 0);   REQUIRE(tl.getBlue() == 0);
+    REQUIRE(tr.getRed() == 0);   REQUIRE(tr.getGreen() == 255); REQUIRE(tr.getBlue() == 0);
+    REQUIRE(bl.getRed() == 0);   REQUIRE(bl.getGreen() == 0);   REQUIRE(bl.getBlue() == 255);
+    REQUIRE(br.getRed() == 255); REQUIRE(br.getGreen() == 255); REQUIRE(br.getBlue() == 0);
 }
 
 // ── elementos inválidos ───────────────────────────────────────────────────────
@@ -85,9 +85,10 @@ TEST_CASE("parseScene ignores unknown elements") {
 TEST_CASE("parseScene ignores unknown attributes") {
     const char* xml = R"(<scene><film invalid_attr="x"/></scene>)";
     const auto parsed = raytracer::ParserScene::parseScene(xml, true);
+    raytracer::ParamSet filmPs;
 
-    REQUIRE(parsed.find("film") != parsed.end());
-    REQUIRE_FALSE(parsed.at("film").has("invalid_attr"));
+    REQUIRE_NOTHROW(filmPs = parsed.getParam("film"));
+    REQUIRE_FALSE(filmPs.has("invalid_attr"));
 }
 
 TEST_CASE("parseScene handles empty scene") {
@@ -101,7 +102,7 @@ TEST_CASE("parseScene handles malformed XML") {
     const char* xml = R"(<scene><film x_res="abc"/></scene>)";
 
     raytracer::ParserScene parser;
-    REQUIRE_NOTHROW(parser.parseScene(xml, true));
+    REQUIRE_THROWS_AS(parser.parseScene(xml, true), std::invalid_argument);
 }
 
 // ── case insensitive ──────────────────────────────────────────────────────────
@@ -149,11 +150,10 @@ TEST_CASE("parseScene stores background color from RT3 document") {
 
     REQUIRE(backgroundPs.retrieve<std::string>("type") == "single_color");
 
-    const auto color = backgroundPs.retrieve<std::vector<std::uint8_t>>("color");
-    REQUIRE(color.size() == 3);
-    REQUIRE(color[0] == 153);
-    REQUIRE(color[1] == 204);
-    REQUIRE(color[2] == 255);
+    const auto color = backgroundPs.retrieve<raytracer::RGBColor>("color");
+    REQUIRE(color.getRed() == 153);
+    REQUIRE(color.getGreen() == 204);
+    REQUIRE(color.getBlue() == 255);
 }
 
 TEST_CASE("parseScene handles world_begin and world_end without throwing") {

@@ -70,7 +70,7 @@ TEST_CASE("convert<T,K,N> stores a valid fixed-size vector") {
 TEST_CASE("convert<T,K,N> stores a valid fixed-size boolean vector") {
    raytracer::ParamSet ps;
 
-   REQUIRE(convert<std::vector<bool>, bool, 3>("flags", "1 0 1", &ps));
+   REQUIRE(convert<std::vector<bool>, bool, 3>("flags", "true false true", &ps));
 
    const auto flags = ps.retrieve<std::vector<bool>>("flags");
    REQUIRE(flags.size() == 3);
