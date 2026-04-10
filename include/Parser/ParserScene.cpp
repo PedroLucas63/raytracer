@@ -25,8 +25,8 @@ namespace raytracer{
       { "integrator", { "type" } },
       { "world_begin",{} },
       { "world_end",  {} },
-      { "object",     { "type", "center", "radius", "material" } },
-      { "material",   { "type", "color", "name" } }
+      { "object",     { "type", "origin", "radius", "norm", "material" } },
+      { "material",   { "type", "color", "name", "color1", "color2", "spacing" } }
    };
 
    std::unordered_map<std::string, ConvertFunction> converters {
@@ -62,8 +62,13 @@ namespace raytracer{
       { "up",              convert<raytracer::Vector3, double, 3> },
 
       { "radius",          convert<float> },
-      { "center",          convert<raytracer::Point3, double, 3> },
-      { "material",        convert<std::string> }
+      { "origin",          convert<raytracer::Point3, double, 3> },
+      { "norm",            convert<raytracer::Vector3, double, 3> },
+      { "material",        convert<std::string> },
+
+      { "color1",           convert<raytracer::RGBColor, std::uint8_t, 3> },
+      { "color2",           convert<raytracer::RGBColor, std::uint8_t, 3> },
+      { "spacing",          convert<float> }
    };
 
    // ── helpers ──────────────────────────────────────────────────────────────────

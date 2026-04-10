@@ -8,10 +8,12 @@
 namespace raytracer {
    class Surfel {
       public:
-         Surfel(float t, std::shared_ptr<Material> material) : t(t), material(material) {}
+         Surfel(float t, Point3 point, std::shared_ptr<Material> material) 
+            : t(t), point(point), material(material) {}
          ~Surfel() = default;
 
          float t; // Distance along the ray to the intersection point
+         Point3 point;
          std::shared_ptr<Material> material;
    };
 }

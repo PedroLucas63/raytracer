@@ -8,14 +8,14 @@
 namespace raytracer {
    class Sphere : public Primitive {
       private:
-         Point3 _center;
+         Point3 _origin;
          float _radius;
 
          std::pair<float, float> calculateIntersectPoints(const Ray& ray) const;
 
       public:
-         Sphere(const Point3& center, float radius, std::shared_ptr<Material> material): 
-            Primitive(material), _center(center), _radius(radius) {}
+         Sphere(const Point3& origin, float radius, std::shared_ptr<Material> material): 
+            Primitive(material), _origin(origin), _radius(radius) {}
          Sphere(const ParamSet& params, std::shared_ptr<Material> material);
          ~Sphere() = default;
 

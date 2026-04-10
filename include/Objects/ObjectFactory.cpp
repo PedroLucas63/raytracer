@@ -1,5 +1,6 @@
 #include "ObjectFactory.hpp"
 #include "Shapes/Sphere.hpp"
+#include "Shapes/Plan.hpp"
 
 namespace raytracer {
    std::shared_ptr<Primitive> ObjectFactory::createPrimitive(
@@ -19,6 +20,8 @@ namespace raytracer {
       std::string type = params.retrieve<std::string>("type");
       if (type == "sphere") {
          return std::make_shared<Sphere>(params, material);
+      } else if (type == "plan") {
+         return std::make_shared<Plan>(params, material);
       } else {
          throw std::invalid_argument("Unknown primitive type: " + type);
       }

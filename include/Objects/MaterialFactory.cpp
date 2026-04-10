@@ -14,6 +14,8 @@ namespace raytracer {
       std::string type = params.retrieve<std::string>("type");      
       if (type == "color") {
          return std::make_shared<ColorMaterial>(params);
+      } else if (type == "grid") {
+         return std::make_shared<GridMaterial>(params);
       } else {
          throw std::invalid_argument("Unknown material type: " + type);
       }

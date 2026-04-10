@@ -39,7 +39,7 @@ namespace raytracer {
 
          std::vector<Surfel> intersections;
          for (const auto& primitive : _scene.getPrimitives()) {
-            Surfel sf(0.0f, nullptr);
+            Surfel sf(0.0f, Point3(), nullptr);
             if (primitive->intersectWithSurfel(ray, &sf)) {
                intersections.push_back(sf);
             }
@@ -52,8 +52,9 @@ namespace raytracer {
                   return a.t < b.t;
                }
             );
-
-            auto color = closestSurfel.material->getColor();
+            
+            auto p = closestSurfel.point;
+            auto color = closestSurfel.material->getColor(p);
             film.setPixel(color, j, i);
             continue;
          }

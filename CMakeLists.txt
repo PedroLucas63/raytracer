@@ -20,6 +20,7 @@ add_library(raytracer_core
 	include/Objects/MaterialFactory.cpp
 	include/Objects/ObjectFactory.cpp
 	include/Objects/Shapes/Sphere.cpp
+	include/Objects/Shapes/Plan.cpp
 	include/Core/ParamSet.cpp
 	include/Math/Vector3.cpp
 	include/Math/Point3.cpp

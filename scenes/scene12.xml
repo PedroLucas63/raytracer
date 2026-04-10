@@ -1,0 +1,21 @@
+<RT3>
+    <lookat look_from="0 5 -5" look_at="0 5 10" up="0 1 0" />
+    <camera type="perspective" fovy="30" screen_window="-6 6 -3.5 3.5" />
+    <film type="image" w_res="1280" h_res="720" filename="output/scene12.png" img_type="png" />
+
+    <world_begin/>
+        <background type="single_color" color="242 242 242"/>
+
+        <material name="green" type="color" color="0 180 70"/>
+        <material name="blue" type="color" color="40 90 255"/>
+        <material name="cyan" type="color" color="0 210 220"/>
+        <material name="magenta" type="color" color="220 40 180"/>
+        <material name="grid" type="grid" color1="123 123 123" color2="232 232 232" spacing="2"/>
+
+        <object type="sphere" origin="-2.2 3 3.5" radius="2.2" material="green" />
+        <object type="sphere" origin="-2.2 3 6.0" radius="1.2" material="blue" />
+        <object type="sphere" origin="2.2 2 3.5" radius="0.95" material="cyan" />
+        <object type="sphere" origin="2.2 2 6.0" radius="2.0" material="magenta" />
+        <object type="plan" origin="0 0 0" norm="0 1 0" material="grid" />
+    <world_end/>
+</RT3>
