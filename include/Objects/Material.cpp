@@ -22,7 +22,7 @@ namespace raytracer {
 
    GridMaterial::GridMaterial(const ParamSet& params) : Material(params) {
       _color1 = params.retrieveOrDefault("color1", RGBColor(255, 255, 255));
-      _color1 = params.retrieveOrDefault("color2", RGBColor(123, 123, 123));
+      _color2 = params.retrieveOrDefault("color2", RGBColor(123, 123, 123));
       _spacing = params.retrieveOrDefault("spacing", 1.0f);
 
       if (_spacing <= 0) throw std::invalid_argument("GridMaterial requires a 'spacing' positive");
