@@ -1,5 +1,12 @@
 #include "Film.hpp"
 #include "Utils/ImageUtils.hpp"
+#include <filesystem>
+#include <string>
+
+namespace {
+   void ensureOutputDirectoryExists(const std::filesystem::path& outputPath);
+   std::filesystem::path makeUniqueFilename(const std::filesystem::path& outputPath);
+}
 
 namespace raytracer {
    /** Constructors */
@@ -91,6 +98,38 @@ namespace raytracer {
       if (_filename.empty()) {
          throw std::runtime_error("Filename is not set. Cannot save the film.");
       }
-      ImageUtils::saveImage(_image, _filename);
+
+      std::filesystem::path outputPath(_filename);
+      ensureOutputDirectoryExists(outputPath);
+      outputPath = makeUniqueFilename(outputPath);
+      ImageUtils::saveImage(_image, outputPath.string());
+   }
+   
+}
+
+namespace {
+   void ensureOutputDirectoryExists(const std::filesystem::path& outputPath) {
+      const auto outputDir = outputPath.parent_path();
+      if (!outputDir.empty() && !std::filesystem::exists(outputDir)) {
+         std::filesystem::create_directories(outputDir);
+      }
+   }
+
+   std::filesystem::path makeUniqueFilename(const std::filesystem::path& outputPath) {
+      if (!std::filesystem::exists(outputPath)) {
+         return outputPath;
+      }
+
+      const auto extension = outputPath.extension().string();
+      const auto originalStem = outputPath.stem().string();
+      std::filesystem::path candidate;
+      int suffix = 1;
+
+      do {
+         candidate = outputPath.parent_path() / (originalStem + "-" + std::to_string(suffix) + extension);
+         suffix++;
+      } while (std::filesystem::exists(candidate));
+
+      return candidate;
    }
 }
