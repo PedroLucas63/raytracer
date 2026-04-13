@@ -18,6 +18,13 @@ namespace raytracer {
    std::pair<float, float> Sphere::calculateIntersectPoints(const Ray& ray) const {
       auto oc = ray.origin - _origin;
 
+      auto d = ray.direction.normalize();
+      auto proj = oc.dot(d);
+      auto oc_perp = oc - d * proj;
+      auto delta_stable = _radius * _radius - oc_perp.lengthSquared();
+
+      if (delta_stable < 0) return {-1, -1};
+
       auto A = ray.direction.dot(ray.direction);
       auto B = 2 * oc.dot(ray.direction);
       auto C = oc.dot(oc) - _radius * _radius;
