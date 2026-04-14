@@ -49,7 +49,8 @@ namespace raytracer {
       //   v = normalize(w x u)                 — up real
       _eye = look_from;
       _w   = (look_at - look_from).normalize();
-      _u   = _w.cross(vup).normalize();
+      // _u   = _w.cross(vup).normalize();
+      _u   = vup.cross(_w).normalize();
       _v   = _w.cross(_u).normalize();
    }
 
