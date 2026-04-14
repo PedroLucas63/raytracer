@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <limits>
 #include "Core/ParamSet.hpp"
+#include "Image/RGBColor.hpp"
 
 namespace raytracer {
    using ConvertFunction = std::function<bool(const std::string&, const std::string&, ParamSet*)>;
@@ -117,6 +118,12 @@ namespace raytracer {
       ps->add(attrName, value);
       return true;
    }
+
+   bool convert_color(
+      const std::string& attrName, 
+      const std::string& attrContent, 
+      ParamSet* ps
+   );
 }
 
 #endif // !CONVERT_FUNCTION_HPP

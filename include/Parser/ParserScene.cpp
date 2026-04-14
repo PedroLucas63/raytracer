@@ -38,7 +38,7 @@ namespace raytracer{
       { "fovy",            convert<int> },
 
 
-      { "color",           convert<raytracer::RGBColor, std::uint8_t, 3> },
+      { "color",           convert_color },
       { "bl",              convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "tl",              convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "tr",              convert<raytracer::RGBColor, std::uint8_t, 3> },

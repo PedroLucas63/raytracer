@@ -1,5 +1,5 @@
 <RT3>
-    <lookat look_from="0 10 -5" look_at="0 0 10" up="0 1 0" />
+    <lookat look_from="10 10 -5" look_at="-2 0 10" up="0 1 0" />
     <camera type="perspective" fovy="30" screen_window="-6 6 -3.5 3.5" />
     <film type="image" w_res="1280" h_res="720" filename="output/scene12.png" img_type="png" />
 
