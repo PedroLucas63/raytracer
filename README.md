@@ -67,6 +67,25 @@ Requisitos de ambiente:
 - Compilador com suporte a C++23
 - Ninja (preset padrao)
 
+## Uso Com Devcontainer (Recomendado)
+
+Este repositorio pode ser aberto em um devcontainer no VS Code, garantindo ambiente consistente para build e testes.
+
+### 1. Abrir no container
+
+1. Instale a extensao **Dev Containers** no VS Code.
+2. Abra a pasta do projeto no VS Code.
+3. Execute o comando **Dev Containers: Reopen in Container**.
+
+### 2. Build dentro do container
+
+Com o terminal ja dentro do container:
+
+```bash
+cmake --preset default
+cmake --build build
+```
+
 ## Build
 
 ### 1. Instalar dependencias
