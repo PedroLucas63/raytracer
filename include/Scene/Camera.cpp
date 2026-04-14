@@ -43,15 +43,10 @@ namespace raytracer {
    void Camera::buildFrame(const Point3& look_from,
                            const Point3& look_at,
                            const Vector3& vup) {
-      // Convenção left-hand do enunciado:
-      //   w = normalize(look_at - look_from)   — gaze direction
-      //   u = normalize(vup x w)               — right
-      //   v = normalize(w x u)                 — up real
       _eye = look_from;
       _w   = (look_at - look_from).normalize();
-      // _u   = _w.cross(vup).normalize();
       _u   = vup.cross(_w).normalize();
-      _v   = _w.cross(_u).normalize();
+      _v   = _u.cross(_w).normalize();
    }
 
    void Camera::pixelToScreenUV(int i, int j, double& u, double& v) const {
