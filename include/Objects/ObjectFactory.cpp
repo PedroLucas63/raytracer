@@ -16,6 +16,9 @@ namespace raytracer {
          material = scene.getLastMaterial();
       } else {
          std::string material_name = params.retrieve<std::string>("material");
+         if (material_name.starts_with("__")) {
+            throw std::invalid_argument("Cannot reference anonymous material: " + material_name);
+         }
          material = scene.getMaterialAt(material_name);
       }
 
