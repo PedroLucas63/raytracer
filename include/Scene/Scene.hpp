@@ -18,6 +18,7 @@ namespace raytracer {
       private:
          std::vector<std::shared_ptr<Primitive>> _primitives;
          std::unordered_map<std::string, std::shared_ptr<Material>> _materialMap;
+         std::shared_ptr<Material> _lastMaterial = nullptr;
          ParamSets _params;
          
       public:
@@ -29,6 +30,7 @@ namespace raytracer {
 
          void addMaterial(const std::shared_ptr<Material>& material);
          std::shared_ptr<Material> getMaterialAt(const std::string& name) const;
+         std::shared_ptr<Material> getLastMaterial() const { return _lastMaterial; }
 
          void setParam(const std::string& key, const ParamSet& value);
          ParamSet getParam(const std::string& key) const;

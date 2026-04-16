@@ -6,14 +6,14 @@
     <world_begin/>
         <background type="single_color" color="242 242 242"/>
 
-        <material name="green" type="color" color="0 180 70"/>
-        <material name="blue" type="color" color="40 90 255"/>
-        <material name="cyan" type="color" color="0 210 220"/>
-        <material name="magenta" type="color" color="220 40 180"/>
+        <material name="green" type="flat" color="0 180 70"/>
+        <material name="blue" type="flat" color="40 90 255"/>
+        <material name="cyan" type="flat" color="0 210 220"/>
+        <material name="magenta" type="flat" color="220 40 180"/>
         <material name="grid" type="grid" color1="123 123 123" color2="232 232 232" spacing="2"/>
         <material name="grid2" type="grid" color1="123 23 234" color2="13 233 78" spacing="0.5"/>
 
-        <object type="sphere" origin="-2.2 3 3.5" radius="2.2" material="grid2" />
+        <object type="sphere" origin="-2.2 3 3.5" radius="2.2" />
         <object type="sphere" origin="-2.2 3 6.5" radius="1.2" material="blue" />
         <object type="sphere" origin="2.2 2 3.5" radius="0.95" material="cyan" />
         <object type="sphere" origin="2.2 2 6.0" radius="2.0" material="magenta" />

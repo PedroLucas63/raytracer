@@ -3,20 +3,31 @@
 
 namespace raytracer {
    Material::Material(const ParamSet& params) {
-      if (!params.has("name")) {
-         throw std::invalid_argument("Material requires a 'name' parameter");
+      bool anonymous = !params.has("name");
+      
+      std::string name;
+      if (anonymous) {
+         name = "__material_" + std::to_string(reinterpret_cast<std::uintptr_t>(this));
+      } else {
+         name = params.retrieve<std::string>("name");
       }
-      _name = params.retrieve<std::string>("name");
+
+      if (name.starts_with("__") && !anonymous) {
+         throw std::invalid_argument("Material name cannot start with '__' unless it's anonymous");
+      }
+
+      _name = name;
+      _annonymous = anonymous;
    }
 
-   ColorMaterial::ColorMaterial(const ParamSet& params) : Material(params) {
+   FlatMaterial::FlatMaterial(const ParamSet& params) : Material(params) {
       if (!params.has("color")) {
-         throw std::invalid_argument("ColorMaterial requires a 'color' parameter");
+         throw std::invalid_argument("FlatMaterial requires a 'color' parameter");
       }
       _color = params.retrieveOrDefault("color", RGBColor(255, 255, 255));
    }
 
-   const RGBColor& ColorMaterial::getColor(const Point3& point) const {
+   const RGBColor& FlatMaterial::getColor(const Point3& point) const {
       return _color;
    }
 

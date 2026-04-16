@@ -40,6 +40,10 @@ namespace raytracer {
          std::vector<Surfel> intersections;
          for (const auto& primitive : _scene.getPrimitives()) {
             Surfel sf(0.0f, Point3(), nullptr);
+
+            if (!primitive->hasMaterial())
+               continue;
+            
             if (primitive->intersectWithSurfel(ray, &sf)) {
                intersections.push_back(sf);
             }

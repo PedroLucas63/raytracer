@@ -7,6 +7,7 @@ namespace raytracer {
    }
 
    void Scene::addMaterial(const std::shared_ptr<Material>& material) {
+      _lastMaterial = material;
       _materialMap[material->getName()] = material;
    }
 

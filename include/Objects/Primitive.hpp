@@ -16,8 +16,12 @@ namespace raytracer {
          virtual ~Primitive() = default;
          virtual bool intersect(const Ray& ray) const = 0;
          virtual bool intersectWithSurfel(const Ray& ray, Surfel* sf) const = 0;
-         virtual const Material* getMaterial() const {
-            return _material.get();
+         virtual const bool hasMaterial() const { return _material != nullptr; }
+         virtual const std::shared_ptr<Material> getMaterial() const {
+            if (!hasMaterial()) {
+               throw std::runtime_error("Primitive has no material assigned");
+            }
+            return _material;
          };
    };
 }

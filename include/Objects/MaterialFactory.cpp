@@ -7,13 +7,9 @@ namespace raytracer {
          throw std::invalid_argument("MaterialFactory requires a 'type' parameter");
       }
 
-      if (!params.has("name")) {
-         throw std::invalid_argument("MaterialFactory requires a 'name' parameter");
-      }
-
       std::string type = params.retrieve<std::string>("type");      
-      if (type == "color") {
-         return std::make_shared<ColorMaterial>(params);
+      if (type == "flat") {
+         return std::make_shared<FlatMaterial>(params);
       } else if (type == "grid") {
          return std::make_shared<GridMaterial>(params);
       } else {

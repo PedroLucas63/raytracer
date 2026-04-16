@@ -5,7 +5,7 @@
 
     <world_begin/>
         <background type="4_colors" bl="176 214 175" tl="4 99 202" tr="4 99 202" br="176 214 175" />
-        <material type="color" color="220 10 10" name="red" />
-        <object type="sphere" radius="0.4" origin="-1.5 -1.5 100000000000000" material="red" />
+        <material type="flat" color="220 10 10" />
+        <object type="sphere" radius="0.4" origin="-1.5 -1.5 100000000000000" />
     <world_end/>
 </RT3>

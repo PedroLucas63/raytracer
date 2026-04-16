@@ -1,6 +1,7 @@
 #include "ObjectFactory.hpp"
 #include "Shapes/Sphere.hpp"
 #include "Shapes/Plan.hpp"
+#include <iostream>
 
 namespace raytracer {
    std::shared_ptr<Primitive> ObjectFactory::createPrimitive(
@@ -10,12 +11,16 @@ namespace raytracer {
          throw std::invalid_argument("ObjectFactory requires a 'type' parameter");
       }
 
+      std::shared_ptr<Material> material;
       if (!params.has("material")) {
-         throw std::invalid_argument("ObjectFactory requires a 'material' parameter");
+         material = scene.getLastMaterial();
+      } else {
+         std::string material_name = params.retrieve<std::string>("material");
+         material = scene.getMaterialAt(material_name);
       }
 
-      std::string material_name = params.retrieve<std::string>("material");
-      std::shared_ptr<Material> material = scene.getMaterialAt(material_name);
+      if (material == nullptr)
+         std::cerr << "[WARN]: Primitive created without material" << std::endl;
 
       std::string type = params.retrieve<std::string>("type");
       if (type == "sphere") {
