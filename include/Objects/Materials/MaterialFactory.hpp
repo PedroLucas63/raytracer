@@ -1,7 +1,8 @@
 #ifndef OBJECT_MATERIAL_FACTORY_HPP
 #define OBJECT_MATERIAL_FACTORY_HPP
 
-#include "Material.hpp"
+#include "Objects/Materials/Material.hpp"
+#include <memory>
 
 namespace raytracer {
    class MaterialFactory {

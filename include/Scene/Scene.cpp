@@ -1,4 +1,4 @@
-#include "Scene.hpp"
+#include "Scene/Scene.hpp"
 
 namespace raytracer {   
    
@@ -36,10 +36,13 @@ namespace raytracer {
       _params[key] = value;
    }
 
-   ParamSets& Scene::getParams() { return _params; }
+   ParamSets& Scene::getParams() { 
+      return _params; 
+   }
 
    void Scene::include(const Scene& other) {
       _params.insert(other._params.begin(), other._params.end());
+      _lastMaterial = other._lastMaterial;
       _materialMap.insert(other._materialMap.begin(), other._materialMap.end());
       _primitives.insert(
          _primitives.end(), other._primitives.begin(), other._primitives.end()

@@ -16,9 +16,12 @@ add_library(raytracer_core
 	include/Scene/Camera.cpp
 	include/Scene/Film.cpp
 	include/Scene/Scene.cpp
-	include/Objects/Material.cpp
-	include/Objects/MaterialFactory.cpp
-	include/Objects/ObjectFactory.cpp
+	include/Objects/Materials/Material.cpp
+	include/Objects/Materials/GridMaterial.cpp
+	include/Objects/Materials/FlatMaterial.cpp
+	include/Objects/Materials/MaterialFactory.cpp
+	include/Objects/PrimitiveFactory.cpp
+	include/Objects/GeometricPrimitive.cpp
 	include/Objects/Shapes/Sphere.cpp
 	include/Objects/Shapes/Plan.cpp
 	include/Core/ParamSet.cpp

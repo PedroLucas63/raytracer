@@ -1,22 +1,22 @@
-#include "Sphere.hpp"
+#include "Objects/Shapes/Sphere.hpp"
 #include <cmath>
 
 namespace raytracer {
 
-   Sphere::Sphere(const ParamSet& params, std::shared_ptr<Material> material) : Primitive(material) {
-      if (!params.has("origin")) {
-         throw std::invalid_argument("Sphere requires a 'origin' parameter");
+   Sphere::Sphere(const ParamSet& params) : Shape() {
+      if (!params.has("center")) {
+         throw std::invalid_argument("Sphere requires a 'center' parameter");
       }
       if (!params.has("radius")) {
          throw std::invalid_argument("Sphere requires a 'radius' parameter");
       }
 
-      _origin = params.retrieve<Point3>("origin");
+      _center = params.retrieve<Point3>("center");
       _radius = params.retrieve<float>("radius");
    }
 
    std::pair<float, float> Sphere::calculateIntersectPoints(const Ray& ray) const {
-      auto oc = ray.origin - _origin;
+      auto oc = ray.origin - _center;
 
       auto d = ray.direction.normalize();
       auto proj = oc.dot(d);
@@ -49,7 +49,7 @@ namespace raytracer {
          (t2 >= ray.t_min && t2 <= ray.t_max);
    }
 
-   bool Sphere::intersectWithSurfel(const Ray& ray, Surfel* sf) const {
+   bool Sphere::intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const {
       auto [t1, t2] = calculateIntersectPoints(ray);
 
       auto result = (t1 >= ray.t_min && t1 <= ray.t_max) || 
@@ -70,9 +70,20 @@ namespace raytracer {
 
       if (sf) {
          auto intersectPoint = ray.origin + (ray.direction * t);
-         *sf = Surfel(t, intersectPoint, _material);
+         *sf = Surfel(t, intersectPoint);
+      }
+
+      if (tHit) {
+         *tHit = t;
       }
 
       return true;
+   }
+
+   Bounds3 Sphere::getBounds() const {
+      auto vec = Vector3(_radius, _radius, _radius);
+      auto point1 = _center - vec;
+      auto point2 = _center + vec;
+      return Bounds3(point1, point2);
    }
 }

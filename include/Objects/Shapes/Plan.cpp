@@ -1,8 +1,8 @@
-#include "Plan.hpp"
+#include "Objects/Shapes/Plan.hpp"
 #include <cmath>
 
 namespace raytracer {
-   Plan::Plan(const ParamSet& params, std::shared_ptr<Material> material) : Primitive(material) {
+   Plan::Plan(const ParamSet& params) {
       if (!params.has("origin")) {
          throw std::invalid_argument("Plan requires a 'origin' parameter");
       }
@@ -31,16 +31,26 @@ namespace raytracer {
       return t >= ray.t_min && t <= ray.t_max;
    }
 
-   bool Plan::intersectWithSurfel(const Ray& ray, Surfel* sf) const {
+   bool Plan::intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const {
       auto t = getIntersection(ray);
 
       if (t < ray.t_min || t > ray.t_max) return false;
-      
+
+      if (tHit) {
+         *tHit = t;
+      }
+
       if (sf) {
          auto intersectPoint = ray.origin + (ray.direction * t);
-         *sf = Surfel(t, intersectPoint, _material);
+         *sf = Surfel(t, intersectPoint);
       }
 
       return true;
+   }
+
+   Bounds3 Plan::getBounds() const {
+      auto point1 = Point3(-INFINITY, -INFINITY, -INFINITY);
+      auto point2 = Point3(INFINITY, INFINITY, INFINITY);
+      return Bounds3(point1, point2);
    }
 }

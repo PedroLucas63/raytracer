@@ -1,4 +1,4 @@
-#include "ParserScene.hpp"
+#include "Parser/ParserScene.hpp"
 #include <algorithm>
 #include <string>
 #include <cctype>
@@ -8,8 +8,8 @@
 #include <unordered_map>
 #include "Math/Point3.hpp"
 #include "Math/Vector3.hpp"
-#include "Objects/MaterialFactory.hpp"
-#include "Objects/ObjectFactory.hpp"
+#include "Objects/Materials/MaterialFactory.hpp"
+#include "Objects/PrimitiveFactory.hpp"
 
 namespace raytracer{
 
@@ -63,6 +63,7 @@ namespace raytracer{
 
       { "radius",          convert<float> },
       { "origin",          convert<raytracer::Point3, double, 3> },
+      { "center",          convert<raytracer::Point3, double, 3> },
       { "norm",            convert<raytracer::Vector3, double, 3> },
       { "material",        convert<std::string> },
 
@@ -189,7 +190,7 @@ namespace raytracer{
             }
          } else if (element == "object") {
             try {
-               auto object = ObjectFactory::createPrimitive(ps, scene);
+               auto object = PrimitiveFactory::create(ps, scene);
                scene.addPrimitive(object);
             } catch (const std::exception& e) {
                std::cerr << "[Parser] Failed to create object: " << e.what() << '\n';

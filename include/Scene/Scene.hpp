@@ -4,12 +4,9 @@
 #include <vector>
 #include <memory>
 #include "Objects/Primitive.hpp"
-// #include "PrimitiveFactory.hpp"
-#include "Objects/Material.hpp"
-#include "Objects/MaterialFactory.hpp"
+#include "Objects/Materials/Material.hpp"
+#include "Objects/Materials/MaterialFactory.hpp"
 #include <unordered_map>
-
-
 
 namespace raytracer {
    using ParamSets = std::unordered_map<std::string, ParamSet>;
@@ -38,7 +35,6 @@ namespace raytracer {
 
          void include(const Scene& other);
    };
-   //set params e get params
 }
 
 #endif // !SCENE_HPP

@@ -1,5 +1,7 @@
 #include <memory>
-#include "MaterialFactory.hpp"
+#include "Objects/Materials/MaterialFactory.hpp"
+#include "Objects/Materials/FlatMaterial.hpp"
+#include "Objects/Materials/GridMaterial.hpp"
 
 namespace raytracer {
    std::shared_ptr<Material> MaterialFactory::create(const ParamSet& params) {
