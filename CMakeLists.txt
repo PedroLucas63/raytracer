@@ -26,6 +26,8 @@ add_library(raytracer_core
 	include/Objects/Shapes/Plan.cpp
 	include/Objects/Aggregate/AggregatePrimitive.cpp
 	include/Objects/Aggregate/PrimitiveList.cpp
+	include/Integrator/Integrator.cpp
+	include/Integrator/RayCastIntegrator.cpp
 	include/Core/ParamSet.cpp
 	include/Math/Vector3.cpp
 	include/Math/Point3.cpp
