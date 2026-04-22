@@ -17,7 +17,7 @@
 #include <vector>
 
 class ProgressBar {
-   private:
+   public:
       class GenericType {
          public:
             virtual ~GenericType() = default;
@@ -160,6 +160,7 @@ class ProgressBar {
             bool isEnd() const;
       };
 
+   private:
       using AttrPtr = std::shared_ptr<GenericType>;
       using AxisRange = std::tuple<uint, uint>;
       using AxisDataU = std::tuple<uint, std::string>;

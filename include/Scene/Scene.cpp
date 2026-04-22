@@ -1,6 +1,18 @@
 #include "Scene/Scene.hpp"
+#include "Scene/Background/BackgroundFactory.hpp"
 
 namespace raytracer {   
+
+   Scene& Scene::operator=(const Scene& other) {
+      if (this != &other) {
+         _primitives = other._primitives;
+         _materialMap = other._materialMap;
+         _lastMaterial = other._lastMaterial;
+         _background = other._background ? std::make_unique<Background>(*other._background) : nullptr;
+         _params = other._params;
+      }
+      return *this;
+   }
    
    void Scene::addPrimitive(const std::shared_ptr<Primitive>& primitive) {
       _primitives.push_back(primitive);
@@ -24,6 +36,27 @@ namespace raytracer {
       throw std::runtime_error("Material not found: " + name);
    }
 
+   void Scene::setBackground(const Background& background) {
+      _background = std::make_unique<Background>(background);
+   }
+
+   void Scene::buildBackground() {
+      if (!_background) {
+         _background = BackgroundFactory::create(_params);
+      }
+   }
+
+   const std::shared_ptr<Background> Scene::getBackground() const {
+      if (!_background) {
+         throw std::runtime_error("Background not set");
+      }
+      return _background;
+   }
+
+   bool Scene::hasBackground() const {
+      return _background != nullptr;
+   }
+
    ParamSet Scene::getParam(const std::string& key) const {
       auto it = _params.find(key);
       if (it != _params.end()) {
@@ -34,9 +67,13 @@ namespace raytracer {
 
    void Scene::setParam(const std::string& key, const ParamSet& value) {
       _params[key] = value;
+
+      if (key == "background") {
+         buildBackground();
+      }
    }
 
-   ParamSets& Scene::getParams() { 
+   const ParamSets& Scene::getParams() const { 
       return _params; 
    }
 

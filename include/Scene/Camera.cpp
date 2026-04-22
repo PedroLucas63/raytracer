@@ -116,13 +116,13 @@ namespace raytracer {
       return type;
    }
 
-   std::unique_ptr<Camera> CameraFactory::build(const ParamSets& params) {
+   std::shared_ptr<Camera> CameraFactory::create(const ParamSets& params) {
       std::string type = getAndValidateCameraType(params);
 
       if (type == "perspective") {
-         return std::make_unique<PerspectiveCamera>(params);
+         return std::make_shared<PerspectiveCamera>(params);
       } else if (type == "orthographic") {
-         return std::make_unique<OrthographicCamera>(params);
+         return std::make_shared<OrthographicCamera>(params);
       }
 
       throw std::invalid_argument("Unsupported camera type: " + type);

@@ -12,7 +12,7 @@ namespace raytracer {
          static std::string getAndValidateBackgroundType(const ParamSets& params);
 
       public:
-         static std::unique_ptr<Background> build(const ParamSets& params);
+         static std::shared_ptr<Background> create(const ParamSets& params);
    };
 }
 

@@ -108,13 +108,13 @@ namespace raytracer{
     * @param filename The path to the XML file to parse
     * @brief Load document from file and delegate to parseDocument
     */
-   Scene ParserScene::parseScene(const char* filename) {
+   void ParserScene::parseScene(const char* filename, Scene& scene) {
       tinyxml2::XMLDocument doc;
       if (doc.LoadFile(filename) != tinyxml2::XML_SUCCESS) {
          std::cerr << "[Parser] Failed to load XML: " << filename << '\n';
-         return Scene();
+         return;
       }
-      return parseDocument(doc);
+      parseDocument(doc, scene);
    }
 
    /**
@@ -122,23 +122,23 @@ namespace raytracer{
     * @param fromString A boolean flag to differentiate this overload (not used in logic)
     * @brief Load document from string and delegate to parseDocument (useful for testing)
     */
-   Scene ParserScene::parseScene(const char* xmlContent, bool fromString) {
+   void ParserScene::parseScene(const char* xmlContent, bool fromString, Scene& scene) {
       tinyxml2::XMLDocument doc;
       if (doc.Parse(xmlContent) != tinyxml2::XML_SUCCESS) {
          std::cerr << "[Parser] Failed to parse XML string.\n";
-         return Scene();
+         return;
       }
-      return parseDocument(doc);
+      parseDocument(doc, scene);
    }
 
 
-   Scene ParserScene::parseDocument(tinyxml2::XMLDocument& doc) {
+   void ParserScene::parseDocument(tinyxml2::XMLDocument& doc, Scene& scene) {
       tinyxml2::XMLElement* root = doc.RootElement();
       if (!root) {
          throw std::runtime_error("XML document has no root element.");
       }
 
-      Scene scene;
+      scene = Scene();
 
       for (auto* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
          const std::string element = stringToLower(node->Name());
@@ -178,8 +178,9 @@ namespace raytracer{
                std::cerr << "[Parser] Included file not found: " << incFile << '\n';
                continue;
             }
-
-            auto includedScene = parseScene(incFile.c_str());
+            
+            auto includedScene = Scene();
+            parseScene(incFile.c_str(), includedScene);
             scene.include(includedScene);
          } else if (element == "material") {
             try {
@@ -199,7 +200,5 @@ namespace raytracer{
             scene.setParam(element, ps);
          }
       }
-
-      return scene;
    }
 };

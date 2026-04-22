@@ -17,11 +17,11 @@ namespace raytracer {
       throw std::runtime_error("Background type not specified");
    }
 
-   std::unique_ptr<Background> BackgroundFactory::build(const ParamSets& params) {
+   std::shared_ptr<Background> BackgroundFactory::create(const ParamSets& params) {
       std::string type = getAndValidateBackgroundType(params);
       if (type == "image")
-         return std::make_unique<BackgroundImage>(params);
+         return std::make_shared<BackgroundImage>(params);
       else
-         return std::make_unique<BackgroundColor>(params);
+         return std::make_shared<BackgroundColor>(params);
    }
 }

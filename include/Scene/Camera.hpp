@@ -80,7 +80,7 @@ namespace raytracer {
          static std::string getAndValidateCameraType(const ParamSets& params);
 
       public:
-         static std::unique_ptr<Camera> build(const ParamSets& params);
+         static std::shared_ptr<Camera> create(const ParamSets& params);
    };
  
 }

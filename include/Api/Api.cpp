@@ -14,8 +14,8 @@ namespace raytracer {
    void Api::render() {
       const auto& params = _scene.getParams();
 
-      auto camera = CameraFactory::build(params); 
-      auto background = BackgroundFactory::build(params);
+      auto camera = CameraFactory::create(params); 
+      auto background = BackgroundFactory::create(params);
       auto film = camera->film();
 
       int w = film.getWidth();
@@ -83,7 +83,7 @@ namespace raytracer {
 
    void Api::run() {
       // Parse data and save static Tags ParamSet
-      _scene = ParserScene::parseScene(_options.getInputSceneFile().c_str());
+      ParserScene::parseScene(_options.getInputSceneFile().c_str(), _scene);
       auto& params = _scene.getParams();
 
       if (params.find("film") == params.end())

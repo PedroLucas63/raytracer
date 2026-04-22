@@ -18,11 +18,11 @@
 namespace raytracer {
     class ParserScene{
         public:
-            static Scene parseScene(const char* filename);
-            static Scene parseScene(const char* xmlContent, bool fromString);
+            static void parseScene(const char* filename, Scene& scene);
+            static void parseScene(const char* xmlContent, bool fromString, Scene& scene);
         
         private:
-            static Scene parseDocument(tinyxml2::XMLDocument& doc);
+            static void parseDocument(tinyxml2::XMLDocument& doc, Scene& scene);
             static std::string stringToLower(std::string s);
             static bool isValidElement(std::string_view);
             static bool isValidAttribute(std::string_view elementName, std::string_view attrName);
