@@ -8,8 +8,8 @@
         <material name="red" type="flat" color="255 0 0"/>
         <material name="yellow" type="flat" color="255 220 0"/>
 
-        <object type="sphere" origin="-1.4 0 1" radius="1.1" material="red" />
-        <object type="sphere" origin="1.5 0 2" radius="0.9" material="yellow" />
-        <object type="sphere" origin="8 0 1" radius="1.2" material="red" />
+        <object type="sphere" center="-1.4 0 1" radius="1.1" material="red" />
+        <object type="sphere" center="1.5 0 2" radius="0.9" material="yellow" />
+        <object type="sphere" center="8 0 1" radius="1.2" material="red" />
     <world_end/>
 </RT3>

@@ -12,12 +12,12 @@
         <material name="magenta" type="flat" color="220 40 180"/>
 
         <!-- Pair 1: smaller front sphere showing contour of the back sphere -->
-        <object type="sphere" origin="2.2 0 6.0" radius="2.0" />
-        <object type="sphere" origin="2.2 0 3.5" radius="0.95" material="cyan" />
+        <object type="sphere" center="2.2 0 6.0" radius="2.0" />
+        <object type="sphere" center="2.2 0 3.5" radius="0.95" material="cyan" />
 
         <!-- Pair 2: larger front sphere occluding the back sphere -->
-        <object type="sphere" origin="-2.2 0 3.5" radius="2.2" material="green" />
-        <object type="sphere" origin="-2.2 0 6.0" radius="1.2" material="blue" />
+        <object type="sphere" center="-2.2 0 3.5" radius="2.2" material="green" />
+        <object type="sphere" center="-2.2 0 6.0" radius="1.2" material="blue" />
 
 
     <world_end/>

@@ -25,7 +25,7 @@ namespace raytracer{
       { "integrator", { "type" } },
       { "world_begin",{} },
       { "world_end",  {} },
-      { "object",     { "type", "origin", "radius", "norm", "material" } },
+      { "object",     { "type", "center", "origin", "radius", "norm", "material" } },
       { "material",   { "type", "color", "name", "color1", "color2", "spacing" } }
    };
 

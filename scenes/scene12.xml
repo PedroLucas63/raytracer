@@ -13,10 +13,10 @@
         <material name="grid" type="grid" color1="123 123 123" color2="232 232 232" spacing="2"/>
         <material name="grid2" type="grid" color1="123 23 234" color2="13 233 78" spacing="0.5"/>
 
-        <object type="sphere" origin="-2.2 3 3.5" radius="2.2" />
-        <object type="sphere" origin="-2.2 3 6.5" radius="1.2" material="blue" />
-        <object type="sphere" origin="2.2 2 3.5" radius="0.95" material="cyan" />
-        <object type="sphere" origin="2.2 2 6.0" radius="2.0" material="magenta" />
+        <object type="sphere" center="-2.2 3 3.5" radius="2.2" />
+        <object type="sphere" center="-2.2 3 6.5" radius="1.2" material="blue" />
+        <object type="sphere" center="2.2 2 3.5" radius="0.95" material="cyan" />
+        <object type="sphere" center="2.2 2 6.0" radius="2.0" material="magenta" />
         <object type="plan" origin="0 0 0" norm="0 1 0" material="grid" />
     <world_end/>
 </RT3>

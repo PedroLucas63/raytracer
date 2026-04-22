@@ -6,6 +6,6 @@
     <world_begin/>
         <background type="single_color" color="240 240 240"/>
         <material type="flat" color="255 0 0"/>
-        <object type="sphere" origin="0 0 0" radius="1.2" />
+        <object type="sphere" center="0 0 0" radius="1.2" />
     <world_end/>
 </RT3>
