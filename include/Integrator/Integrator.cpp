@@ -16,7 +16,10 @@ namespace raytracer {
          }
       );
 
-      progress.setTitle("Ray Tracing Scene").render();
+      progress
+         .setTitle("Ray Tracing Scene")
+         .setVerbose(true)
+         .render();
 
       return progress;
    }

@@ -327,85 +327,82 @@ void ProgressBar::renderIfDue(bool force) {
 }
 
 void ProgressBar::render() const {
-   std::vector<std::string> lines;
-
-   if (_verbose) {
-      lines.emplace_back(_title.empty() ? "Progress" : _title);
+   std::ostringstream line1;
+   // Título
+   if (!_title.empty()) {
+      line1 << _title << " | ";
    }
 
+   // Porcentagem
    float progress_percentage = 0.0f;
    if (_total_progress > 0) {
       progress_percentage = (100.0f * static_cast<float>(_current_progress)) / static_cast<float>(_total_progress);
    }
-
    progress_percentage = std::clamp(progress_percentage, 0.0f, 100.0f);
 
-   uint8_t filled_length = static_cast<uint8_t>((progress_percentage / 100.0f) * static_cast<float>(_bar_width));
-   if (filled_length > _bar_width) {
-      filled_length = _bar_width;
+   // Índices
+   std::ostringstream indices_ss;
+   const auto& indices = _progress_iterator.indices();
+   for (size_t i = 0; i < _axis.size(); ++i) {
+      const auto& axis = _axis[i];
+      const auto axis_range = axis.end - axis.init;
+      const auto current_value = (i < indices.size()) ? indices[i] : axis.init;
+      const auto axis_step = (current_value - axis.init) + 1;
+      if (i > 0) indices_ss << ", ";
+      if (!axis.title.empty()) {
+         indices_ss << axis.title << ": " << axis_step << "/" << axis_range;
+      } else {
+         indices_ss << "Axis " << i << ": " << axis_step << "/" << axis_range;
+      }
+   }
+   std::string indices_str = indices_ss.str();
+
+   // Calcula largura da barra
+   uint8_t term_width = getTerminalWidth();
+   std::ostringstream percent_ss;
+   percent_ss << std::fixed << std::setprecision(2) << progress_percentage << "%";
+   std::string percent_str = percent_ss.str();
+
+   // Espaço reservado: título + " | " + " | " + índices + porcentagem + barra
+   size_t static_len = line1.str().size() + 3 + indices_str.size() + 3 + percent_str.size();
+   size_t bar_width = 0;
+   if (term_width > static_len + 10) {
+      bar_width = term_width - static_len - 2; // 2 for bar borders
+      if (bar_width < 10) bar_width = 10;
+   } else {
+      bar_width = 10;
    }
 
+   // Barra
    auto repeatUtf8 = [](const std::string& glyph, size_t count) {
       std::string output;
       output.reserve(glyph.size() * count);
-
       for (size_t i = 0; i < count; ++i) {
          output += glyph;
       }
-
       return output;
    };
-
+   uint8_t filled_length = static_cast<uint8_t>((progress_percentage / 100.0f) * static_cast<float>(bar_width));
+   if (filled_length > bar_width) filled_length = bar_width;
    const auto filled_bar = repeatUtf8("█", static_cast<size_t>(filled_length));
-   const auto empty_bar = repeatUtf8("░", static_cast<size_t>(_bar_width - filled_length));
+   const auto empty_bar = repeatUtf8("░", static_cast<size_t>(bar_width - filled_length));
 
-   std::ostringstream bar_line;
-   bar_line << "▏" << filled_bar << empty_bar << "▕ "
-            << std::fixed << std::setprecision(2) << progress_percentage << "%";
-   lines.emplace_back(bar_line.str());
-
-   lines.emplace_back("");
-
-   if (_verbose) {
-      const auto& indices = _progress_iterator.indices();
-      for (size_t i = 0; i < _axis.size(); ++i) {
-         const auto& axis = _axis[i];
-         const auto axis_range = axis.end - axis.init;
-         const auto current_value = (i < indices.size()) ? indices[i] : axis.init;
-         const auto axis_step = (current_value - axis.init) + 1;
-
-         std::ostringstream axis_line;
-         if (!axis.title.empty()) {
-            axis_line << axis.title;
-         } else {
-            axis_line << "Axis " << i;
-         }
-
-         axis_line << ": " << axis_step << "/" << axis_range;
-         lines.emplace_back(axis_line.str());
-      }
-
-      lines.emplace_back("");
-      lines.emplace_back("");
-
-      if (_attributes.empty()) {
-         lines.emplace_back("Attributes: (none)");
-      } else {
-         for (const auto& [name, attribute] : _attributes) {
-            (void)name;
-            lines.emplace_back(attribute->renderLine());
-         }
-      }
-   }
+   // Monta linha principal
+   line1 << "▏" << filled_bar << empty_bar << "▕ " << percent_str << " | " << indices_str;
 
    clearPreviousRender();
+   std::cout << line1.str() << '\n';
 
-   for (const auto& line : lines) {
-      std::cout << line << '\n';
+   // Linha de atributos, se houver
+   if (!_attributes.empty()) {
+      for (const auto& [name, attribute] : _attributes) {
+         (void)name;
+         std::cout << attribute->renderLine() << '\n';
+      }
    }
 
    std::cout.flush();
-   _last_rendered_lines = lines.size();
+   _last_rendered_lines = 1 + (_attributes.empty() ? 0 : _attributes.size());
 }
 
 void ProgressBar::step() {
