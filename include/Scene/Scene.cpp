@@ -1,5 +1,6 @@
 #include "Scene/Scene.hpp"
 #include "Scene/Background/BackgroundFactory.hpp"
+#include <iostream>
 
 namespace raytracer {   
 
@@ -8,7 +9,7 @@ namespace raytracer {
          _primitives = other._primitives;
          _materialMap = other._materialMap;
          _lastMaterial = other._lastMaterial;
-         _background = other._background ? std::make_unique<Background>(*other._background) : nullptr;
+         _background = other._background ? other._background : nullptr;
          _params = other._params;
       }
       return *this;
@@ -37,13 +38,12 @@ namespace raytracer {
    }
 
    void Scene::setBackground(const Background& background) {
-      _background = std::make_unique<Background>(background);
+      _background = background.clone();
    }
 
    void Scene::buildBackground() {
-      if (!_background) {
+      if (!_background)
          _background = BackgroundFactory::create(_params);
-      }
    }
 
    const std::shared_ptr<Background> Scene::getBackground() const {

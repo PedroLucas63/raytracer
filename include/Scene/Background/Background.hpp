@@ -4,7 +4,7 @@
 #include "Image/RGBColor.hpp"
 #include "Math/Point2.hpp"
 #include "Image/Image.hpp"
-#include "Parser/ParserScene.hpp"
+#include <memory>
 
 namespace raytracer {
    class Background {
@@ -15,6 +15,8 @@ namespace raytracer {
                                       uint16_t width, uint16_t height) const = 0;
          virtual RGBColor samplePixel(Point2 position, uint16_t width, uint16_t height) const = 0;
          virtual Image toImage(uint16_t width, uint16_t height) const = 0;
+
+         virtual std::shared_ptr<Background> clone() const = 0;
    };
 };
 

@@ -95,11 +95,15 @@ namespace raytracer {
 
    /** Save the film to a file */
    void Film::save() const {
-      if (_filename.empty()) {
+      save(_filename);
+   }
+
+   void Film::save(const std::string& filename) const {
+      if (filename.empty()) {
          throw std::runtime_error("Filename is not set. Cannot save the film.");
       }
 
-      std::filesystem::path outputPath(_filename);
+      std::filesystem::path outputPath(filename);
       ensureOutputDirectoryExists(outputPath);
       outputPath = makeUniqueFilename(outputPath);
       ImageUtils::saveImage(_image, outputPath.string());

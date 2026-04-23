@@ -5,72 +5,22 @@
 #include <iostream>
 #include "Objects/Shapes/Sphere.hpp"
 #include "Objects/Surfel.hpp"
+#include "Integrator/IntegratorFactory.hpp"
 
 namespace raytracer {
    // Define the static member variable
    RunningOptions Api::_options;
    Scene Api::_scene;
 
-   void Api::render() {
-      const auto& params = _scene.getParams();
+   void Api::generate() {
+      auto integrator = IntegratorFactory::create(_scene.getParams());
 
-      auto camera = CameraFactory::create(params); 
-      auto background = BackgroundFactory::create(params);
-      auto film = camera->film();
+      integrator->render(_scene);
 
-      int w = film.getWidth();
-      int h = film.getHeight();
-
-      ProgressBar progress(
-         {
-            {w, "Cols"},
-            {h, "Rows"}
-         }
-      );
-      progress.setTitle("Ray Tracing Scene").render();
-
-      for (auto it : progress) {
-         auto col = it[0], row = it[1];
-
-         auto i = col;
-         auto j = h - 1 - row;
-
-         Ray ray = camera->generate_ray(i, j);
-
-         std::vector<Surfel> intersections;
-         for (const auto& primitive : _scene.getPrimitives()) {
-            Surfel sf(0.0f, Point3(), nullptr);
-
-            if (!primitive->hasMaterial())
-               continue;
-            
-            if (primitive->intersectWithSurfel(ray, &sf)) {
-               intersections.push_back(sf);
-            }
-         }
-
-         if (intersections.size() > 0) {
-            auto closestSurfel = *std::min_element(
-               intersections.begin(), intersections.end(),
-               [](const Surfel& a, const Surfel& b) {
-                  return a.t < b.t;
-               }
-            );
-            
-            auto p = closestSurfel.point;
-            auto color = closestSurfel.material->getColor(p);
-            film.setPixel(color, j, i);
-            continue;
-         }
-
-         float u_norm = static_cast<float>(i) / (w - 1);
-         float v_norm = static_cast<float>(j) / (h - 1);
-
-         auto color = background->sampleUV(u_norm, v_norm);
-         film.setPixel(color, j, i);
-      }
-
-      film.save();
+      if (_options.hasOutput())
+         integrator->saveImage(_options.getOutput());
+      else
+         integrator->saveImage();
    }
    
    void Api::initEngine(const RunningOptions& options) {
@@ -88,16 +38,11 @@ namespace raytracer {
 
       if (params.find("film") == params.end())
          throw std::runtime_error("Scene data must contain 'film' parameters.");
-      
-      if (_options.hasOutput()) {
-         std::string outputPath = _options.getOutput();
-         params["film"].add<std::string>("filename", outputPath);
-      }
 
       // Find world_end tag and call render() when found
       auto worldEndIt = params.find("world_end");
       if (worldEndIt != params.end()) {
-         render();
+         generate();
       } else {
          std::cerr << "[Api] Warning: <world_end> tag not found. Rendering skipped.\n";
       }

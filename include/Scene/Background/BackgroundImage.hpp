@@ -19,6 +19,8 @@ namespace raytracer {
                               uint16_t width, uint16_t height) const override;
          RGBColor samplePixel(Point2 position, uint16_t width, uint16_t height) const override;
          Image toImage(uint16_t width, uint16_t height) const override;
+
+         std::shared_ptr<Background> clone() const override;
    };
 };
 

@@ -50,8 +50,8 @@ namespace raytracer {
  
          virtual Ray generate_ray(int i, int j) const = 0;
  
-         Film&       film()       { return *_film; }
-         const Film& film() const { return *_film; }
+         std::shared_ptr<Film>       film()       { return _film; }
+         const std::shared_ptr<Film> film() const { return _film; }
    };
 
 

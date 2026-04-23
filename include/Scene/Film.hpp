@@ -55,6 +55,7 @@ namespace raytracer {
 
          /** Save the film to a file */
          void save() const;
+         void save(const std::string& filename) const;
    };
 }
 

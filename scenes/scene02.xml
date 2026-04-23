@@ -1,6 +1,7 @@
 <RT3>
    <lookat look_from="0 0 -7" look_at="0 0 0" up="0 1 0" />
    <camera type="orthographic" />
+   <integrator type="flat" />
    <film type="image" x_res="800" y_res="600" filename="output/scene02.png" img_type="png" />
    <world_begin/>
       <!-- This defines an interpolated background -->

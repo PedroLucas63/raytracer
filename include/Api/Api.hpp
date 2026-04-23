@@ -15,7 +15,7 @@ namespace raytracer {
          Api() = default;
          ~Api() = default;
 
-         static void render();         
+         static void generate();
       public:
          static void initEngine(const RunningOptions& options);
          static void run();

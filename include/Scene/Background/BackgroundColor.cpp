@@ -110,4 +110,8 @@ namespace raytracer{
       }
       return image;
    }
+
+   std::shared_ptr<Background> BackgroundColor::clone() const {
+      return std::make_shared<BackgroundColor>(*this);
+   }
 };

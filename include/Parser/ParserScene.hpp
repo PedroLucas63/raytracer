@@ -15,6 +15,7 @@
 #include "Utils/ConvertFunction.hpp"
 #include "Scene/Scene.hpp"
 
+
 namespace raytracer {
     class ParserScene{
         public:

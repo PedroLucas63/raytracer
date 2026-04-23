@@ -5,9 +5,10 @@
 
 // ── helper ────────────────────────────────────────────────────────────────────
 static raytracer::ParamSet parseElementOrFail(const char* xml, const std::string& element) {
-    const auto parsed = raytracer::ParserScene::parseScene(xml, true);
+    raytracer::Scene scene;
+    raytracer::ParserScene::parseScene(xml, true, scene);
     raytracer::ParamSet elementPs;
-    REQUIRE_NOTHROW(elementPs = parsed.getParam(element));
+    REQUIRE_NOTHROW(elementPs = scene.getParam(element));
     return elementPs;
 }
 
@@ -78,31 +79,31 @@ TEST_CASE("parseScene stores background corner colors") {
 TEST_CASE("parseScene ignores unknown elements") {
     const char* xml = R"(<scene><unknown_tag foo="bar"/></scene>)";
 
-    raytracer::ParserScene parser;
-    REQUIRE_NOTHROW(parser.parseScene(xml, true));
+    raytracer::Scene scene;
+    REQUIRE_NOTHROW(raytracer::ParserScene::parseScene(xml, true, scene));
 }
 
 TEST_CASE("parseScene ignores unknown attributes") {
     const char* xml = R"(<scene><film invalid_attr="x"/></scene>)";
-    const auto parsed = raytracer::ParserScene::parseScene(xml, true);
+    raytracer::Scene scene;
+    raytracer::ParserScene::parseScene(xml, true, scene);
     raytracer::ParamSet filmPs;
-
-    REQUIRE_NOTHROW(filmPs = parsed.getParam("film"));
+    REQUIRE_NOTHROW(filmPs = scene.getParam("film"));
     REQUIRE_FALSE(filmPs.has("invalid_attr"));
 }
 
 TEST_CASE("parseScene handles empty scene") {
     const char* xml = R"(<scene></scene>)";
 
-    raytracer::ParserScene parser;
-    REQUIRE_NOTHROW(parser.parseScene(xml, true));
+    raytracer::Scene scene;
+    REQUIRE_NOTHROW(raytracer::ParserScene::parseScene(xml, true, scene));
 }
 
 TEST_CASE("parseScene handles malformed XML") {
     const char* xml = R"(<scene><film x_res="abc"/></scene>)";
 
-    raytracer::ParserScene parser;
-    REQUIRE_THROWS_AS(parser.parseScene(xml, true), std::invalid_argument);
+    raytracer::Scene scene;
+    REQUIRE_THROWS_AS(raytracer::ParserScene::parseScene(xml, true, scene), std::invalid_argument);
 }
 
 // ── case insensitive ──────────────────────────────────────────────────────────
@@ -164,8 +165,8 @@ TEST_CASE("parseScene handles world_begin and world_end without throwing") {
         </RT3>
     )";
 
-    raytracer::ParserScene parser;
-    REQUIRE_NOTHROW(parser.parseScene(xml, true));
+    raytracer::Scene scene;
+    REQUIRE_NOTHROW(raytracer::ParserScene::parseScene(xml, true, scene));
 }
 
 TEST_CASE("parseScene handles camera element") {
@@ -191,6 +192,6 @@ TEST_CASE("parseScene handles full RT3 document without throwing") {
         </RT3>
     )";
 
-    raytracer::ParserScene parser;
-    REQUIRE_NOTHROW(parser.parseScene(xml, true));
+    raytracer::Scene scene;
+    REQUIRE_NOTHROW(raytracer::ParserScene::parseScene(xml, true, scene));
 }

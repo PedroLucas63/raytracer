@@ -67,4 +67,8 @@ namespace raytracer {
    Image BackgroundImage::toImage(uint16_t width, uint16_t height) const {
       return _image;
    }
+
+   std::shared_ptr<Background> BackgroundImage::clone() const {
+      return std::make_shared<BackgroundImage>(*this);
+   }
 }

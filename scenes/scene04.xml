@@ -2,6 +2,7 @@
    <lookat look_from="0 0 -7" look_at="0 0 0" up="0 1 0" />
    <camera type="orthographic" />
    <film type="image" x_res="300" y_res="225" filename="output/scene04.png" img_type="png" />
+   <integrator type="flat" />
    <world_begin/>
       <!-- This defines an interpolated background -->
       <background type="image" filename="assets/images/panda.jpg" />

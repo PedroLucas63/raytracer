@@ -5,6 +5,7 @@
 #include "Image/RGBColor.hpp"
 #include "Scene/Scene.hpp"
 #include "Math/Ray.hpp"
+#include "Utils/ProgressBar.hpp"
 #include <memory>
 #include <optional>
 
@@ -13,6 +14,8 @@ namespace raytracer {
       public:
          virtual ~Integrator() = default;
          virtual void render(const Scene& scene) = 0;
+         virtual void saveImage() const = 0;
+         virtual void saveImage(const std::string& filename) const = 0;
    };
 
    class SamplerIntegrator : public Integrator {
@@ -30,7 +33,9 @@ namespace raytracer {
          virtual std::optional<RGBColor> Li(const Ray& ray, const Scene& scene) const = 0;
          virtual void render(const Scene& scene);
          virtual void preprocess(const Scene& scene);
-         virtual void saveImage() const;
+         virtual void saveImage() const override;
+         virtual void saveImage(const std::string& filename) const override;
+
    };
 }
 

@@ -1,6 +1,6 @@
-#include "BackgroundFactory.hpp"
-#include "BackgroundColor.hpp"
-#include "BackgroundImage.hpp"
+#include "Scene/Background/BackgroundFactory.hpp"
+#include "Scene/Background/BackgroundColor.hpp"
+#include "Scene/Background/BackgroundImage.hpp"
 
 namespace raytracer {
    std::string BackgroundFactory::getAndValidateBackgroundType(
