@@ -32,6 +32,10 @@ namespace raytracer {
    }
 
    RGBColor SamplerIntegrator::sampleBackground(const Scene& scene, uint i, uint j) const {
+      if (!scene.hasBackground()) {
+         return RGBColor(0, 0, 0); // Default to black if no background is set
+      }
+
       auto background = scene.getBackground();
       auto& film = _camera->film();
 

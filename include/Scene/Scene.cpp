@@ -79,6 +79,11 @@ namespace raytracer {
 
    void Scene::include(const Scene& other) {
       _params.insert(other._params.begin(), other._params.end());
+
+      if (other._params.find("background") != other._params.end()) {
+         buildBackground();
+      }
+
       _lastMaterial = other._lastMaterial;
       _materialMap.insert(other._materialMap.begin(), other._materialMap.end());
       _primitives.insert(
