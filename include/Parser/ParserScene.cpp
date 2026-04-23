@@ -39,14 +39,14 @@ namespace raytracer{
 
 
       { "color",           convert_color },
-      { "bl",              convert<raytracer::RGBColor, std::uint8_t, 3> },
-      { "tl",              convert<raytracer::RGBColor, std::uint8_t, 3> },
-      { "tr",              convert<raytracer::RGBColor, std::uint8_t, 3> },
-      { "br",              convert<raytracer::RGBColor, std::uint8_t, 3> },
-      { "t",              convert<raytracer::RGBColor, std::uint8_t, 3> },
-      { "b",              convert<raytracer::RGBColor, std::uint8_t, 3> },
-      { "r",              convert<raytracer::RGBColor, std::uint8_t, 3> },
-      { "l",              convert<raytracer::RGBColor, std::uint8_t, 3> },
+      { "bl",              convert_color },
+      { "tl",              convert_color },
+      { "tr",              convert_color },
+      { "br",              convert_color },
+      { "t",               convert_color },
+      { "b",               convert_color },
+      { "r",               convert_color },
+      { "l",               convert_color },
       { "screen_window",   convert<std::vector<float>, float, 4> },
 
       { "x_res",           convert<int> },
