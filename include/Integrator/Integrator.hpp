@@ -6,6 +6,7 @@
 #include "Scene/Scene.hpp"
 #include "Math/Ray.hpp"
 #include "Utils/ProgressBar.hpp"
+#include "Scene/Background/BackgroundImage.hpp"
 #include <memory>
 #include <optional>
 
@@ -24,7 +25,8 @@ namespace raytracer {
 
          ProgressBar makeProgressBar();
          std::tuple<uint, uint> getIAndJ(const ProgressBar::Iterator::reference& it) const;
-         RGBColor sampleBackground(const Scene& scene, uint i, uint j) const;
+         RGBColor sampleBackground(const Scene& scene, uint i, uint j, const Ray* ray) const;
+         std::shared_ptr<BackgroundImage> getSphericalBackgroundImage(const Scene& scene) const;
 
       public:
          SamplerIntegrator() = default;

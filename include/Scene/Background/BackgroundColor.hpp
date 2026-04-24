@@ -8,7 +8,7 @@
 #include <array>
 #include <stdexcept>
 #include "Parser/ParserScene.hpp"
-#include "Background.hpp"
+#include "Scene/Background/Background.hpp"
 
 
 namespace raytracer {  
@@ -28,7 +28,7 @@ namespace raytracer {
 
          BackgroundColor(const ParamSets& params);
 
-         ~BackgroundColor() {};
+         ~BackgroundColor() {}
 
          static BackgroundColor solid(const RGBColor& color);
          static BackgroundColor horizontalGradient(const RGBColor& left, const RGBColor& right);

@@ -1,0 +1,13 @@
+<RT3>
+   <lookat look_from="0 0 -7" look_at="-11 0 0" up="0 1 0" />
+   <camera type="perspective" fovy="60" />
+   <film type="image" x_res="2048" y_res="1024" filename="output/scene21.png" img_type="png" />
+   <integrator type="flat" />
+   <world_begin/>
+      <background type="image" filename="assets/images/panorama.jpg" spherical="true" />
+      <material type="flat" color="0.95 0.05 0.05" />
+      <object type="sphere" radius="0.4" center="-1 0.5 5"/>
+      <object type="sphere" radius="0.4" center="1 -0.5 8"/>
+      <object type="sphere" radius="0.4" center="-1 -1.5 3.5"/>
+   <world_end/>
+</RT3>

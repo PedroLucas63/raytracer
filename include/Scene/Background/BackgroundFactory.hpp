@@ -1,7 +1,7 @@
 #ifndef BACKGROUND_FACTORY_HPP
 #define BACKGROUND_FACTORY_HPP
 
-#include "Background.hpp"
+#include "Scene/Background/Background.hpp"
 #include "Parser/ParserScene.hpp"
 #include <string>
 #include <memory>

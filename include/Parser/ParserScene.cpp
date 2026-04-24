@@ -18,7 +18,7 @@ namespace raytracer{
    std::unordered_map<std::string, std::vector<std::string>> elementList {
       { "camera",     { "type", "screen_window", "fovy"} },
       { "lookat",    { "look_from", "look_at", "up" } },
-      { "background", { "type", "filename", "mapping", "color", "tl", "tr", "bl", "br", "t", "b", "l", "r" } },
+      { "background", { "type", "filename", "mapping", "color", "tl", "tr", "bl", "br", "t", "b", "l", "r", "spherical" } },
       { "film",       { "type", "filename", "img_type", "x_res", "y_res",
                         "w_res", "h_res", "crop_window", "gamma_corrected" } },
       { "include",    { "filename" } },
@@ -50,6 +50,7 @@ namespace raytracer{
       { "b",               convert_color },
       { "r",               convert_color },
       { "l",               convert_color },
+      { "spherical",       convert<bool> },
       { "screen_window",   convert<std::vector<float>, float, 4> },
 
       { "x_res",           convert<int> },

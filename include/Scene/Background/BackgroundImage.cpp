@@ -1,4 +1,4 @@
-#include "BackgroundImage.hpp"
+#include "Scene/Background/BackgroundImage.hpp"
 #include <cmath>
 #include "Utils/ImageUtils.hpp"
 
@@ -39,6 +39,8 @@ namespace raytracer {
       const ParamSet& bgParams = it->second;
       auto filename = bgParams.retrieve<std::string>("filename");
       _image = ImageUtils::loadImage(filename);
+
+      _isSpherical = bgParams.retrieveOrDefault<bool>("spherical", false);
    }
 
    RGBColor BackgroundImage::sampleUV(float u, float v) const {
@@ -70,5 +72,24 @@ namespace raytracer {
 
    std::shared_ptr<Background> BackgroundImage::clone() const {
       return std::make_shared<BackgroundImage>(*this);
+   }
+
+   RGBColor BackgroundImage::sampleDirection(const Vector3& direction) const {
+      auto dir = direction.normalize();
+      float x = dir.getX();
+      float y = std::clamp(static_cast<float>(dir.getY()), -1.0f, 1.0f);
+      float z = dir.getZ();
+
+      float u = 0.5f + std::atan2(z, x) / (2.0f * M_PI);
+      float v = 0.5f - std::asin(y) / M_PI;
+
+      u = u - std::floor(u);
+      v = std::clamp(v, 0.0f, 1.0f);
+
+      return samplePixelByUV(u, v);
+   }
+
+   bool BackgroundImage::isSpherical() const {
+      return _isSpherical;
    }
 }
