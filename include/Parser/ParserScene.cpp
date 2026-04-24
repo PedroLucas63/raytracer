@@ -22,10 +22,13 @@ namespace raytracer{
       { "film",       { "type", "filename", "img_type", "x_res", "y_res",
                         "w_res", "h_res", "crop_window", "gamma_corrected" } },
       { "include",    { "filename" } },
-      { "integrator", { "type" } },
+      { "integrator", { "type", "near_color", "far_color", "zmin", "zmax" } },
       { "world_begin",{} },
       { "world_end",  {} },
+      { "render_again", {} },
       { "object",     { "type", "center", "origin", "radius", "norm", "material" } },
+      { "make_named_material", { "type", "name", "color", "color1", "color2", "spacing" } },
+      { "named_material",      { "name" } },
       { "material",   { "type", "color", "name", "color1", "color2", "spacing" } }
    };
 
@@ -69,7 +72,12 @@ namespace raytracer{
 
       { "color1",           convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "color2",           convert<raytracer::RGBColor, std::uint8_t, 3> },
-      { "spacing",          convert<float> }
+      { "spacing",          convert<float> },
+
+      { "near_color",       convert<raytracer::RGBColor, std::uint8_t, 3> },
+      { "far_color",        convert<raytracer::RGBColor, std::uint8_t, 3> },
+      { "zmin",             convert<float> },
+      { "zmax",             convert<float> }
    };
 
    // ── helpers ──────────────────────────────────────────────────────────────────
@@ -189,7 +197,26 @@ namespace raytracer{
             } catch (const std::exception& e) {
                std::cerr << "[Parser] Failed to create material: " << e.what() << '\n';
             }
-         } else if (element == "object") {
+         } else if (element == "make_named_material") {
+            try {
+               auto material = MaterialFactory::create(ps);
+               scene.addNamedMaterial(material);
+            } catch (const std::exception& e) {
+               std::cerr << "[Parser] Failed to create named material: " << e.what() << '\n';
+            }
+         } else if (element == "named_material") {
+            // Activates a previously defined named material (makes it the current material).
+            if (!ps.has("name")) {
+               std::cerr << "[Parser] <named_material> is missing 'name'.\n";
+               continue;
+            }
+            try {
+               std::string name = ps.retrieve<std::string>("name");
+               scene.activateNamedMaterial(name);
+            } catch (const std::exception& e) {
+               std::cerr << "[Parser] Failed to activate named material: " << e.what() << '\n';
+            }
+         }else if (element == "object") {
             try {
                auto object = PrimitiveFactory::create(ps, scene);
                scene.addPrimitive(object);

@@ -4,6 +4,8 @@
 #include "Scene/Scene.hpp"
 #include "Integrator/Integrator.hpp"
 #include <memory>
+#include <limits>
+
 
 namespace raytracer {
    class IntegratorFactory {

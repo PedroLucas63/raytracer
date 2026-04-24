@@ -19,6 +19,10 @@ namespace raytracer {
          bool intersectWithSurfel(const Ray& ray, Surfel* sf) const override;
 
          const Bounds3 getBounds() const override; 
+
+         void add(const std::shared_ptr<Primitive>& primitive);
+
+         void merge(const std::shared_ptr<PrimitiveList>& other);
    };
 }
 

@@ -70,7 +70,8 @@ namespace raytracer {
 
       if (sf) {
          auto intersectPoint = ray.origin + (ray.direction * t);
-         *sf = Surfel(t, intersectPoint);
+         auto normal = (intersectPoint - _center).normalize() * (1.0f / _radius);
+         *sf = Surfel(t, intersectPoint, nullptr, normal);
       }
 
       if (tHit) {

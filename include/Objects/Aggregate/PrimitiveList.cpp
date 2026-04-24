@@ -61,4 +61,17 @@ namespace raytracer {
 
       return bound;
    } 
+
+      void PrimitiveList::add(const std::shared_ptr<Primitive>& primitive) {
+            _primitives.push_back(primitive);
+         }
+
+
+      void PrimitiveList::merge(const std::shared_ptr<PrimitiveList>& other) {
+         _primitives.insert(
+            _primitives.end(),
+            other->_primitives.begin(),
+            other->_primitives.end()
+         );
+      }
 }

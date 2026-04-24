@@ -8,13 +8,14 @@
 #include "Objects/Materials/Material.hpp"
 #include "Objects/Materials/MaterialFactory.hpp"
 #include <unordered_map>
+#include "Objects/Aggregate/PrimitiveList.hpp"
 
 namespace raytracer {
    using ParamSets = std::unordered_map<std::string, ParamSet>;
 
    class Scene {
       private:
-         std::vector<std::shared_ptr<Primitive>> _primitives;
+         std::shared_ptr<PrimitiveList> _aggregate;
          std::unordered_map<std::string, std::shared_ptr<Material>> _materialMap;
          std::shared_ptr<Material> _lastMaterial = nullptr;
 
@@ -23,13 +24,19 @@ namespace raytracer {
          ParamSets _params;
          
       public:
-         Scene() = default;
+         Scene(){
+            _aggregate = std::make_shared<PrimitiveList>();
+         }
          ~Scene() = default;
          Scene& operator=(const Scene& other);
 
-         void addPrimitive(const std::shared_ptr<Primitive>& primitive);
-         const std::vector<std::shared_ptr<Primitive>>& getPrimitives() const;
+         bool intersect(const Ray& r, Surfel* surfel) const;
+         bool intersect_p(const Ray& r) const;
 
+         void addNamedMaterial(const std::shared_ptr<Material>& material);
+         void activateNamedMaterial(const std::string& name);
+
+         void addPrimitive(const std::shared_ptr<Primitive>& primitive);
          void addMaterial(const std::shared_ptr<Material>& material);
          std::shared_ptr<Material> getMaterialAt(const std::string& name) const;
          std::shared_ptr<Material> getLastMaterial() const { return _lastMaterial; }

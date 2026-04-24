@@ -1,7 +1,7 @@
 <RT3>
    <lookat look_from="0 0 -2" look_at="0 0 10" up="0 1 0" />
    <camera type="perspective" fovy="65" />
-   <integrator type="flat"/>
+   <integrator type="depth_map" zmin="0.1" zmax="0.8"/>
    <film type="image" x_res="800" y_res="600" filename="output/flat_spheres_perspective.png" img_type="png" />
 
    <!-- The Scene -->

@@ -6,7 +6,7 @@ namespace raytracer {
 
    Scene& Scene::operator=(const Scene& other) {
       if (this != &other) {
-         _primitives = other._primitives;
+         _aggregate = other._aggregate;
          _materialMap = other._materialMap;
          _lastMaterial = other._lastMaterial;
          _background = other._background ? other._background : nullptr;
@@ -16,7 +16,15 @@ namespace raytracer {
    }
    
    void Scene::addPrimitive(const std::shared_ptr<Primitive>& primitive) {
-      _primitives.push_back(primitive);
+      _aggregate->add(primitive);
+   }
+
+   bool Scene::intersect(const Ray& r, Surfel* isect) const {
+      return _aggregate->intersectWithSurfel(r, isect);
+   }
+ 
+   bool Scene::intersect_p(const Ray& r) const {
+      return _aggregate->intersect(r);
    }
 
    void Scene::addMaterial(const std::shared_ptr<Material>& material) {
@@ -24,9 +32,21 @@ namespace raytracer {
       _materialMap[material->getName()] = material;
    }
 
+   void Scene::addNamedMaterial(const std::shared_ptr<Material>& material) {
+      // Stores in the library but does NOT change _lastMaterial
+      if (material->isAnonymous()) {
+         throw std::invalid_argument("make_named_material requires a named material (set 'name' attribute).");
+      }
+      _materialMap[material->getName()] = material;
+   }
 
-   const std::vector<std::shared_ptr<Primitive>>& Scene::getPrimitives() const {
-      return _primitives;
+   void Scene::activateNamedMaterial(const std::string& name) {
+      auto it = _materialMap.find(name);
+      if (it != _materialMap.end()) {
+         _lastMaterial = it->second;
+      } else {
+         throw std::runtime_error("Material not found: " + name);
+      }
    }
 
    std::shared_ptr<Material> Scene::getMaterialAt(const std::string& name) const{
@@ -77,17 +97,33 @@ namespace raytracer {
       return _params; 
    }
 
+   // void Scene::include(const Scene& other) {
+   //    _params.insert(other._params.begin(), other._params.end());
+
+   //    if (other._params.find("background") != other._params.end()) {
+   //       buildBackground();
+   //    }
+
+   //    _lastMaterial = other._lastMaterial;
+   //    _materialMap.insert(other._materialMap.begin(), other._materialMap.end());
+   //    _primitives.insert(
+   //       _primitives.end(), other._primitives.begin(), other._primitives.end()
+   //    );
+   // }
+
    void Scene::include(const Scene& other) {
       _params.insert(other._params.begin(), other._params.end());
-
+ 
       if (other._params.find("background") != other._params.end()) {
          buildBackground();
       }
-
+ 
       _lastMaterial = other._lastMaterial;
       _materialMap.insert(other._materialMap.begin(), other._materialMap.end());
-      _primitives.insert(
-         _primitives.end(), other._primitives.begin(), other._primitives.end()
-      );
+ 
+      const auto& otherAggregate = other._aggregate;
+      if (otherAggregate) {
+         _aggregate->merge(otherAggregate);
+      }
    }
 }
