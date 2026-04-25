@@ -31,21 +31,31 @@ namespace raytracer {
       _options = options;
    }
 
+
    void Api::run() {
-      // Parse data and save static Tags ParamSet
-      ParserScene::parseScene(_options.getInputSceneFile().c_str(), _scene);
-      auto& params = _scene.getParams();
 
-      if (params.find("film") == params.end())
-         throw std::runtime_error("Scene data must contain 'film' parameters.");
+      std::unordered_map<std::string, std::function<void(Scene&)>> handlers;
 
-      // Find world_end tag and call render() when found
-      auto worldEndIt = params.find("world_end");
-      if (worldEndIt != params.end()) {
+
+      handlers["render_again"] = [&](Scene& s) {
          generate();
-      } else {
-         std::cerr << "[Api] Warning: <world_end> tag not found. Rendering skipped.\n";
-      }
+      };
+
+      handlers["world_end"] = [&](Scene& s) {
+         generate();
+      };
+
+      // The callback is invoked after every element is processed.
+      // Api decides what each element means.
+      ParserScene::parseScene(
+         _options.getInputSceneFile().c_str(),
+         _scene,
+         [&](Scene& sceneRef, const std::string& element, const ParamSet&) {
+            if (handlers.count(element)) {
+               handlers[element](sceneRef);
+            }
+         }
+      );
    }
 
    void Api::cleanUp() {

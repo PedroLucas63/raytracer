@@ -8,6 +8,9 @@
 
 namespace raytracer {
    class Api {
+
+      std::unordered_map<std::string, std::function<void()>> handlers;
+      
       private:
          static RunningOptions _options;
          static Scene _scene;

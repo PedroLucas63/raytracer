@@ -5,9 +5,9 @@
    <film type="image" x_res="800" y_res="600" filename="output/normal_map.png" img_type="png" />
 
    <!-- The Scene -->
-   <include filename="scenes/references/geometry_spheres.xml" />
+   <include filename="scenes/references/geometry_spheres2.xml" />
 
-   <lookat look_from="5 0 5 " look_at="0 0 5" up="0 0 1" />
+   <lookat look_from="0 10 5 " look_at="0 0 5" up="0 0 1" />
    <camera type="orthographic" screen_window="-8 8 -6 6" />
    <film type="image" x_res="800" y_res="600" filename="output/normal_map_ortho.png" img_type="png" />
 

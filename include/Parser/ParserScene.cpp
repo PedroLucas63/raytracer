@@ -117,13 +117,14 @@ namespace raytracer{
     * @param filename The path to the XML file to parse
     * @brief Load document from file and delegate to parseDocument
     */
-   void ParserScene::parseScene(const char* filename, Scene& scene) {
+   void ParserScene::parseScene(const char* filename, Scene& scene,
+                                 OnElementCallback onElement) {
       tinyxml2::XMLDocument doc;
       if (doc.LoadFile(filename) != tinyxml2::XML_SUCCESS) {
          std::cerr << "[Parser] Failed to load XML: " << filename << '\n';
          return;
       }
-      parseDocument(doc, scene);
+      parseDocument(doc, scene, onElement);
    }
 
    /**
@@ -131,17 +132,18 @@ namespace raytracer{
     * @param fromString A boolean flag to differentiate this overload (not used in logic)
     * @brief Load document from string and delegate to parseDocument (useful for testing)
     */
-   void ParserScene::parseScene(const char* xmlContent, bool fromString, Scene& scene) {
+   void ParserScene::parseScene(const char* xmlContent, bool fromString, Scene& scene,
+                                 OnElementCallback onElement) {
       tinyxml2::XMLDocument doc;
       if (doc.Parse(xmlContent) != tinyxml2::XML_SUCCESS) {
          std::cerr << "[Parser] Failed to parse XML string.\n";
          return;
       }
-      parseDocument(doc, scene);
+      parseDocument(doc, scene, onElement);
    }
 
-
-   void ParserScene::parseDocument(tinyxml2::XMLDocument& doc, Scene& scene) {
+   void ParserScene::parseDocument(tinyxml2::XMLDocument& doc, Scene& scene,
+                                    OnElementCallback onElement) {
       tinyxml2::XMLElement* root = doc.RootElement();
       if (!root) {
          throw std::runtime_error("XML document has no root element.");
@@ -187,10 +189,19 @@ namespace raytracer{
                std::cerr << "[Parser] Included file not found: " << incFile << '\n';
                continue;
             }
-            
+
             auto includedScene = Scene();
-            parseScene(incFile.c_str(), includedScene);
+            parseScene(incFile.c_str(), includedScene, nullptr);
             scene.include(includedScene);
+
+            // Notify for the include itself.
+            if (onElement) onElement(scene, element, ps);
+
+            if (includedScene.getParams().count("world_end") > 0) {
+               ParamSet empty;
+               if (onElement) onElement(scene, "world_end", empty);
+            }
+
          } else if (element == "material") {
             try {
                auto material = MaterialFactory::create(ps);
@@ -198,6 +209,8 @@ namespace raytracer{
             } catch (const std::exception& e) {
                std::cerr << "[Parser] Failed to create material: " << e.what() << '\n';
             }
+            if (onElement) onElement(scene, element, ps);
+
          } else if (element == "make_named_material") {
             try {
                auto material = MaterialFactory::create(ps);
@@ -205,8 +218,9 @@ namespace raytracer{
             } catch (const std::exception& e) {
                std::cerr << "[Parser] Failed to create named material: " << e.what() << '\n';
             }
+            if (onElement) onElement(scene, element, ps);
+
          } else if (element == "named_material") {
-            // Activates a previously defined named material (makes it the current material).
             if (!ps.has("name")) {
                std::cerr << "[Parser] <named_material> is missing 'name'.\n";
                continue;
@@ -217,15 +231,20 @@ namespace raytracer{
             } catch (const std::exception& e) {
                std::cerr << "[Parser] Failed to activate named material: " << e.what() << '\n';
             }
-         }else if (element == "object") {
+            if (onElement) onElement(scene, element, ps);
+
+         } else if (element == "object") {
             try {
                auto object = PrimitiveFactory::create(ps, scene);
                scene.addPrimitive(object);
             } catch (const std::exception& e) {
                std::cerr << "[Parser] Failed to create object: " << e.what() << '\n';
             }
+            if (onElement) onElement(scene, element, ps);
+
          } else {
             scene.setParam(element, ps);
+            if (onElement) onElement(scene, element, ps);
          }
       }
    }

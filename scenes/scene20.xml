@@ -5,7 +5,7 @@
    <film type="image" x_res="800" y_res="600" filename="output/depth_map.png" img_type="png" />
 
    <!-- The Scene -->
-   <include filename="scenes/references/geometry_spheres2.xml" />
+   <include filename="scenes/references/geometry_spheres.xml" />
 
    <lookat look_from="0 10 5 " look_at="0 0 5" up="0 0 1" />
    <camera type="orthographic" screen_window="-8 8 -6 6" />
