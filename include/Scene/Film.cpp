@@ -94,18 +94,20 @@ namespace raytracer {
    }
 
    /** Save the film to a file */
-   void Film::save() const {
-      save(_filename);
+   void Film::save(bool noOverwrite) const {
+      save(_filename, noOverwrite);
    }
 
-   void Film::save(const std::string& filename) const {
+   void Film::save(const std::string& filename, bool noOverwrite) const {
       if (filename.empty()) {
          throw std::runtime_error("Filename is not set. Cannot save the film.");
       }
 
       std::filesystem::path outputPath(filename);
       ensureOutputDirectoryExists(outputPath);
-      outputPath = makeUniqueFilename(outputPath);
+      if (noOverwrite) {
+         outputPath = makeUniqueFilename(outputPath);
+      }
       ImageUtils::saveImage(_image, outputPath.string());
    }
    
@@ -130,7 +132,7 @@ namespace {
       int suffix = 1;
 
       do {
-         candidate = outputPath.parent_path() / (originalStem + "-" + std::to_string(suffix) + extension);
+         candidate = outputPath.parent_path() / (originalStem + "_" + std::to_string(suffix) + extension);
          suffix++;
       } while (std::filesystem::exists(candidate));
 

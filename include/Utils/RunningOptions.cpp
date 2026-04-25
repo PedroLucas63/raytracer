@@ -41,6 +41,7 @@ namespace raytracer {
          ->type_name("<x0, x1, y0, y1>")
          ->check(CLI::Range(0, 10000));
       app.add_flag("-q,--quick", _quick, "Reduces quality parameters to render image quickly.");
+      app.add_flag("--no-overwrite", _noOverwrite, "Do not overwrite output file, auto-increment filename.");
       app.add_option("-o,--output", _output, "Write the rendered image to <filename>.")
          ->type_name("<filename>")
          ->check([this](const std::string& output_path) {
@@ -87,5 +88,9 @@ namespace raytracer {
 
    bool RunningOptions::isFail() const {
       return fail;
+   }
+
+   bool RunningOptions::noOverwrite() const {
+      return _noOverwrite;
    }
 }

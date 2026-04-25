@@ -15,8 +15,8 @@ namespace raytracer {
       public:
          virtual ~Integrator() = default;
          virtual void render(const Scene& scene) = 0;
-         virtual void saveImage() const = 0;
-         virtual void saveImage(const std::string& filename) const = 0;
+         virtual void saveImage(bool noOverwrite) const = 0;
+         virtual void saveImage(const std::string& filename, bool noOverwrite) const = 0;
    };
 
    class SamplerIntegrator : public Integrator {
@@ -35,8 +35,8 @@ namespace raytracer {
          virtual std::optional<RGBColor> Li(const Ray& ray, const Scene& scene) const = 0;
          virtual void render(const Scene& scene);
          virtual void preprocess(const Scene& scene);
-         virtual void saveImage() const override;
-         virtual void saveImage(const std::string& filename) const override;
+         virtual void saveImage(bool noOverwrite) const override;
+         virtual void saveImage(const std::string& filename, bool noOverwrite) const override;
 
    };
 }

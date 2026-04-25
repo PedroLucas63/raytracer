@@ -31,6 +31,12 @@ namespace raytracer {
       );
    }
 
+   RGBColor RGBColor::lerp(const RGBColor& a, const RGBColor& b, float t){
+      if (t < 0.0f || t > 1.0f)
+         throw std::invalid_argument("t must be in [0, 1]");
+      return b.interpolate(a, t);
+   }
+
    /** Getters and Setters */
    uint8_t RGBColor::getRed() const {
       return _red;

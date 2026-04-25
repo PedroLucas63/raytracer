@@ -1,15 +1,15 @@
 <RT3>
    <lookat look_from="0 0 -2" look_at="0 0 10" up="0 1 0" />
    <camera type="perspective" fovy="65" />
-   <integrator type="depth_map" zmin="0.1" zmax="0.8"/>
-   <film type="image" x_res="800" y_res="600" filename="output/flat_spheres_perspective.png" img_type="png" />
+   <integrator type="depth_map" zmin="0.1" zmax="0.8" near_color="0 50 0" far_color="0 220 0" />
+   <film type="image" x_res="800" y_res="600" filename="output/depth_map.png" img_type="png" />
 
    <!-- The Scene -->
-   <include filename="scenes/references/geometry_spheres.xml" />
+   <include filename="scenes/references/geometry_spheres2.xml" />
 
    <lookat look_from="0 10 5 " look_at="0 0 5" up="0 0 1" />
    <camera type="orthographic" screen_window="-8 8 -6 6" />
-   <film type="image" x_res="800" y_res="600" filename="output/flat_spheres_ortho.png" img_type="png" />
+   <film type="image" x_res="800" y_res="600" filename="output/depth_map.png" img_type="png" />
 
    <!-- The Scene -->
    <render_again />

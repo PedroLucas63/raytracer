@@ -54,8 +54,8 @@ namespace raytracer {
          Film toGrayScale() const;
 
          /** Save the film to a file */
-         void save() const;
-         void save(const std::string& filename) const;
+         void save(bool noOverwrite) const;
+         void save(const std::string& filename, bool noOverwrite) const;
    };
 }
 

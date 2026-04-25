@@ -89,11 +89,11 @@ namespace raytracer {
       _camera = CameraFactory::create(scene.getParams());
    }
 
-   void SamplerIntegrator::saveImage() const {
-      _camera->film()->save();
+   void SamplerIntegrator::saveImage(bool noOverwrite) const {
+      _camera->film()->save(noOverwrite);
    }
 
-   void SamplerIntegrator::saveImage(const std::string& filename) const {
-      _camera->film()->save(filename);
+   void SamplerIntegrator::saveImage(const std::string& filename, bool noOverwrite) const {
+      _camera->film()->save(filename, noOverwrite);
    }
 }

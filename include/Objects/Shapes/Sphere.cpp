@@ -35,10 +35,7 @@ namespace raytracer {
       
       auto square_delta = std::sqrt(delta);
       auto t1 = (-B - square_delta) / (2 * A);
-      auto t2 = -1;
-
-      if (delta != 0)
-         t2 = (-B + square_delta) / (2 * A);
+      auto t2 = (-B + square_delta) / (2 * A);
 
       return {t1, t2};
    }
@@ -65,12 +62,17 @@ namespace raytracer {
       }
       
       if (t2 >= ray.t_min && t2 <= ray.t_max) {
-         t = setT && t2 < t ? t2 : t;
+         if (!setT) {
+            t = t2;
+            setT = true;
+         } else if (t2 < t) {
+            t = t2;
+         }
       }
 
       if (sf) {
          auto intersectPoint = ray.origin + (ray.direction * t);
-         auto normal = (intersectPoint - _center).normalize() * (1.0f / _radius);
+         auto normal = (intersectPoint - _center).normalize();
          *sf = Surfel(t, intersectPoint, nullptr, normal);
       }
 

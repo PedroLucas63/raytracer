@@ -11,6 +11,9 @@ namespace raytracer {
             float _zmin;
             float _zmax;
 
+            float _realZmin = 0.0f;
+            float _realZmax = 1.0f;
+
         public:
             DepthMapIntegrator(
                 const RGBColor& nearColor = RGBColor(255, 255, 255),
@@ -24,9 +27,6 @@ namespace raytracer {
             void preprocess(const Scene& scene) override;
 
             std::optional<RGBColor> Li(const Ray& ray, const Scene& scene) const override;
-
-        private:
-            RGBColor lerp(float t) const;
     };
 }
 

@@ -16,6 +16,7 @@ namespace raytracer {
          bool _quick = false;
          std::string _output;
          bool fail = true;
+         bool _noOverwrite = false;
 
          void configureCLI(CLI::App& app);
          std::string validateOutputPath(std::string filename) const;
@@ -32,6 +33,7 @@ namespace raytracer {
          std::string getOutput() const;
          bool hasOutput() const;
          bool isFail() const;
+         bool noOverwrite() const;
    };
 }
 

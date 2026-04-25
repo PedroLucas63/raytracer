@@ -18,9 +18,9 @@ namespace raytracer {
       integrator->render(_scene);
 
       if (_options.hasOutput())
-         integrator->saveImage(_options.getOutput());
+         integrator->saveImage(_options.getOutput(), _options.noOverwrite());
       else
-         integrator->saveImage();
+         integrator->saveImage(_options.noOverwrite());
    }
    
    void Api::initEngine(const RunningOptions& options) {

@@ -45,6 +45,8 @@ namespace raytracer {
          }
          static RGBColor fromNormalized(float red, float green, float blue);
 
+         static RGBColor lerp(const RGBColor& a, const RGBColor& b, float t); 
+
          /** Destructor */
          ~RGBColor() = default;
 
