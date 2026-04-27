@@ -19,6 +19,7 @@ add_library(raytracer_core
 	include/Objects/Materials/Material.cpp
 	include/Objects/Materials/GridMaterial.cpp
 	include/Objects/Materials/FlatMaterial.cpp
+	include/Objects/Materials/BlinnMaterial.cpp
 	include/Objects/Materials/MaterialFactory.cpp
 	include/Objects/PrimitiveFactory.cpp
 	include/Objects/GeometricPrimitive.cpp
