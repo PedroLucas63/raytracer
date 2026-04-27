@@ -19,11 +19,11 @@ namespace raytracer {
       _aggregate->add(primitive);
    }
 
-   bool Scene::intersect(const Ray& r, Surfel* isect) const {
+   bool Scene::intersectWithSurfel(const Ray& r, Surfel* isect) const {
       return _aggregate->intersectWithSurfel(r, isect);
    }
  
-   bool Scene::intersect_p(const Ray& r) const {
+   bool Scene::intersect(const Ray& r) const {
       return _aggregate->intersect(r);
    }
 

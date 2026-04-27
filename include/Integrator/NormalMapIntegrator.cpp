@@ -5,7 +5,7 @@ namespace raytracer {
 
    std::optional<RGBColor> NormalMapIntegrator::Li(const Ray& ray, const Scene& scene) const {
       Surfel surfel;
-      if (!scene.intersect(ray, &surfel))
+      if (!scene.intersectWithSurfel(ray, &surfel))
          return std::nullopt;
 
       // Normal is already unit-length from the shape's intersectWithSurfel.

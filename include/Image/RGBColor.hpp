@@ -5,6 +5,8 @@
 #include <iterator>
 
 namespace raytracer {
+   const constexpr int RGB_CHANELLS = 3;
+
    enum RGBChannel {
       RED = 0,
       GREEN = 1,

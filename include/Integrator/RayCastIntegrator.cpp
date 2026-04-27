@@ -9,7 +9,7 @@ namespace raytracer {
 
       Surfel surfel;
 
-      if(!scene.intersect(ray, &surfel)) {
+      if(!scene.intersectWithSurfel(ray, &surfel)) {
          return std::nullopt;
       }
       

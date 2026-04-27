@@ -21,7 +21,7 @@ namespace raytracer {
             for (int i = 0; i < w; ++i) {
                 Ray ray = _camera->generate_ray(i, j);
                 Surfel sf;
-                if (scene.intersect(ray, &sf)) {
+                if (scene.intersectWithSurfel(ray, &sf)) {
                     anyHit = true;
                     foundMin = std::min(foundMin, sf.t);
                     foundMax = std::max(foundMax, sf.t);
@@ -39,7 +39,7 @@ namespace raytracer {
 
     std::optional<RGBColor> DepthMapIntegrator::Li(const Ray& ray, const Scene& scene) const {
         Surfel surfel;
-        if (!scene.intersect(ray, &surfel))
+        if (!scene.intersectWithSurfel(ray, &surfel))
             return std::nullopt;
 
         // Normalize t into [0,1] within [_realZmin, _realZmax]

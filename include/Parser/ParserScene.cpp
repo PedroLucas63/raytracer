@@ -10,6 +10,7 @@
 #include "Math/Vector3.hpp"
 #include "Objects/Materials/MaterialFactory.hpp"
 #include "Objects/PrimitiveFactory.hpp"
+#include "Objects/Light/LightFactory.hpp"
 
 namespace raytracer{
 
@@ -29,7 +30,8 @@ namespace raytracer{
       { "object",     { "type", "center", "origin", "radius", "norm", "material" } },
       { "make_named_material", { "type", "name", "color", "color1", "color2", "spacing" } },
       { "named_material",      { "name" } },
-      { "material",   { "type", "color", "name", "color1", "color2", "spacing" } }
+      { "material",   { "type", "color", "name", "color1", "color2", "spacing" } },
+      { "light_source", { "type", "I", "scale", "from", "to" } }
    };
 
    std::unordered_map<std::string, ConvertFunction> converters {
@@ -78,7 +80,13 @@ namespace raytracer{
       { "near_color",       convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "far_color",        convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "zmin",             convert<float> },
-      { "zmax",             convert<float> }
+      { "zmax",             convert<float> },
+
+      // Light attributes
+      { "I",                convert_color },
+      { "scale",            convert<raytracer::Vector3, double, 3> },
+      { "from",             convert<raytracer::Point3, double, 3> },
+      { "to",               convert<raytracer::Point3, double, 3> },
    };
 
    // ── helpers ──────────────────────────────────────────────────────────────────
@@ -242,6 +250,16 @@ namespace raytracer{
             }
             if (onElement) onElement(scene, element, ps);
 
+         } else if (element == "light_source") {
+            try {
+               auto light = LightFactory::create(ps);
+               scene.addLight(light);
+            } catch (const std::exception& e) {
+               std::cerr << "[Parser] Failed to create light source: " << e.what() << '\n';
+            }
+
+            if (onElement) onElement(scene, element, ps);
+            
          } else {
             scene.setParam(element, ps);
             if (onElement) onElement(scene, element, ps);

@@ -1,14 +1,16 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 
-#include <vector>
-#include <memory>
+
 #include "Scene/Background/Background.hpp"
 #include "Objects/Primitive.hpp"
 #include "Objects/Materials/Material.hpp"
 #include "Objects/Materials/MaterialFactory.hpp"
-#include <unordered_map>
 #include "Objects/Aggregate/PrimitiveList.hpp"
+#include "Objects/Light/Light.hpp"
+#include <vector>
+#include <memory>
+#include <unordered_map>
 
 namespace raytracer {
    using ParamSets = std::unordered_map<std::string, ParamSet>;
@@ -18,6 +20,8 @@ namespace raytracer {
          std::shared_ptr<PrimitiveList> _aggregate;
          std::unordered_map<std::string, std::shared_ptr<Material>> _materialMap;
          std::shared_ptr<Material> _lastMaterial = nullptr;
+
+         std::vector<std::shared_ptr<Light>> _lights;
 
          std::shared_ptr<Background> _background;
 
@@ -30,8 +34,8 @@ namespace raytracer {
          ~Scene() = default;
          Scene& operator=(const Scene& other);
 
-         bool intersect(const Ray& r, Surfel* surfel) const;
-         bool intersect_p(const Ray& r) const;
+         bool intersectWithSurfel(const Ray& r, Surfel* surfel) const;
+         bool intersect(const Ray& r) const;
 
          void addNamedMaterial(const std::shared_ptr<Material>& material);
          void activateNamedMaterial(const std::string& name);
@@ -40,6 +44,9 @@ namespace raytracer {
          void addMaterial(const std::shared_ptr<Material>& material);
          std::shared_ptr<Material> getMaterialAt(const std::string& name) const;
          std::shared_ptr<Material> getLastMaterial() const { return _lastMaterial; }
+
+         void addLight(const std::shared_ptr<Light>& light);
+         const std::vector<std::shared_ptr<Light>>& getLights() const;
 
          void setBackground(const Background& background);
          void buildBackground();

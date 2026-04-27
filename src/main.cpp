@@ -1,6 +1,5 @@
 #include "Utils/RunningOptions.hpp"
 #include "Api/Api.hpp"
-#include <print>
 
 int main(int argc, char** argv) {
     auto options = raytracer::RunningOptions{};
