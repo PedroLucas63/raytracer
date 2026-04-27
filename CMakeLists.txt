@@ -30,6 +30,7 @@ add_library(raytracer_core
 	include/Integrator/RayCastIntegrator.cpp
 	include/Integrator/DepthMapIntegrator.cpp
 	include/Integrator/NormalMapIntegrator.cpp
+	include/Integrator/BlinnPhongIntegrator.cpp
 	include/Integrator/IntegratorFactory.cpp
 	include/Core/ParamSet.cpp
 	include/Math/Vector3.cpp
