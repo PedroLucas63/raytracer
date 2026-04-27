@@ -17,6 +17,5 @@ namespace raytracer {
          return std::nullopt;
       
       return surfel.material->getColor(surfel.point);
-      
    }
 }

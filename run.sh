@@ -16,4 +16,7 @@ rm -rf output
 ./build/raytracer scenes/scene15.xml
 ./build/raytracer scenes/scene16.xml
 ./build/raytracer scenes/scene17.xml
+./build/raytracer scenes/scene18.xml
+./build/raytracer scenes/scene19.xml
+./build/raytracer scenes/scene20.xml
 ./build/raytracer scenes/scene21.xml
