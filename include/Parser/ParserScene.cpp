@@ -28,9 +28,9 @@ namespace raytracer{
       { "world_end",  {} },
       { "render_again", {} },
       { "object",     { "type", "center", "origin", "radius", "norm", "material" } },
-      { "make_named_material", { "type", "name", "color", "color1", "color2", "spacing" } },
+      { "make_named_material", { "type", "name", "color", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness" } },
       { "named_material",      { "name" } },
-      { "material",   { "type", "color", "name", "color1", "color2", "spacing" } },
+      { "material",   { "type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness" } },
       { "light_source", { "type", "I", "scale", "from", "to" } }
    };
 
@@ -87,6 +87,11 @@ namespace raytracer{
       { "scale",            convert<raytracer::Vector3, double, 3> },
       { "from",             convert<raytracer::Point3, double, 3> },
       { "to",               convert<raytracer::Point3, double, 3> },
+
+      { "diffuse",          convert<raytracer::Vector3, double, 3> },
+      { "specular",         convert<raytracer::Vector3, double, 3> },
+      { "ambient",          convert<raytracer::Vector3, double, 3> },
+      { "glossiness",       convert<float> }
    };
 
    // ── helpers ──────────────────────────────────────────────────────────────────
@@ -160,7 +165,7 @@ namespace raytracer{
       scene = Scene();
 
       for (auto* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
-         const std::string element = stringToLower(node->Name());
+         const std::string element = node->Name();
 
          if (!isValidElement(element)) {
             std::cerr << "[Parser] Invalid element: <" << element << ">\n";
@@ -170,7 +175,7 @@ namespace raytracer{
          ParamSet ps;
 
          for (auto* attr = node->FirstAttribute(); attr; attr = attr->Next()) {
-            const std::string attrName = stringToLower(attr->Name());
+            const std::string attrName = attr->Name();
 
             if (!isValidAttribute(element, attrName)) {
                std::cerr << "[Parser] <" << element << "> has no attribute '" << attrName << "'\n";

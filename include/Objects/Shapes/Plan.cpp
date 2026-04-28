@@ -43,7 +43,7 @@ namespace raytracer {
       if (sf) {
          auto intersectPoint = ray.origin + (ray.direction * t);
          auto normal = _norm.dot(ray.direction) < 0 ? _norm : _norm * -1.0f;
-         *sf = Surfel(t, intersectPoint, nullptr, normal);
+         *sf = Surfel(t, intersectPoint, nullptr, normal, -ray.direction);
       }
 
       return true;

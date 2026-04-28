@@ -62,7 +62,7 @@ namespace raytracer {
          if (_ambientLight) {
             throw std::runtime_error("Scene already has an ambient light. Multiple ambient lights are not supported.");
          }
-
+         
          _ambientLight = ambientLight;
       } else {
          _lights.push_back(light);

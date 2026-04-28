@@ -27,9 +27,20 @@ namespace raytracer {
             const std::shared_ptr<Light> light
          ) const;
 
-         void specularReflection() const;
+         void specularReflection(
+            const Point3& surfelPoint,
+            const Vector3& viewDir,
+            const Vector3& normal,
+            const std::shared_ptr<Light>& light,
+            RGBColor* L
+         ) const;
 
          void ambientContribution(const Scene& scene, RGBColor* L) const;
+
+         Vector3 computeHalfVector(
+            const Vector3& viewDir, 
+            const Vector3& lightDir
+         ) const;
 
       public:
          BlinnMaterial(const ParamSet& params);

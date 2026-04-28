@@ -2,6 +2,7 @@
 #include "Utils/Utils.hpp"
 #include "Objects/Light/DirectionalLight.hpp"
 #include "Objects/Light/PointLight.hpp"
+#include <cmath>
 
 namespace raytracer {
    BlinnMaterial::BlinnMaterial(const ParamSet& params) : Material(params) {
@@ -75,7 +76,7 @@ namespace raytracer {
 
       for (auto& light : scene.getLights()) {
          lambertianReflection(surfel.point, surfel.normal, light, &L);
-         specularReflection();
+         specularReflection(surfel.point, surfel.viewDir, surfel.normal, light, &L);
       }
 
       ambientContribution(scene, &L);
@@ -96,8 +97,23 @@ namespace raytracer {
       *L += color * NdotL;
    }
 
-   void BlinnMaterial::specularReflection() const {
-      
+   void BlinnMaterial::specularReflection(
+      const Point3& surfelPoint,
+      const Vector3& viewDir,
+      const Vector3& normal,
+      const std::shared_ptr<Light>& light,
+      RGBColor* L
+   ) const {
+      auto lightDir = computeLightDirection(surfelPoint, light);
+      auto h = computeHalfVector(viewDir, lightDir);
+      auto NdotH = std::max(0.0, normal.dot(h));
+
+      auto specularFactor = std::pow(NdotH, _glossiness);
+
+      auto lightColor = light->getIntensity();
+
+      auto color = multiplyColorByIntensity(lightColor, _specular);
+      *L += color * specularFactor;
    }
 
    void BlinnMaterial::ambientContribution(const Scene& scene, RGBColor* L) const {
@@ -112,12 +128,26 @@ namespace raytracer {
       const Point3& surfelPoint, 
       const std::shared_ptr<Light> light
    ) const {
-      auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light);
-         return directionalLight->getDirection();
       
-      auto pointLight = std::dynamic_pointer_cast<PointLight>(light);
-         return (pointLight->getPosition() - surfelPoint).normalize();
+      if (auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light))
+         return -directionalLight->getDirection();
+      
+      if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
+         return (surfelPoint - pointLight->getPosition()).normalize();
 
       return Vector3(0, 0, 0);
+   }
+
+
+   Vector3 BlinnMaterial::computeHalfVector(
+      const Vector3& viewDir, 
+      const Vector3& lightDir
+   ) const {
+      auto numerator = viewDir + lightDir;
+      auto denominator =  numerator.length();
+      
+      if (denominator == 0.0)
+         return Vector3(0, 0, 0);
+      return numerator / denominator;
    }
 }

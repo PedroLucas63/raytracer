@@ -4,7 +4,6 @@
 #include "Utils/ProgressBar.hpp"
 #include <iostream>
 #include "Objects/Shapes/Sphere.hpp"
-#include "Objects/Surfel.hpp"
 #include "Integrator/IntegratorFactory.hpp"
 
 namespace raytracer {
