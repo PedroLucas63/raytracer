@@ -8,6 +8,7 @@
 #include "Objects/Materials/MaterialFactory.hpp"
 #include "Objects/Aggregate/PrimitiveList.hpp"
 #include "Objects/Light/Light.hpp"
+#include "Objects/Light/AmbientLight.hpp"
 #include <vector>
 #include <memory>
 #include <unordered_map>
@@ -22,6 +23,7 @@ namespace raytracer {
          std::shared_ptr<Material> _lastMaterial = nullptr;
 
          std::vector<std::shared_ptr<Light>> _lights;
+         std::shared_ptr<AmbientLight> _ambientLight = nullptr;
 
          std::shared_ptr<Background> _background;
 
@@ -47,6 +49,7 @@ namespace raytracer {
 
          void addLight(const std::shared_ptr<Light>& light);
          const std::vector<std::shared_ptr<Light>>& getLights() const;
+         std::shared_ptr<AmbientLight> getAmbientLight() const;
 
          void setBackground(const Background& background);
          void buildBackground();

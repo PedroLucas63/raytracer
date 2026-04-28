@@ -31,6 +31,7 @@ add_library(raytracer_core
 	include/Objects/Light/PointLight.cpp
 	include/Objects/Light/AmbientLight.cpp
 	include/Objects/Light/DirectionalLight.cpp
+	include/Objects/Light/LightFactory.cpp
 	include/Integrator/Integrator.cpp
 	include/Integrator/RayCastIntegrator.cpp
 	include/Integrator/DepthMapIntegrator.cpp
@@ -46,6 +47,7 @@ add_library(raytracer_core
 	include/Utils/RunningOptions.cpp
 	include/Utils/ConvertFunction.cpp
 	include/Utils/ProgressBar.cpp
+	include/Utils/Utils.cpp
 	include/Parser/ParserScene.cpp
 	include/Api/Api.cpp
 )

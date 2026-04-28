@@ -17,7 +17,7 @@ namespace raytracer {
          )
          :  Material(name), _color1(color1), _color2(color2), _spacing(spacing) {}
          GridMaterial(const ParamSet& params);
-         const RGBColor& getColor(const Point3& point) const;
+         RGBColor getColor(const Point3& point) const override;
    };
 }
 

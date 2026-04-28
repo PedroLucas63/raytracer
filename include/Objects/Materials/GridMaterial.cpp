@@ -11,7 +11,7 @@ namespace raytracer {
       if (_spacing <= 0) throw std::invalid_argument("GridMaterial requires a 'spacing' positive");
    }
 
-   const RGBColor& GridMaterial::getColor(const Point3& point) const {
+   RGBColor GridMaterial::getColor(const Point3& point) const {
       auto x_pos = static_cast<int>(std::floor(point.getX() / _spacing));
       auto y_pos = static_cast<int>(std::floor(point.getY() / _spacing));
 

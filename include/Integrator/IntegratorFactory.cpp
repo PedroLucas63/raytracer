@@ -2,7 +2,7 @@
 #include "Integrator/RayCastIntegrator.hpp"
 #include "Integrator/DepthMapIntegrator.hpp"
 #include "Integrator/NormalMapIntegrator.hpp"
-
+#include "Integrator/BlinnPhongIntegrator.hpp"
 
 namespace raytracer {
    std::string IntegratorFactory::getAndValidateIntegratorType(const ParamSets& params) {
@@ -16,7 +16,12 @@ namespace raytracer {
          throw std::invalid_argument("Integrator parameters must include 'type'.");
 
       std::string type = integratorParams.retrieve<std::string>("type");
-      if (type != "flat" && type != "depth_map" && type != "normal_map")
+      if (
+         type != "flat" && 
+         type != "depth_map" && 
+         type != "normal_map" && 
+         type != "blinn_phong"
+      )
          throw std::invalid_argument("Unsupported integrator type: " + type);
 
       return type;
@@ -38,6 +43,8 @@ namespace raytracer {
  
       } else if (type == "normal_map") {
          return std::make_shared<NormalMapIntegrator>();
+      } else if (type == "blinn_phong") {
+         return std::make_shared<BlinnPhongIntegrator>(integratorParams);
       } else {
          throw std::invalid_argument("Unsupported integrator type: " + type);
       }

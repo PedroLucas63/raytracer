@@ -8,7 +8,7 @@ namespace raytracer {
       _color = params.retrieve<RGBColor>("color");
    }
 
-   const RGBColor& FlatMaterial::getColor(const Point3& point) const {
+   RGBColor FlatMaterial::getColor(const Point3& point) const {
       return _color;
    }
 }

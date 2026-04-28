@@ -1,4 +1,7 @@
 #include "Objects/Materials/BlinnMaterial.hpp"
+#include "Utils/Utils.hpp"
+#include "Objects/Light/DirectionalLight.hpp"
+#include "Objects/Light/PointLight.hpp"
 
 namespace raytracer {
    BlinnMaterial::BlinnMaterial(const ParamSet& params) : Material(params) {
@@ -59,8 +62,62 @@ namespace raytracer {
       _glossiness = glossiness;
    }
 
-   const RGBColor& BlinnMaterial::getColor(const Point3& point) const {
-      // TODO: Implement Blinn-Phong shading model to calculate the color based on the material properties and the point's position
-      return RGBColor();
+   RGBColor BlinnMaterial::getColor(const Point3& point) const {
+      return RGBColor::fromNormalized(
+         _diffuse.getX(), 
+         _diffuse.getY(), 
+         _diffuse.getZ()
+      );
+   }
+
+   RGBColor BlinnMaterial::getColor(const Surfel& surfel, const Scene& scene) const {
+      RGBColor L;
+
+      for (auto& light : scene.getLights()) {
+         lambertianReflection(surfel.point, surfel.normal, light, &L);
+         specularReflection();
+      }
+
+      ambientContribution(scene, &L);
+
+      return L;
+   }
+
+   void BlinnMaterial::lambertianReflection(
+      const Point3& surfelPoint,
+      const Vector3& normal,
+      const std::shared_ptr<Light>& light,
+      RGBColor* L
+   ) const {
+      auto lightDir = computeLightDirection(surfelPoint, light);
+      auto NdotL = std::max(0.0, normal.dot(lightDir));
+      auto lightColor = light->getIntensity();
+      auto color = multiplyColorByIntensity(lightColor, _diffuse);
+      *L += color * NdotL;
+   }
+
+   void BlinnMaterial::specularReflection() const {
+      
+   }
+
+   void BlinnMaterial::ambientContribution(const Scene& scene, RGBColor* L) const {
+      if (auto light = scene.getAmbientLight()) {
+         auto ambientColor = light->getIntensity();
+         auto color = multiplyColorByIntensity(ambientColor, _ambient);
+         *L += color;
+      }
+   }
+
+   Vector3 BlinnMaterial::computeLightDirection(
+      const Point3& surfelPoint, 
+      const std::shared_ptr<Light> light
+   ) const {
+      auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light);
+         return directionalLight->getDirection();
+      
+      auto pointLight = std::dynamic_pointer_cast<PointLight>(light);
+         return (pointLight->getPosition() - surfelPoint).normalize();
+
+      return Vector3(0, 0, 0);
    }
 }

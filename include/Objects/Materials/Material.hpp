@@ -18,7 +18,7 @@ namespace raytracer {
          Material(const ParamSet& params);
          ~Material() = default;
 
-         virtual const RGBColor& getColor(const Point3& point) const = 0;
+         virtual RGBColor getColor(const Point3& point) const = 0;
          virtual const std::string& getName() const { return _name; }
          virtual bool isAnonymous() const { return _annonymous; }
    };

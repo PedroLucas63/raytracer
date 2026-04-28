@@ -1,10 +1,12 @@
 #include "Objects/Light/Light.hpp"
+#include "Utils/Utils.hpp"
 
 namespace raytracer {
-   Light::Light(const RGBColor intensity, const Vector3 scale) :
-      _intensity(intensity), _scale(scale) {}
+   Light::Light(const RGBColor intensity, const Vector3 scale) : _intensity(intensity) {
+      setScale(scale);
+   }
 
-   Light::Light(const ParamSet& params) : _intensity(), _scale() {
+   Light::Light(const ParamSet& params) : _intensity() {
       if (params.has("I")) {
          _intensity = params.retrieve<RGBColor>("I");
       } else {
@@ -13,8 +15,6 @@ namespace raytracer {
 
       if (params.has("scale")) {
          setScale(params.retrieve<Vector3>("scale"));
-      } else {
-         _scale = VECTOR3_ONE;
       }
    }
 
@@ -26,11 +26,7 @@ namespace raytracer {
       _intensity = intensity;
    }
 
-   Vector3 Light::getScale() const {
-      return _scale;
-   }
-
    void Light::setScale(const Vector3& scale) {
-      _scale = scale.clamp(0.0, 1.0);
+      _intensity = multiplyColorByIntensity(_intensity, scale);
    }
 }

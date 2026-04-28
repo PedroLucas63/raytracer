@@ -57,6 +57,26 @@ namespace raytracer {
       throw std::runtime_error("Material not found: " + name);
    }
 
+   void Scene::addLight(const std::shared_ptr<Light>& light) {
+      if (auto ambientLight = std::dynamic_pointer_cast<AmbientLight>(light)) {
+         if (_ambientLight) {
+            throw std::runtime_error("Scene already has an ambient light. Multiple ambient lights are not supported.");
+         }
+
+         _ambientLight = ambientLight;
+      } else {
+         _lights.push_back(light);
+      }
+   }
+
+   const std::vector<std::shared_ptr<Light>>& Scene::getLights() const {
+      return _lights;
+   }
+
+   std::shared_ptr<AmbientLight> Scene::getAmbientLight() const {
+      return _ambientLight;
+   }
+
    void Scene::setBackground(const Background& background) {
       _background = background.clone();
    }
