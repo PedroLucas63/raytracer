@@ -19,5 +19,8 @@
         <object type="sphere" center="-2.2 3 6.5" radius="1.2" material="blue" />
         <object type="sphere" center="2.2 2 3.5" radius="0.95" material="cyan" />
         <object type="sphere" center="2.2 2 6.0" radius="2.0" material="magenta" />
+
+        <material type="grid" color1="123 123 123" color2="232 232 232" spacing="2"/>
+        <object type="plan" origin="0 0 0" norm="0 1 0"/>
     <world_end/>
 </RT3>

@@ -15,7 +15,7 @@ namespace raytracer {
 
       auto material = getBlinnMaterial(surfel.material);
       if (!material)
-         return std::nullopt;
+         return surfel.material->getColor(surfel.point);
 
       return material->getColor(surfel, scene);
    }
