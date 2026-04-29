@@ -18,6 +18,7 @@ namespace raytracer {
          void lambertianReflection(
             const Point3& surfelPoint,
             const Vector3& normal,
+            const Vector3& lightDir, 
             const std::shared_ptr<Light>& light,
             RGBColor* L
          ) const;
@@ -31,8 +32,17 @@ namespace raytracer {
             const Point3& surfelPoint,
             const Vector3& viewDir,
             const Vector3& normal,
+            const Vector3& lightDir, 
             const std::shared_ptr<Light>& light,
             RGBColor* L
+         ) const;
+
+         bool isOccluded(
+            const Point3&                 hitPoint,
+            const Vector3&                normal,
+            const Vector3&                lightDir,
+            const std::shared_ptr<Light>& light,
+            const Scene&                  scene
          ) const;
 
          void ambientContribution(const Scene& scene, RGBColor* L) const;

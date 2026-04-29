@@ -73,10 +73,16 @@ namespace raytracer {
 
    RGBColor BlinnMaterial::getColor(const Surfel& surfel, const Scene& scene) const {
       RGBColor L;
-
+      
       for (auto& light : scene.getLights()) {
-         lambertianReflection(surfel.point, surfel.normal, light, &L);
-         specularReflection(surfel.point, surfel.viewDir, surfel.normal, light, &L);
+         auto lightDir = computeLightDirection(surfel.point, light);
+
+         if (isOccluded(surfel.point, surfel.normal, lightDir, light, scene))
+            continue;
+
+
+         lambertianReflection(surfel.point, surfel.normal, lightDir, light, &L);
+         specularReflection(surfel.point, surfel.viewDir, surfel.normal, lightDir, light, &L);
       }
 
       ambientContribution(scene, &L);
@@ -84,14 +90,38 @@ namespace raytracer {
       return L;
    }
 
+   bool BlinnMaterial::isOccluded(
+      const Point3&                 hitPoint,
+      const Vector3&                normal,
+      const Vector3&                lightDir,
+      const std::shared_ptr<Light>& light,
+      const Scene&                  scene
+   ) const {
+
+      constexpr double SHADOW_EPS = 1e-4;
+
+      double tMax = std::numeric_limits<double>::infinity();
+      if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light)) {
+         tMax = (pointLight->getPosition() - hitPoint).length() - SHADOW_EPS;
+      }
+
+      Point3  shadowOrigin = hitPoint + normal * SHADOW_EPS;
+      Ray     shadowRay(shadowOrigin, lightDir, SHADOW_EPS, tMax);
+
+      return scene.intersect(shadowRay);
+   
+   }
+
    void BlinnMaterial::lambertianReflection(
       const Point3& surfelPoint,
       const Vector3& normal,
+      const Vector3& lightDir, 
       const std::shared_ptr<Light>& light,
       RGBColor* L
    ) const {
-      auto lightDir = computeLightDirection(surfelPoint, light);
       auto NdotL = std::max(0.0, normal.dot(lightDir));
+      if (NdotL == 0.0) return;
+
       auto lightColor = light->getIntensity();
       auto color = multiplyColorByIntensity(lightColor, _diffuse);
       *L += color * NdotL;
@@ -101,14 +131,19 @@ namespace raytracer {
       const Point3& surfelPoint,
       const Vector3& viewDir,
       const Vector3& normal,
+      const Vector3& lightDir, 
       const std::shared_ptr<Light>& light,
       RGBColor* L
    ) const {
-      auto lightDir = computeLightDirection(surfelPoint, light);
+      auto NdotL = normal.dot(lightDir);
+      // If the light is coming from behind the surface, we do not calculate specular reflection
+      if (NdotL <= 0) return;
+
       auto h = computeHalfVector(viewDir, lightDir);
       auto NdotH = std::max(0.0, normal.dot(h));
 
       auto specularFactor = std::pow(NdotH, _glossiness);
+      if (specularFactor == 0.0) return;
 
       auto lightColor = light->getIntensity();
 
@@ -133,7 +168,7 @@ namespace raytracer {
          return -directionalLight->getDirection();
       
       if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
-         return (surfelPoint - pointLight->getPosition()).normalize();
+         return (pointLight->getPosition() - surfelPoint).normalize();
 
       return Vector3(0, 0, 0);
    }
@@ -146,7 +181,7 @@ namespace raytracer {
       auto numerator = viewDir + lightDir;
       auto denominator =  numerator.length();
       
-      if (denominator == 0.0)
+      if (denominator == 1e-8)
          return Vector3(0, 0, 0);
       return numerator / denominator;
    }

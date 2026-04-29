@@ -28,8 +28,9 @@ namespace raytracer {
       if (!scene.intersectWithSurfel(ray, surfel))
          return false;
 
-      // TODO: [2]
-      // [2] SPECIAL SITUATION: IF THE RAY HITS THE SURFACE FROM "BEHIND" (INSIDE), WE DO NOT COLOR.
+      if(ray.direction.dot(surfel->normal) > 0) {
+         return false;
+      }
 
       return true;
    }
