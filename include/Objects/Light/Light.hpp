@@ -8,14 +8,15 @@
 namespace raytracer {
    class Light {
       protected:
-         RGBColor _intensity;
+         // Stored as float Vector3 to support HDR values (scale > 1.0)
+         Vector3 _intensity;
          
       public:
          Light(const RGBColor intensity, const Vector3 scale);
          Light(const ParamSet& params);
          virtual ~Light() = default;
 
-         virtual RGBColor getIntensity() const;
+         virtual Vector3 getIntensity() const;
          virtual void setIntensity(const RGBColor& intensity);
 
          virtual void setScale(const Vector3& scale);

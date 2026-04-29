@@ -1,5 +1,5 @@
 <RT3>
-    <lookat look_from="0 15 -5" look_at="0 0 5" up="0 1 0" />
+    <lookat look_from="0 15 -50" look_at="0 0 5" up="0 1 0" />
     <camera type="perspective" fovy="40" screen_window="-1 1 -0.56 0.56" />
     <film type="image" w_res="1280" h_res="720" filename="output/scene23.png" img_type="png" />
     <integrator type="blinn_phong" />
@@ -15,16 +15,17 @@
         
         <material name="floor" type="blinn" diffuse="0.2 0.2 0.2" specular="0.1 0.1 0.1" ambient="0.02 0.02 0.02" glossiness="10"/>
 
-        <light_source type="point" from="0 2 5" I="1.0 1.0 1.0" scale="0.8 0.8 0.8" />
-        
-        <light_source type="ambient" I="0.2 0.2 0.2" scale="0.6 0.6 0.6" />
+        <light_source type="point" from="0 2 5" I="0.5 0.5 1.0" scale="2 2 2" />
+        <light_source type="directional" from="10 10 -5" to="-2 0 10" I="1.0 1.0 1.0" />
+        <light_source type="ambient" I="0.1 0.1 0.1"  scale="1 1 1" />
+
 
         <object type="sphere" center="0 1 9" radius="1.0" material="m1" />   
         <object type="sphere" center="0 1 1" radius="1.0" material="m2" />   
         <object type="sphere" center="4 1 5" radius="1.0" material="m3" />   
+        <object type="sphere" center="8 1 5" radius="1.0" material="m3" />   
         <object type="sphere" center="-4 1 5" radius="1.0" material="m4" />  
         <object type="sphere" center="2.8 1 7.8" radius="1.0" material="m5" />
-        <object type="sphere" center="1 2 6" radius="1.0" material="m5" />
 
         <object type="plan" origin="0 0 0" norm="0 1 0" material="floor" />
     <world_end/>
