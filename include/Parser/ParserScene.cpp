@@ -31,7 +31,7 @@ namespace raytracer{
       { "make_named_material", { "type", "name", "color", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness" } },
       { "named_material",      { "name" } },
       { "material",   { "type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness" } },
-      { "light_source", { "type", "I", "scale", "from", "to" } }
+      { "light_source", { "type", "I", "scale", "from", "to", "attenuation" } }
    };
 
    std::unordered_map<std::string, ConvertFunction> converters {
@@ -87,7 +87,7 @@ namespace raytracer{
       { "scale",            convert<raytracer::Vector3, double, 3> },
       { "from",             convert<raytracer::Point3, double, 3> },
       { "to",               convert<raytracer::Point3, double, 3> },
-
+      { "attenuation",      convert<raytracer::Vector3, double, 3> },
       { "diffuse",          convert<raytracer::Vector3, double, 3> },
       { "specular",         convert<raytracer::Vector3, double, 3> },
       { "ambient",          convert<raytracer::Vector3, double, 3> },
