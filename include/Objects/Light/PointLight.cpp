@@ -14,7 +14,7 @@ namespace raytracer {
       }
 
       if(params.has("attenuation")) {
-         auto att = params.retrieve<Vector3>("att");
+         auto att = params.retrieve<Vector3>("attenuation");
          _kc = static_cast<float>(att.getX());
          _kl = static_cast<float>(att.getY());
          _kq = static_cast<float>(att.getZ());
