@@ -23,14 +23,14 @@ namespace raytracer{
       { "film",       { "type", "filename", "img_type", "x_res", "y_res",
                         "w_res", "h_res", "crop_window", "gamma_corrected" } },
       { "include",    { "filename" } },
-      { "integrator", { "type", "near_color", "far_color", "zmin", "zmax" } },
+      { "integrator", { "type", "near_color", "far_color", "zmin", "zmax", "depth" } },
       { "world_begin",{} },
       { "world_end",  {} },
       { "render_again", {} },
       { "object",     { "type", "center", "origin", "radius", "norm", "material" } },
       { "make_named_material", { "type", "name", "color", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness" } },
       { "named_material",      { "name" } },
-      { "material",   { "type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness" } },
+      { "material",   { "type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "reflectivity" } },
       { "light_source", { "type", "I", "scale", "from", "to", "attenuation" } }
    };
 
@@ -81,6 +81,7 @@ namespace raytracer{
       { "far_color",        convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "zmin",             convert<float> },
       { "zmax",             convert<float> },
+      { "depth",            convert<uint> },
 
       // Light attributes
       { "I",                convert_color },
@@ -91,7 +92,8 @@ namespace raytracer{
       { "diffuse",          convert<raytracer::Vector3, double, 3> },
       { "specular",         convert<raytracer::Vector3, double, 3> },
       { "ambient",          convert<raytracer::Vector3, double, 3> },
-      { "glossiness",       convert<float> }
+      { "glossiness",       convert<float> },
+      { "reflectivity",     convert<float> },
    };
 
    // ── helpers ──────────────────────────────────────────────────────────────────

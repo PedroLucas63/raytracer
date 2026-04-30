@@ -1,0 +1,30 @@
+<RT3>
+   <lookat look_from="-50 40 -15" look_at="15 0 5" up="0 1 0" />
+   <camera type="perspective" fovy="30" screen_window="-3 3 -1.68 1.68" />
+   <film type="image" w_res="1920" h_res="1080" filename="output/scene25.png" img_type="png" />
+   <integrator type="blinn_phong" />
+
+   <world_begin/>
+      <background type="image" filename="assets/images/studio.png" spherical="true" />
+
+
+      <material name="m1" type="blinn" diffuse="0.8 0.1 0.1" specular="1 1 1" ambient="0.1 0.1 0.1" glossiness="256"/>
+      <material name="m2" type="blinn" diffuse="0.1 0.8 0.1" specular="1 1 1" ambient="0.1 0.1 0.1" glossiness="256"/>
+      <material name="m3" type="blinn" diffuse="0.1 0.1 0.8" specular="1 1 1" ambient="0.1 0.1 0.1" glossiness="256"/>
+      <material name="m4" type="blinn" diffuse="0.8 0.8 0.1" specular="1 1 1" ambient="0.1 0.1 0.1" glossiness="256"/>
+      <material name="m5" type="blinn" diffuse="0.8 0.1 0.8" specular="1 1 1" ambient="0.1 0.1 0.1" glossiness="256"/>
+      
+      <material name="floor" type="blinn" diffuse="0.2 0.2 0.2" specular="0.1 0.1 0.1" ambient="0.02 0.02 0.02" glossiness="10"/>
+
+      <light_source type="directional" from="10 5 5" to="0 5 -5" I="1.0 1.0 1.0" scale="1 1 1" />
+      <light_source type="ambient" I="0.1 0.1 0.1"  scale="5 5 5" />
+
+
+      <object type="sphere" center="15 5 1" radius="2.0" material="m1" />   
+      <object type="sphere" center="5 5 7" radius="2.0" material="m2" />   
+      <object type="sphere" center="19 5 14" radius="2.0" material="m3" />   
+      <object type="sphere" center="24 5 7" radius="2.0" material="m3" />   
+      <object type="sphere" center="11 5 14" radius="2.0" material="m4" />  
+      <object type="sphere" center="17.8 5 7.8" radius="2.0" material="m5" />
+   <world_end/>
+</RT3>

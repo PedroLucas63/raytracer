@@ -1,26 +1,56 @@
 <RT3>
-    <lookat look_from="10 10 -5" look_at="-2 0 10" up="0 1 0" />
+    <lookat look_from="-20 15 -10" look_at="10 5 5" up="0 1 0" />
     <camera type="perspective" fovy="30" screen_window="-6 6 -3.5 3.5" />
-    <film type="image" w_res="1280" h_res="720" filename="output/scene22.png" img_type="png" />
+    <film type="image" w_res="1280" h_res="720" filename="output/reflection_plane.png" img_type="png" />
     <integrator type="blinn_phong" />
 
     <world_begin/>
-        <background type="single_color" color="242 242 242"/>
+        <background type="image" filename="assets/images/studio.png" spherical="true"/>
 
-        <material name="green" type="blinn" diffuse="0.0 0.7 0.2" specular="0.5 0.5 0.5" ambient="0.1 0.1 0.1" glossiness="32"/>
-        <material name="blue" type="blinn" diffuse="0.2 0.4 0.8" specular="0.5 0.5 0.5" ambient="0.1 0.1 0.1" glossiness="32"/>
-        <material name="cyan" type="blinn" diffuse="0.2 0.8 0.8" specular="0.5 0.5 0.5" ambient="0.1 0.1 0.1" glossiness="32"/>
-        <material name="magenta" type="blinn" diffuse="0.8 0.2 0.8" specular="0.5 0.5 0.5" ambient="0.1 0.1 0.1" glossiness="32"/>
+        <!-- Materiais reflexivos -->
+        <material name="mirror1" type="blinn"
+            diffuse="0.2 0.05 0.05"
+            specular="1 1 1"
+            ambient="0.05 0.05 0.05"
+            glossiness="256"
+            reflectivity="0.8"/>
 
-        <light_source type="directional" from="10 10 -5" to="-2 0 10" I="1.0 1.0 1.0" />
-        <light_source type="ambient" I="0.2 0.2 0.2" />
+        <material name="mirror2" type="blinn"
+            diffuse="0.05 0.2 0.05"
+            specular="1 1 1"
+            ambient="0.05 0.05 0.05"
+            glossiness="256"
+            reflectivity="0.9"/>
 
-        <object type="sphere" center="-2.2 3 3.5" radius="2.2" />
-        <object type="sphere" center="-2.2 3 6.5" radius="1.2" material="blue" />
-        <object type="sphere" center="2.2 2 3.5" radius="0.95" material="cyan" />
-        <object type="sphere" center="2.2 2 6.0" radius="2.0" material="magenta" />
+        <material name="mirror3" type="blinn"
+            diffuse="0.05 0.05 0.2"
+            specular="1 1 1"
+            ambient="0.05 0.05 0.05"
+            glossiness="256"
+            reflectivity="1.0"/>
 
-        <material type="grid" color1="123 123 123" color2="232 232 232" spacing="2"/>
+        <!-- Chão com grid e leve reflexão -->
+        <material type="grid"
+            color1="123 123 123"
+            color2="232 232 232"
+            spacing="2"
+            reflectivity="0.3"/>
+
+        <!-- Luz corrigida -->
+        <light_source type="directional"
+            from="0 10 -10"
+            to="10 0 5"
+            I="1.0 1.0 1.0"/>
+
+        <light_source type="ambient" I="0.1 0.1 0.1"/>
+
+        <!-- Esferas -->
+        <object type="sphere" center="5 5 5" radius="2.5" material="mirror1"/>
+        <object type="sphere" center="10 5 10" radius="2.5" material="mirror2"/>
+        <object type="sphere" center="15 5 5" radius="2.5" material="mirror3"/>
+
+        <!-- Plano -->
         <object type="plan" origin="0 0 0" norm="0 1 0"/>
+
     <world_end/>
 </RT3>

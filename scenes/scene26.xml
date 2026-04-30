@@ -1,0 +1,54 @@
+<RT3>
+   <lookat look_from="-30 25 -10" look_at="10 5 5" up="0 1 0" />
+   <camera type="perspective" fovy="30" screen_window="-3 3 -1.68 1.68" />
+   <film type="image" w_res="1920" h_res="1080" filename="output/scene26.png" img_type="png" />
+   <integrator type="blinn_phong" depth="3" />
+
+   <world_begin/>
+      <background type="image" filename="assets/images/studio.png" spherical="true" />
+
+      <!-- Materiais reflexivos -->
+      <material name="mirror_red" type="blinn"
+         diffuse="0.3 0.05 0.05"
+         specular="1 1 1"
+         ambient="0.05 0.05 0.05"
+         glossiness="256"
+         reflectivity="0.8"/>
+
+      <material name="mirror_green" type="blinn"
+         diffuse="0.05 0.3 0.05"
+         specular="1 1 1"
+         ambient="0.05 0.05 0.05"
+         glossiness="256"
+         reflectivity="0.9"/>
+
+      <material name="mirror_blue" type="blinn"
+         diffuse="0.05 0.05 0.3"
+         specular="1 1 1"
+         ambient="0.05 0.05 0.05"
+         glossiness="256"
+         reflectivity="1.0"/>
+
+      <!-- Chão (importante pra ver reflexo) -->
+      <material name="floor" type="blinn"
+         diffuse="0.2 0.2 0.2"
+         specular="0.2 0.2 0.2"
+         ambient="0.02 0.02 0.02"
+         glossiness="50"
+         reflectivity="0.3"/>
+
+      <!-- Luz -->
+      <light_source type="directional" from="10 10 10" to="0 0 0"
+         I="1.0 1.0 1.0" scale="1 1 1" />
+      <light_source type="ambient" I="0.1 0.1 0.1" scale="3 3 3" />
+
+      <!-- Esferas -->
+      <object type="sphere" center="5 5 5" radius="2.5" material="mirror_red" />
+      <object type="sphere" center="10 5 10" radius="2.5" material="mirror_green" />
+      <object type="sphere" center="15 5 5" radius="2.5" material="mirror_blue" />
+
+      <!-- Chão -->
+      <object type="sphere" center="10 -1000 5" radius="995" material="floor" />
+
+   <world_end/>
+</RT3>

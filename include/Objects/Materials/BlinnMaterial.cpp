@@ -1,8 +1,11 @@
 #include "Objects/Materials/BlinnMaterial.hpp"
 #include "Utils/Utils.hpp"
 
+#include "Scene/Background/Background.hpp"
+#include "Scene/Background/BackgroundImage.hpp"
 #include "Objects/Light/DirectionalLight.hpp"
 #include "Objects/Light/PointLight.hpp"
+#include "Math/Ray.hpp"
 #include <cmath>
 #include <limits>
 
@@ -32,6 +35,8 @@ namespace raytracer {
       } else {
          throw std::invalid_argument("BlinnMaterial requires a 'glossiness' parameter of type float");
       }
+
+      _reflectivity = params.retrieveOrDefault<float>("reflectivity", 0.0f);
    }
 
    // --- Getters ---
@@ -40,6 +45,7 @@ namespace raytracer {
    RGBColor BlinnMaterial::getSpecular() const { return _specular; }
    RGBColor BlinnMaterial::getAmbient()  const { return _ambient;  }
    float    BlinnMaterial::getGlossiness() const { return _glossiness; }
+   float    BlinnMaterial::getReflectivity() const { return _reflectivity; }
 
    // --- Setters (receive Vector3 from XML parser, convert to RGBColor) ---
 
@@ -71,13 +77,22 @@ namespace raytracer {
       _glossiness = glossiness;
    }
 
+   void BlinnMaterial::setReflectivity(float reflectivity) {
+      _reflectivity = std::clamp(reflectivity, 0.0f, 1.0f);
+   }
+
    // --- Color ---
 
    RGBColor BlinnMaterial::getColor(const Point3& point) const {
       return _diffuse;
    }
 
-   RGBColor BlinnMaterial::getColor(const Surfel& surfel, const Scene& scene) const {
+   RGBColor BlinnMaterial::getColor(
+      const Surfel& surfel, 
+      const Scene& scene,
+      const int currentDepth = 0,
+      const int maxDepth = 0
+   ) const {
       RGBColor L;
 
       for (auto& light : scene.getLights()) {
@@ -98,6 +113,16 @@ namespace raytracer {
       }
 
       ambientContribution(scene, L);
+
+      if (_reflectivity > 0.0f && currentDepth < maxDepth) {
+         auto reflectivityContribution = getReflectivyContribution(
+            surfel,
+            scene,
+            currentDepth, 
+            maxDepth
+         );
+         L = L * (1.0f - _reflectivity) + reflectivityContribution * _reflectivity;
+      }
 
       return L;
    }
@@ -187,6 +212,46 @@ namespace raytracer {
          return (pointLight->getPosition() - surfelPoint).normalize();
 
       return Vector3(0, 0, 0);
+   }
+
+   RGBColor BlinnMaterial::getReflectivyContribution(
+      const Surfel& surfel,
+      const Scene& scene,
+      const int currentDepth, 
+      const int maxDepth
+   ) const {
+      // [1] Get reflection direction;
+      auto I = -surfel.viewDir;
+      auto N = surfel.normal;
+      auto reflectionDir = (I - N * 2 * (I.dot(N))).normalize();
+      auto origin = surfel.point + N * 1e-4; // Offset to avoid self-intersection
+      auto reflectionRay = Ray(origin, reflectionDir);
+
+      // [2] Intersect with scene:
+      Surfel reflectionSurfel;
+      if (scene.intersectWithSurfel(reflectionRay, &reflectionSurfel)) {
+         // [2.1] Has intersection? Call getColor (check if is BlinnMaterial or not);
+         auto material = reflectionSurfel.material;
+
+         if (auto blinnMaterial = std::dynamic_pointer_cast<BlinnMaterial>(material)) {
+            return blinnMaterial->getColor(reflectionSurfel, scene, currentDepth + 1, maxDepth);
+         }
+
+         return material->getColor(reflectionSurfel.point);
+      } else {
+         // [2.2] Dont has intersection? Get background color.
+         if (!scene.hasBackground()) {
+            return RGBColor(0, 0, 0); // Default to black if no background is set
+         }
+
+         auto background = scene.getBackground();
+         auto imageBg = std::dynamic_pointer_cast<BackgroundImage>(background);
+         if (imageBg && imageBg->isSpherical())
+            return imageBg->sampleDirection(reflectionDir);
+
+         return RGBColor(0, 0, 0); // Default to black if no spherical background is set
+      }
+      // [3] Return the color
    }
 
    Vector3 BlinnMaterial::computeHalfVector(

@@ -15,6 +15,7 @@ namespace raytracer {
          RGBColor _specular;
          RGBColor _ambient;
          float    _glossiness;
+         float    _reflectivity;
 
          void lambertianReflection(
             const Vector3&                normal,
@@ -48,6 +49,13 @@ namespace raytracer {
 
          void ambientContribution(const Scene& scene, RGBColor& L) const;
 
+         RGBColor getReflectivyContribution(
+            const Surfel& surfel,
+            const Scene& scene,
+            const int currentDepth, 
+            const int maxDepth
+         ) const;
+
          Vector3 computeHalfVector(
             const Vector3& viewDir,
             const Vector3& lightDir
@@ -56,17 +64,24 @@ namespace raytracer {
       public:
          BlinnMaterial(const ParamSet& params);
          RGBColor getColor(const Point3& point) const override;
-         RGBColor getColor(const Surfel& surfel, const Scene& scene) const;
+         RGBColor getColor(
+            const Surfel& surfel, 
+            const Scene& scene,
+            const int currentDepth,
+            const int maxDepth
+         ) const;
 
          RGBColor getDiffuse()  const;
          RGBColor getSpecular() const;
          RGBColor getAmbient()  const;
          float    getGlossiness() const;
+         float    getReflectivity() const;
 
          void setDiffuse (const Vector3& diffuse);
          void setSpecular(const Vector3& specular);
          void setAmbient (const Vector3& ambient);
          void setGlossiness(float glossiness);
+         void setReflectivity(float reflectivity);
    };
 }
 

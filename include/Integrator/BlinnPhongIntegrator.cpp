@@ -17,7 +17,7 @@ namespace raytracer {
       if (!material)
          return surfel.material->getColor(surfel.point);
 
-      return material->getColor(surfel, scene);
+      return material->getColor(surfel, scene, 0, _depth);
    }
 
    bool BlinnPhongIntegrator::findClosestIntersection(
