@@ -80,7 +80,7 @@ namespace raytracer {
       float y = std::clamp(static_cast<float>(dir.getY()), -1.0f, 1.0f);
       float z = dir.getZ();
 
-      float u = 0.5f + std::atan2(z, x) / (2.0f * M_PI);
+      float u = 0.5f + std::atan2(-z, x) / (2.0f * M_PI);
       float v = 0.5f - std::asin(y) / M_PI;
 
       u = u - std::floor(u);

@@ -1,4 +1,5 @@
 #include "Objects/Light/Light.hpp"
+#include <cmath>
 
 namespace raytracer {
    Light::Light(const RGBColor intensity, const Vector3 scale) {
@@ -33,9 +34,9 @@ namespace raytracer {
 
    void Light::setScale(const Vector3& scale) {
       _intensity = Vector3(
-         _intensity.getX() * scale.getX(),
-         _intensity.getY() * scale.getY(),
-         _intensity.getZ() * scale.getZ()
+         std::clamp(_intensity.getX() * scale.getX(), 0.0, 1.0),
+         std::clamp(_intensity.getY() * scale.getY(), 0.0, 1.0),
+         std::clamp(_intensity.getZ() * scale.getZ(), 0.0, 1.0)
       );
    }
 }
