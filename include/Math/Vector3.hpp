@@ -63,6 +63,7 @@ namespace raytracer {
          Vector3 normalize() const;
          double  dot(const Vector3& other) const;
          Vector3 cross(const Vector3& other) const;
+         double angleBetween(const Vector3& other) const;
          
          /** Access operator */
          double operator[](Axis axis) const;

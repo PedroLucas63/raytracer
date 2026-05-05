@@ -212,4 +212,16 @@ namespace raytracer {
          _x*other._y - _y*other._x
       );
    }
+
+   double Vector3::angleBetween(const Vector3& other) const {
+      auto numerator = dot(other);
+      auto denominator = length() * other.length();
+
+      if (std::abs(denominator) < 1e-8) return 0.0;
+
+      auto cosAngle = numerator / denominator;
+      auto rad = std::acos(cosAngle);
+
+      return rad * (180.0 / M_PI);
+   }
 }
