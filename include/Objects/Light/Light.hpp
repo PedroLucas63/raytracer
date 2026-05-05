@@ -23,6 +23,8 @@ namespace raytracer {
          virtual void setScale(const Vector3& scale);
 
          virtual float getAttenuation(const Point3& point) const;
+         virtual double getTMax(const Point3& point) const;
+         virtual Vector3 getDirectionByPoint(const Point3& point) const;
    };
 }
 

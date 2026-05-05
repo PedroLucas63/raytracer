@@ -37,4 +37,12 @@ namespace raytracer {
       float d = (_position - point).length();
       return computeAttenuation(d);
    }
+
+   double PointLight::getTMax(const Point3& point) const {
+      return (_position - point).length();
+   }
+
+   Vector3 PointLight::getDirectionByPoint(const Point3& point) const {
+      return (_position - point).normalize();
+   }
 }

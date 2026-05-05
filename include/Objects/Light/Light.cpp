@@ -44,4 +44,14 @@ namespace raytracer {
       // Base Light class has no attenuation, so return 1.0 (full intensity)
       return 1.0f;
    }
+
+   double Light::getTMax(const Point3& point) const {
+      // Base Light class has no attenuation, so return infinity (no max distance)
+      return std::numeric_limits<double>::infinity();
+   }
+
+   Vector3 Light::getDirectionByPoint(const Point3& point) const {
+      // Base Light class has no direction, so return a zero vector
+      return Vector3(0.0, 0.0, 0.0);
+   }
 }

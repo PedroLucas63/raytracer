@@ -16,6 +16,8 @@ namespace raytracer {
          Vector3 getDirection() const;
          void setDirection(const Vector3& direction);
          void setDirection(const Point3& from, const Point3& to);
+
+         Vector3 getDirectionByPoint(const Point3& point) const override;
    };
 }
 

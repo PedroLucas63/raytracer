@@ -25,11 +25,6 @@ namespace raytracer {
             RGBColor&                     L
          ) const;
 
-         Vector3 computeLightDirection(
-            const Point3&              surfelPoint,
-            const std::shared_ptr<Light> light
-         ) const;
-
          void specularReflection(
             const Vector3&                viewDir,
             const Vector3&                normal,

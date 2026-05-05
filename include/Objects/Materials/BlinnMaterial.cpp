@@ -96,7 +96,7 @@ namespace raytracer {
       RGBColor L;
 
       for (auto& light : scene.getLights()) {
-         auto lightDir = computeLightDirection(surfel.point, light);
+         auto lightDir = light->getDirectionByPoint(surfel.point);
 
          float att = light->getAttenuation(surfel.point);
 
@@ -132,13 +132,10 @@ namespace raytracer {
       const Scene&                  scene
    ) const {
       // TODO: Transform this constant to a parameter of the integrator.
+      // This epsilon value is used to offset the origin of the shadow ray or reflection ray.
       constexpr double SHADOW_EPS = 1e-4;
 
-      // TODO: Add a method to Light class to get the maximum distance for shadow ray (for point lights, it's the distance to the light; for directional lights, it's infinity).
-      double tMax = std::numeric_limits<double>::infinity();
-      if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light)) {
-         tMax = (pointLight->getPosition() - hitPoint).length() - SHADOW_EPS;
-      }
+      double tMax = light->getTMax(hitPoint) - SHADOW_EPS;
 
       Point3 shadowOrigin = hitPoint + normal * SHADOW_EPS;
       Ray    shadowRay(shadowOrigin, lightDir, SHADOW_EPS, tMax);
@@ -198,37 +195,20 @@ namespace raytracer {
       }
    }
 
-   Vector3 BlinnMaterial::computeLightDirection(
-      const Point3& surfelPoint,
-      const std::shared_ptr<Light> light
-   ) const {
-      // TODO: Add a method to Light class to get the light direction for a given point, so we don't need to use dynamic_cast here.
-      if (auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light))
-         return -directionalLight->getDirection();
-
-      if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light))
-         return (pointLight->getPosition() - surfelPoint).normalize();
-
-      return Vector3(0, 0, 0);
-   }
-
    RGBColor BlinnMaterial::getReflectivyContribution(
       const Surfel& surfel,
       const Scene& scene,
       const int currentDepth, 
       const int maxDepth
    ) const {
-      // [1] Get reflection direction;
       auto I = -surfel.viewDir;
       auto N = surfel.normal;
       auto reflectionDir = (I - N * 2 * (I.dot(N))).normalize();
       auto origin = surfel.point + N * 1e-4; // Offset to avoid self-intersection
       auto reflectionRay = Ray(origin, reflectionDir);
 
-      // [2] Intersect with scene:
       Surfel reflectionSurfel;
       if (scene.intersectWithSurfel(reflectionRay, &reflectionSurfel)) {
-         // [2.1] Has intersection? Call getColor (check if is BlinnMaterial or not);
          auto material = reflectionSurfel.material;
 
          if (auto blinnMaterial = std::dynamic_pointer_cast<BlinnMaterial>(material)) {
@@ -237,7 +217,6 @@ namespace raytracer {
 
          return material->getColor(reflectionSurfel.point);
       } else {
-         // [2.2] Dont has intersection? Get background color.
          if (!scene.hasBackground()) {
             return RGBColor(0, 0, 0); // Default to black if no background is set
          }
@@ -249,7 +228,6 @@ namespace raytracer {
 
          return RGBColor(0, 0, 0); // Default to black if no spherical background is set
       }
-      // [3] Return the color
    }
 
    Vector3 BlinnMaterial::computeHalfVector(

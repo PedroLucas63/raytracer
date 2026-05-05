@@ -26,4 +26,8 @@ namespace raytracer {
    void DirectionalLight::setDirection(const Point3& from, const Point3& to) {
       _direction = (to - from).normalize();
    }
+
+   Vector3 DirectionalLight::getDirectionByPoint(const Point3& point) const {
+      return -_direction;
+   }
 }

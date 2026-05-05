@@ -23,6 +23,8 @@ namespace raytracer {
          void setPosition(const Point3& position);
          
          float getAttenuation(const Point3& point) const override;
+         double getTMax(const Point3& point) const override;
+         Vector3 getDirectionByPoint(const Point3& point) const override;
       };
 }
 
