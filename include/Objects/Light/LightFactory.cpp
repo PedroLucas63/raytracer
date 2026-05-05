@@ -2,6 +2,7 @@
 #include "Objects/Light/PointLight.hpp"
 #include "Objects/Light/DirectionalLight.hpp"
 #include "Objects/Light/AmbientLight.hpp"
+#include "Objects/Light/SpotLight.hpp"
 
 namespace raytracer {
    std::string LightFactory::getType(const ParamSet& params) {
@@ -12,7 +13,8 @@ namespace raytracer {
    }
 
    bool LightFactory::validateType(const std::string& type) {
-      return type == "point" || type == "directional" || type == "ambient";
+      return type == "point" || type == "directional" 
+         || type == "ambient" || type == "spot";
    }
    
    std::shared_ptr<Light> LightFactory::create(const ParamSet& params) {
@@ -27,6 +29,8 @@ namespace raytracer {
          return std::make_shared<DirectionalLight>(params);
       } else if (type == "ambient") {
          return std::make_shared<AmbientLight>(params);
+      } else if (type == "spot") {
+         return std::make_shared<SpotLight>(params);
       } else {
          throw std::invalid_argument("Unknown light type: " + type);
       }
