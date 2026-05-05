@@ -32,4 +32,9 @@ namespace raytracer {
    float PointLight::computeAttenuation(float d) const {
       return 1.0f / (_kc + _kl * d + _kq * d * d);
    }
+
+   float PointLight::getAttenuation(const Point3& point) const  {
+      float d = (_position - point).length();
+      return computeAttenuation(d);
+   }
 }

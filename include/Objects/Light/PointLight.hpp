@@ -11,6 +11,8 @@ namespace raytracer {
          float _kc = 1.0f; // Constant attenuation factor
          float _kl = 0.0f; // Linear attenuation factor
          float _kq = 0.0f; // Quadratic attenuation factor
+
+         float computeAttenuation(float d) const;
          
       public:
          PointLight(const RGBColor intensity, const Vector3 scale, const Point3 position);
@@ -19,7 +21,8 @@ namespace raytracer {
 
          Point3 getPosition() const;
          void setPosition(const Point3& position);
-         float computeAttenuation(float d) const;
+         
+         float getAttenuation(const Point3& point) const override;
       };
 }
 

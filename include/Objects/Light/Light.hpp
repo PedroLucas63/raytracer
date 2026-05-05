@@ -4,6 +4,7 @@
 #include "Image/RGBColor.hpp"
 #include "Core/ParamSet.hpp"
 #include "Math/Vector3.hpp"
+#include "Math/Point3.hpp"
 
 namespace raytracer {
    class Light {
@@ -20,6 +21,8 @@ namespace raytracer {
          virtual void setIntensity(const RGBColor& intensity);
 
          virtual void setScale(const Vector3& scale);
+
+         virtual float getAttenuation(const Point3& point) const;
    };
 }
 

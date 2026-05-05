@@ -98,15 +98,10 @@ namespace raytracer {
       for (auto& light : scene.getLights()) {
          auto lightDir = computeLightDirection(surfel.point, light);
 
-         float att = 1.0f;
-         if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light)) {
-            auto distance = (pointLight->getPosition() - surfel.point).length();
-            att = pointLight->computeAttenuation(distance);
-         }
+         float att = light->getAttenuation(surfel.point);
 
          if (isOccluded(surfel.point, surfel.normal, lightDir, light, scene))
             continue;
-
 
          lambertianReflection(surfel.normal, lightDir, light, att, L);
          specularReflection(surfel.viewDir, surfel.normal, lightDir, light, att, L);
@@ -136,8 +131,10 @@ namespace raytracer {
       const std::shared_ptr<Light>& light,
       const Scene&                  scene
    ) const {
+      // TODO: Transform this constant to a parameter of the integrator.
       constexpr double SHADOW_EPS = 1e-4;
 
+      // TODO: Add a method to Light class to get the maximum distance for shadow ray (for point lights, it's the distance to the light; for directional lights, it's infinity).
       double tMax = std::numeric_limits<double>::infinity();
       if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light)) {
          tMax = (pointLight->getPosition() - hitPoint).length() - SHADOW_EPS;
@@ -205,6 +202,7 @@ namespace raytracer {
       const Point3& surfelPoint,
       const std::shared_ptr<Light> light
    ) const {
+      // TODO: Add a method to Light class to get the light direction for a given point, so we don't need to use dynamic_cast here.
       if (auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light))
          return -directionalLight->getDirection();
 
@@ -261,6 +259,7 @@ namespace raytracer {
       auto numerator   = viewDir + lightDir;
       auto denominator = numerator.length();
 
+      // TODO: Create a constant to represent this epsilon value, and use it in all places where we need to compare against zero (e.g., in normalization).
       if (denominator < 1e-8)
          return Vector3(0, 0, 0);
       return numerator / denominator;

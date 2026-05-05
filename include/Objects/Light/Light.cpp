@@ -39,4 +39,9 @@ namespace raytracer {
          std::clamp(_intensity.getZ() * scale.getZ(), 0.0, 1.0)
       );
    }
+
+   float Light::getAttenuation(const Point3& point) const {
+      // Base Light class has no attenuation, so return 1.0 (full intensity)
+      return 1.0f;
+   }
 }
