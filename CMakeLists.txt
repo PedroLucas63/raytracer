@@ -31,6 +31,7 @@ add_library(raytracer_core
 	include/Objects/Light/PointLight.cpp
 	include/Objects/Light/AmbientLight.cpp
 	include/Objects/Light/DirectionalLight.cpp
+	include/Objects/Light/SpotLight.cpp
 	include/Objects/Light/LightFactory.cpp
 	include/Integrator/Integrator.cpp
 	include/Integrator/RayCastIntegrator.cpp
