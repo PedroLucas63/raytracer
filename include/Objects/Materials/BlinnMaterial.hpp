@@ -14,8 +14,8 @@ namespace raytracer {
          RGBColor _diffuse;
          RGBColor _specular;
          RGBColor _ambient;
+         Vector3    _mirror;
          float    _glossiness;
-         float    _reflectivity;
 
          void lambertianReflection(
             const Vector3&                normal,
@@ -44,7 +44,7 @@ namespace raytracer {
 
          void ambientContribution(const Scene& scene, RGBColor& L) const;
 
-         RGBColor getReflectivyContribution(
+         RGBColor getMirrorContribution(
             const Surfel& surfel,
             const Scene& scene,
             const int currentDepth, 
@@ -70,13 +70,13 @@ namespace raytracer {
          RGBColor getSpecular() const;
          RGBColor getAmbient()  const;
          float    getGlossiness() const;
-         float    getReflectivity() const;
+         Vector3  getMirror() const;
 
          void setDiffuse (const Vector3& diffuse);
          void setSpecular(const Vector3& specular);
          void setAmbient (const Vector3& ambient);
          void setGlossiness(float glossiness);
-         void setReflectivity(float reflectivity);
+         void setMirror(const Vector3& mirror);
    };
 }
 

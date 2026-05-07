@@ -1,13 +1,13 @@
 #include "Objects/PrimitiveFactory.hpp"
 #include "Objects/GeometricPrimitive.hpp"
 #include "Objects/Shapes/Sphere.hpp"
-#include "Objects/Shapes/Plan.hpp"
+#include "Objects/Shapes/Plane.hpp"
 #include "Objects/Shapes/Shape.hpp"
 #include <iostream>
 
 namespace raytracer {
    bool PrimitiveFactory::isGeometricPrimitive(const std::string& type) {
-      return type == "sphere" || type == "plan";
+      return type == "sphere" || type == "plane";
    }
 
    std::shared_ptr<Primitive> PrimitiveFactory::createGeometricPrimitive(
@@ -32,8 +32,8 @@ namespace raytracer {
       std::shared_ptr<Shape> shape;
       if (type == "sphere") {
          shape = std::make_shared<Sphere>(params);
-      } else if (type == "plan") {
-         shape = std::make_shared<Plan>(params);
+      } else if (type == "plane") {
+         shape = std::make_shared<Plane>(params);
       } else {
          throw std::invalid_argument("Unknown primitive type: " + type);
       }

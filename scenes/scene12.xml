@@ -18,6 +18,6 @@
         <object type="sphere" center="-2.2 3 6.5" radius="1.2" material="blue" />
         <object type="sphere" center="2.2 2 3.5" radius="0.95" material="cyan" />
         <object type="sphere" center="2.2 2 6.0" radius="2.0" material="magenta" />
-        <object type="plan" origin="0 0 0" norm="0 1 0" material="grid" />
+        <object type="plane" origin="0 0 0" norm="0 1 0" material="grid" />
     <world_end/>
 </RT3>

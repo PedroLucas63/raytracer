@@ -30,7 +30,7 @@ namespace raytracer{
       { "object",     { "type", "center", "origin", "radius", "norm", "material" } },
       { "make_named_material", { "type", "name", "color", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness" } },
       { "named_material",      { "name" } },
-      { "material",   { "type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "reflectivity" } },
+      { "material",   { "type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "mirror" } },
       { "light_source", { "type", "I", "scale", "from", "to", "attenuation", "cutoff", "falloff", "world_radius" } }
    };
 
@@ -93,7 +93,7 @@ namespace raytracer{
       { "specular",         convert<raytracer::Vector3, double, 3> },
       { "ambient",          convert<raytracer::Vector3, double, 3> },
       { "glossiness",       convert<float> },
-      { "reflectivity",     convert<float> },
+      { "mirror",           convert<raytracer::Vector3, double, 3> },
       { "cutoff",           convert<float> },
       { "falloff",          convert<float> },
       { "world_radius",     convert<float> },

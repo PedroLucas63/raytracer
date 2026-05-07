@@ -1,7 +1,7 @@
 <RT3>
     <lookat look_from="-20 15 -10" look_at="10 5 5" up="0 1 0" />
     <camera type="perspective" fovy="30" screen_window="-6 6 -3.5 3.5" />
-    <film type="image" w_res="1280" h_res="720" filename="output/reflection_plane.png" img_type="png" />
+    <film type="image" w_res="1280" h_res="720" filename="output/scene22.png" img_type="png" />
     <integrator type="blinn_phong" />
 
     <world_begin/>
@@ -13,28 +13,28 @@
             specular="1 1 1"
             ambient="0.05 0.05 0.05"
             glossiness="256"
-            reflectivity="0.8"/>
+            mirror="0.8 0.8 0.8"/>
 
         <material name="mirror2" type="blinn"
             diffuse="0.05 0.2 0.05"
             specular="1 1 1"
             ambient="0.05 0.05 0.05"
             glossiness="256"
-            reflectivity="0.9"/>
+            mirror="0.9 0.9 0.9"/>
 
         <material name="mirror3" type="blinn"
             diffuse="0.05 0.05 0.2"
             specular="1 1 1"
             ambient="0.05 0.05 0.05"
             glossiness="256"
-            reflectivity="1.0"/>
+            mirror="1.0 1.0 1.0"/>
 
         <!-- Chão com grid e leve reflexão -->
         <material type="grid"
             color1="123 123 123"
             color2="232 232 232"
             spacing="2"
-            reflectivity="0.3"/>
+            mirror="0.3 0.3 0.3"/>
 
         <!-- Luz corrigida -->
         <light_source type="directional"
@@ -50,7 +50,7 @@
         <object type="sphere" center="15 5 5" radius="2.5" material="mirror3"/>
 
         <!-- Plano -->
-        <object type="plan" origin="0 0 0" norm="0 1 0"/>
+        <object type="plane" origin="0 0 0" norm="0 1 0"/>
 
     <world_end/>
 </RT3>

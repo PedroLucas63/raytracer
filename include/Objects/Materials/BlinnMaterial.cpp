@@ -36,7 +36,10 @@ namespace raytracer {
          throw std::invalid_argument("BlinnMaterial requires a 'glossiness' parameter of type float");
       }
 
-      _reflectivity = params.retrieveOrDefault<float>("reflectivity", 0.0f);
+      _mirror = params.retrieveOrDefault<Vector3>(
+         "mirror", 
+         Vector3(0.0f, 0.0f, 0.0f)
+      );
    }
 
    // --- Getters ---
@@ -45,7 +48,7 @@ namespace raytracer {
    RGBColor BlinnMaterial::getSpecular() const { return _specular; }
    RGBColor BlinnMaterial::getAmbient()  const { return _ambient;  }
    float    BlinnMaterial::getGlossiness() const { return _glossiness; }
-   float    BlinnMaterial::getReflectivity() const { return _reflectivity; }
+   Vector3  BlinnMaterial::getMirror() const { return _mirror; }
 
    // --- Setters (receive Vector3 from XML parser, convert to RGBColor) ---
 
@@ -77,8 +80,8 @@ namespace raytracer {
       _glossiness = glossiness;
    }
 
-   void BlinnMaterial::setReflectivity(float reflectivity) {
-      _reflectivity = std::clamp(reflectivity, 0.0f, 1.0f);
+   void BlinnMaterial::setMirror(const Vector3& mirror) {
+      _mirror = mirror;
    }
 
    // --- Color ---
@@ -109,14 +112,18 @@ namespace raytracer {
 
       ambientContribution(scene, L);
 
-      if (_reflectivity > 0.0f && currentDepth < maxDepth) {
-         auto reflectivityContribution = getReflectivyContribution(
+      if (_mirror.length() > 0.0f && currentDepth < maxDepth) {
+         auto reflectivityContribution = getMirrorContribution(
             surfel,
             scene,
             currentDepth, 
             maxDepth
          );
-         L = L * (1.0f - _reflectivity) + reflectivityContribution * _reflectivity;
+
+         auto inverseMirror = VECTOR3_ONE - _mirror;
+         auto colorContribution = multiplyColorByIntensity(L, inverseMirror);
+         auto mirrorContribution = multiplyColorByIntensity(reflectivityContribution, _mirror);
+         L = colorContribution + mirrorContribution;
       }
 
       return L;
@@ -195,7 +202,7 @@ namespace raytracer {
       }
    }
 
-   RGBColor BlinnMaterial::getReflectivyContribution(
+   RGBColor BlinnMaterial::getMirrorContribution(
       const Surfel& surfel,
       const Scene& scene,
       const int currentDepth, 

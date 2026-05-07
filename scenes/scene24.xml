@@ -11,10 +11,8 @@
     <camera type="perspective" fovy="42" />
     <integrator type="blinn_phong" depth="1" />
     <film type="image" w_res="1280" h_res="720"
-          filename="output/temple.png" img_type="png" />
-
-    <aggregator type="list"/>
-
+          filename="output/scene24.png" img_type="png" />
+          
     <world_begin/>
 
         <!-- ── Fundo escuro azulado ── -->
@@ -105,7 +103,7 @@
 
         <!-- ── PISO (plano de pedra escura) ── -->
         <named_material name="stone"/>
-        <object type="plan" origin="0 0 0" norm="0 1 0" />
+        <object type="plane" origin="0 0 0" norm="0 1 0" />
 
         <!-- ── DEGRAU 1: base larga (y=0.3, raio 0.3) ── -->
         <!-- Fileira frontal Z = -3.5 -->

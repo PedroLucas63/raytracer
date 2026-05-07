@@ -24,7 +24,7 @@ add_library(raytracer_core
 	include/Objects/PrimitiveFactory.cpp
 	include/Objects/GeometricPrimitive.cpp
 	include/Objects/Shapes/Sphere.cpp
-	include/Objects/Shapes/Plan.cpp
+	include/Objects/Shapes/Plane.cpp
 	include/Objects/Aggregate/AggregatePrimitive.cpp
 	include/Objects/Aggregate/PrimitiveList.cpp
 	include/Objects/Light/Light.cpp

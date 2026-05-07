@@ -6,7 +6,7 @@
 #include "Objects/Shapes/Shape.hpp"
 
 namespace raytracer {
-   class Plan : public Shape {
+   class Plane : public Shape {
       private:
          Point3 _origin;
          Vector3 _norm;
@@ -14,11 +14,11 @@ namespace raytracer {
          float getIntersection(const Ray& ray) const;
          
       public:
-         Plan(const Point3& origin, const Vector3& vec)
+         Plane(const Point3& origin, const Vector3& vec)
             : _origin(origin), _norm(vec.normalize()) {}
-         Plan(const ParamSet& params);
+         Plane(const ParamSet& params);
 
-         ~Plan() = default;
+         ~Plane() = default;
 
          bool intersect(const Ray& ray) const;
          bool intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const;
