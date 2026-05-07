@@ -13,18 +13,19 @@ namespace raytracer {
    }
 
    SpotLight::SpotLight(const ParamSet& params) : Light(params) {
-      Vector3 from, to;
+      Point3 from, to;
       if (params.has("from") && params.has("to")) {
-         from = params.retrieve<Vector3>("from");
-         to = params.retrieve<Vector3>("to");
+         from = params.retrieve<Point3>("from");
+         to = params.retrieve<Point3>("to");
       } else {
-         throw std::invalid_argument("Spot Light requires 'from' and 'to' parameters of type Vector3"); 
+         throw std::invalid_argument("Spot Light requires 'from' and 'to' parameters of type Point3"); 
       }
 
+      _from = from;
       _direction = (to - from).normalize();
 
-      _cutoff = params.retrieveOrDefault("cutoff", 0.0);
-      _falloff = params.retrieveOrDefault("falloff", 0.0);
+      _cutoff = params.retrieveOrDefault("cutoff", 0.0f);
+      _falloff = params.retrieveOrDefault("falloff", 0.0f);
    }
 
    float SpotLight::getAttenuation(const Point3& point) const {
@@ -38,5 +39,13 @@ namespace raytracer {
       auto diffCutoff = _cutoff - _falloff;
 
       return 1.0f - (diffAngle / diffCutoff);
+   }
+
+   double SpotLight::getTMax(const Point3& point) const {
+      return (_from - point).length();
+   }
+
+   Vector3 SpotLight::getDirectionByPoint(const Point3& point) const {
+      return (_from - point).normalize();
    }
 }
