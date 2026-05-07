@@ -15,8 +15,9 @@
         
         <material name="floor" type="blinn" diffuse="0.2 0.2 0.2" specular="0.1 0.1 0.1" ambient="0.02 0.02 0.02" glossiness="10"/>
 
-        <light_source type="spot" I="0.8 0.8 0.7" scale="1 1 1" from="10 15 5" to="0 0 5" cutoff="30" falloff="15" />
-        <light_source type="ambient" I="0.1 0.1 0.1"  scale="1 1 1" />
+        <light_source type="point" from="0 2 5" I="0.5 0.5 1.0"/>
+        <light_source type="directional" from="10 10 -5" to="-2 0 10" I="1.0 1.0 1.0" world_radius="50"/>
+        <light_source type="ambient" I="0.1 0.1 0.1"  scale="4 4 4" />
 
 
         <object type="sphere" center="0 1 9" radius="1.0" material="m1" />   

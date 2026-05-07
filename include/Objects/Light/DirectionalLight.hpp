@@ -3,11 +3,13 @@
 
 #include "Objects/Light/Light.hpp"
 #include "Math/Point3.hpp"
+#include <limits>
 
 namespace raytracer {
    class DirectionalLight : public Light {
       private:
          Vector3 _direction;
+         double  _worldRadius = std::numeric_limits<double>::infinity();
 
       public:
          DirectionalLight(const ParamSet& params);
@@ -18,6 +20,7 @@ namespace raytracer {
          void setDirection(const Point3& from, const Point3& to);
 
          Vector3 getDirectionByPoint(const Point3& point) const override;
+         double  getTMax(const Point3& point) const override;
    };
 }
 

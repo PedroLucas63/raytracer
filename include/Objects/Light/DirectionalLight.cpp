@@ -13,6 +13,10 @@ namespace raytracer {
       auto to = params.retrieve<Point3>("to");
 
       setDirection(from, to);
+
+      if (params.has("world_radius")) {
+         _worldRadius = params.retrieve<float>("world_radius");
+      }
    }
 
    Vector3 DirectionalLight::getDirection() const {
@@ -29,5 +33,9 @@ namespace raytracer {
 
    Vector3 DirectionalLight::getDirectionByPoint(const Point3& point) const {
       return -_direction;
+   }
+
+   double DirectionalLight::getTMax(const Point3& point) const {
+      return _worldRadius;
    }
 }
