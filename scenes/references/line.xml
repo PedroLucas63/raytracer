@@ -1,0 +1,10 @@
+<RT3>
+	<world_begin/>
+		<material type="blinn" name="redish" ambient="0.1 0.1 0.1" diffuse ="0.9 0.2 0.1"  specular ="0.8 0.8 0.8"  glossiness ="256"/>
+		<object type="sphere" radius="1" center="0 2 0" />
+		<object type="sphere" radius="1" center="0 4 0" />
+		<object type="sphere" radius="1" center="0 6 0" />
+		<object type="sphere" radius="1" center="0 8 0" />
+		<object type="sphere" radius="1" center="0 10 0" />
+	<world_end/>
+</RT3>

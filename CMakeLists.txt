@@ -59,6 +59,9 @@ target_include_directories(raytracer_core
 add_executable(raytracer src/main.cpp)
 target_link_libraries(raytracer PRIVATE raytracer_core)
 
+add_executable(sphere-builder extras/sphere-builder.cpp)
+target_link_libraries(sphere-builder PRIVATE raytracer_core)
+
 find_package(Stb REQUIRED)
 target_include_directories(raytracer PRIVATE ${Stb_INCLUDE_DIR})
 target_include_directories(raytracer_core PRIVATE ${Stb_INCLUDE_DIR})
@@ -66,6 +69,7 @@ target_include_directories(raytracer_core PRIVATE ${Stb_INCLUDE_DIR})
 find_package(CLI11 CONFIG REQUIRED)
 target_link_libraries(raytracer PRIVATE CLI11::CLI11)
 target_link_libraries(raytracer_core PRIVATE CLI11::CLI11)
+target_link_libraries(sphere-builder PRIVATE CLI11::CLI11)
 
 find_package(tinyxml2 CONFIG REQUIRED)
 
