@@ -28,3 +28,4 @@ rm -rf output
 ./build/raytracer scenes/scene27.xml
 ./build/raytracer scenes/scene28.xml
 ./build/raytracer scenes/scene29.xml
+./build/raytracer scenes/scene30.xml
