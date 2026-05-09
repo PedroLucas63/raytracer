@@ -25,6 +25,11 @@ struct SphereData {
 
 using SphereList = std::vector<SphereData>; 
 
+auto RAD30 = std::numbers::pi / 6.0; // 30 degrees in radians
+auto TAN30 = std::tan(RAD30); // tangent of 30 degrees
+auto COS30 = std::cos(RAD30); // cosine of 30 degrees
+auto SIN30 = std::sin(RAD30); // sine of 30 degrees
+
 void configureCLI(CLI::App& app, CLIData& data);
 bool parse(CLI::App& app, int argc, char** argv);
 raytracer::Point3 makePoint3(const Point3Tuple& tuple);
@@ -33,6 +38,8 @@ void closeFile(std::ofstream& file);
 SphereList generateSpheres(const CLIData& data);
 SphereList generateLine(const CLIData& data);
 SphereList generateTriangular(const CLIData& data);
+SphereList generateTetrahedron(const CLIData& data);
+SphereList generatePyramid(const CLIData& data);
 void printSpheresInFile(SphereList& list, std::ofstream& file);
 
 int main(int argc, char** argv) {
@@ -135,6 +142,12 @@ SphereList generateSpheres(const CLIData& data) {
       return generateLine(data);
    } else if (data.base == 2) {
       return generateTriangular(data);
+   } else if (data.base == 3) {
+      return generateTetrahedron(data);
+   } else if (data.base == 4) {
+      return generatePyramid(data);
+   } else {
+      throw std::invalid_argument("You cannot define a base grater than 4.");
    }
 
    return SphereList();
@@ -189,6 +202,100 @@ SphereList generateTriangular(const CLIData& data) {
    newData.levels -= 1;
    auto list = generateTriangular(newData);
 
+
+   list.insert(list.begin(), spheres.begin(), spheres.end());
+
+   return list;
+}
+
+SphereList generateTetrahedron(const CLIData& data) {
+   if (data.levels == 0) return SphereList();
+
+   auto HIP = data.radius / COS30;
+   auto CO = data.radius * TAN30;
+   auto H = std::sqrt(4 * data.radius * data.radius - HIP * HIP);
+   auto DZ = std::numbers::sqrt3 * data.radius;
+
+   auto center = data.point;
+   auto newY = center.getY() - H * (data.levels - 1);
+   center.setY(newY);
+
+   auto newX = center.getX() - data.radius * (data.levels - 1);
+   center.setX(newX);
+
+   auto newZ = center.getZ() - CO * (data.levels - 1);
+   center.setZ(newZ);
+
+   SphereList spheres;
+   for(int i = 0; i < data.levels; i++) {
+      auto count = data.levels - i;
+      auto lineCenter = center;
+
+      for (int j = 0; j < count; j++) {
+         SphereData sphere;
+         sphere.center = lineCenter;
+         sphere.radius = data.radius;
+
+         spheres.push_back(sphere);
+
+         newX = lineCenter.getX() + 2 * data.radius;
+         lineCenter.setX(newX);
+     }
+
+      newZ = center.getZ() + DZ;
+      center.setZ(newZ);
+
+      newX = center.getX() + data.radius;
+      center.setX(newX);
+   }
+
+   auto newData = data;
+   newData.levels -= 1;
+   auto list = generateTetrahedron(newData);
+
+   list.insert(list.begin(), spheres.begin(), spheres.end());
+
+   return list;
+}
+
+SphereList generatePyramid(const CLIData& data) {
+   if (data.levels == 0) return SphereList();
+
+   auto HIP = std::numbers::sqrt2 * data.radius;
+   auto H = std::sqrt(4 * data.radius * data.radius - HIP * HIP);
+
+   auto center = data.point;
+   auto newY = center.getY() - H * (data.levels - 1);
+   center.setY(newY);
+
+   auto newX = center.getX() - data.radius * (data.levels - 1);
+   center.setX(newX);
+
+   auto newZ = center.getZ() - data.radius * (data.levels - 1);
+   center.setZ(newZ);
+
+   SphereList spheres;
+   for(int i = 0; i < data.levels; i++) {
+      auto lineCenter = center;
+
+      for (int j = 0; j < data.levels; j++) {
+         SphereData sphere;
+         sphere.center = lineCenter;
+         sphere.radius = data.radius;
+
+         spheres.push_back(sphere);
+
+         newX = lineCenter.getX() + 2 * data.radius;
+         lineCenter.setX(newX);
+     }
+
+      newZ = center.getZ() + data.radius;
+      center.setZ(newZ);
+   }
+
+   auto newData = data;
+   newData.levels -= 1;
+   auto list = generatePyramid(newData);
 
    list.insert(list.begin(), spheres.begin(), spheres.end());
 

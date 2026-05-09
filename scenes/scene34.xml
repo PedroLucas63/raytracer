@@ -1,0 +1,23 @@
+
+<RT3>
+    <lookat look_from="10 5 -10" look_at="-10 5 10" up="0 1 0" />
+    <camera type="perspective" fovy="60" /> 
+    <integrator type="blinn_phong" depth="1" />
+    <film type="image" w_res="1920" h_res="1200" filename="output/scene34.png" img_type="png" gamma_corrected="false" />
+    <include filename="scenes/references/pyramid.xml" />
+
+    <!-- The Scene -->
+    <world_begin/>
+
+        <!-- The Background -->
+        <background type="4_colors" bl="176 214 175" tl="4 99 202" tr="4 99 202" br="176 214 175" />
+
+        <!-- Lights -->
+        <light_source type="ambient" I="0.1 0.1 0.1" scale="0.5 0.5 0.5" />
+        <light_source type="point"
+            from="0 15 0"
+            I="1.0 0.97 0.93"
+            scale="1.0 1.0 1.0" />
+
+    <world_end/>
+</RT3>

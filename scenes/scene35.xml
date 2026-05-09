@@ -1,0 +1,33 @@
+
+<RT3>
+    <lookat look_from="-5 6.5 -10" look_at="1 2.5 1" up="0 1 0" />
+    <camera type="perspective" fovy="45" /> 
+    <integrator type="blinn_phong" depth="3" />
+    <film type="image" w_res="1920" h_res="1200" filename="output/scene35.png" img_type="png" gamma_corrected="false" />
+    <include filename="scenes/references/pyramid_jade.xml" />
+
+    <!-- The Scene -->
+    <world_begin/>
+
+        <!-- The Background -->
+        <background type="4_colors" bl="176 214 175" tl="4 99 202" tr="4 99 202" br="176 214 175" />
+
+        <!-- Lights -->
+        <light_source type="ambient" I="0.1 0.1 0.1" scale="0.5 0.5 0.5" />
+        <light_source type="directional" I="0.9 0.9 0.9" scale="0.6 0.6 0.6" from="1 1.45 -3" to="0 0 1" />
+        <light_source type="point" I="0.95 0.9 0.8" scale="0.8 0.8 0.8" from="0 4.0 -1" />
+
+        <!-- Material Library -->
+        <material 
+            type="blinn" 
+            name="grey"
+            ambient="0.1 0.1 0.1" 
+            diffuse ="0.9 0.9 0.9"  
+            specular ="0 0 0"        
+            glossiness ="0"
+        />
+
+        <!-- Objects -->
+        <object type="plane" origin="0 0 0" norm="0 1 0" />
+    <world_end/>
+</RT3>
