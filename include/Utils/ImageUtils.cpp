@@ -28,6 +28,8 @@ namespace raytracer {
          return NETPBM_P3; // Default to P3 for .ppm files
       } else if (extension == ".PPM") {
          return NETPBM_P6; // Default to P6 for .PPM files
+      } else if (extension == ".hdr") {
+         return HDR; // Default to HDR for .hdr files
       } else {
          throw std::invalid_argument("Unsupported file extension: " + extension);
       }
@@ -131,6 +133,35 @@ namespace raytracer {
       }
 
       file.close();
+      return image;
+   }
+
+   Image ImageUtils::loadHDRImage(const std::string& filename) {
+      int width, height, channels;
+      auto data = stbi_loadf(filename.c_str(), &width, &height, &channels, 0);
+
+      if (!data) throw std::runtime_error("Image cannot load.");
+
+      Image image(width, height, channels);
+      for (int row = 0; row < height; row++) {
+         for (int col = 0; col < width; col++) {
+            size_t index = (row * width + col) * channels;
+
+            float red, green, blue;
+
+            if (channels == 1) {
+               red = green = blue = data[index];
+            } else {
+               red = data[index];
+               green = data[index + 1];
+               blue = data[index + 2];
+            }
+            auto color = RGBColor::fromNormalized(red, green, blue);
+            image.setPixel(color, row, col);
+         }
+      }
+
+      stbi_image_free(data);
       return image;
    }
 
@@ -239,18 +270,48 @@ namespace raytracer {
       file.close();
    }
 
+   void ImageUtils::saveHDRImage(const Image& image, const std::string& filename) {
+      float* data = new float[image.getWidth() * image.getHeight() * image.getChannels()];
+      for (int row = 0; row < image.getHeight(); row++) {
+         for (int col = 0; col < image.getWidth(); col++) {
+            size_t index = (row * image.getWidth() + col) * image.getChannels();
+            RGBColor pixel = image.getPixel(row, col);
+
+            data[index] = pixel.getRedNormalized();
+            if (image.getChannels() > 1) {
+               data[index + 1] = pixel.getGreenNormalized();
+               data[index + 2] = pixel.getBlueNormalized();
+            }
+         }
+      }
+
+      stbi_write_hdr(
+         filename.c_str(), 
+         image.getWidth(), 
+         image.getHeight(), 
+         image.getChannels(), 
+         data
+      );
+   }
+
    Image ImageUtils::loadImage(const std::string filename) {
       ImageType type = determineImageType(filename);
       if (type == NETPBM_P3 || type == NETPBM_P6) {
          return loadNetpbmImage(filename, type);
+      } else if (type == HDR) {
+         return loadHDRImage(filename);
       } else {
          return loadStandardImage(filename);
       }
    }
 
-   void ImageUtils::saveImage(const Image& image, const std::string filename, ImageType type) {
+   void ImageUtils::saveImage(const Image& image, const std::string filename) {
+      auto type = determineImageType(filename);
+
       if (type == NETPBM_P3 || type == NETPBM_P6) {
          saveNetpbmImage(image, filename, type);
+      } else if (type == HDR) {
+         saveHDRImage(image, filename);
       } else {
          saveStandardImage(image, filename, type);
       }

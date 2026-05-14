@@ -14,7 +14,8 @@ namespace raytracer {
       TGA,
       JPG,
       NETPBM_P3,
-      NETPBM_P6
+      NETPBM_P6,
+      HDR
    };
 
    class ImageUtils {
@@ -26,12 +27,14 @@ namespace raytracer {
 
       static Image loadNetpbmImage(const std::string& filename, ImageType type);
       static Image loadStandardImage(const std::string& filename);
+      static Image loadHDRImage(const std::string& filename);
 
       static void saveStandardImage(const Image& image, const std::string& filename, ImageType type);
       static void saveNetpbmImage(const Image& image, const std::string& filename, ImageType type);
+      static void saveHDRImage(const Image& image, const std::string& filename);
    public:
       static Image loadImage(const std::string filename);
-      static void saveImage(const Image& image, const std::string filename, ImageType type = PNG);
+      static void saveImage(const Image& image, const std::string filename);
    };
 }
 
