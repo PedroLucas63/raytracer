@@ -27,7 +27,7 @@ namespace raytracer{
       { "world_begin",{} },
       { "world_end",  {} },
       { "render_again", {} },
-      { "object",     { "type", "center", "origin", "radius", "norm", "material" } },
+      { "object",     { "type", "center", "origin", "radius", "norm", "material", "first_point", "second_point"  } },
       { "make_named_material", { "type", "name", "color", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness" } },
       { "named_material",      { "name" } },
       { "material",   { "type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "mirror" } },
@@ -72,6 +72,8 @@ namespace raytracer{
       { "center",          convert<raytracer::Point3, double, 3> },
       { "norm",            convert<raytracer::Vector3, double, 3> },
       { "material",        convert<std::string> },
+      { "first_point",     convert<raytracer::Point3, double, 3> },
+      { "second_point",     convert<raytracer::Point3, double, 3> },
 
       { "color1",           convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "color2",           convert<raytracer::RGBColor, std::uint8_t, 3> },
