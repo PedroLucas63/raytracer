@@ -87,7 +87,7 @@ namespace raytracer {
       return normal.angleBetween(lightDir);
    }
 
-    uint ToonMaterial::getColorIndex(
+   int ToonMaterial::getColorIndex(
       float angle, const std::vector<float> intervals
    ) const {
       if (angle >= 90) return -1;

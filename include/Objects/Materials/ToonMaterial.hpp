@@ -19,7 +19,7 @@ namespace raytracer {
          Vector3 getLightDirection(
             const std::shared_ptr<Light>& light, const Point3& point
          ) const;
-         uint getColorIndex(
+         int getColorIndex(
             float angle, const std::vector<float> intervals
          ) const;
 
