@@ -52,9 +52,12 @@ namespace raytracer {
          auto index = getColorIndex(angle, intervals);
 
          if (index != -1) {
+            auto lightIntensity = light->getIntensity();
             auto color = _intervalColors.at(index);
             accColor += Vector3(
-               color.getRedNormalized(), color.getGreenNormalized(), color.getBlueNormalized()
+               color.getRedNormalized() * lightIntensity.getX(), 
+               color.getGreenNormalized() * lightIntensity.getY(), 
+               color.getBlueNormalized() * lightIntensity.getZ()
             );
             lights++;
          }
@@ -75,7 +78,7 @@ namespace raytracer {
       if (auto pointLight = std::dynamic_pointer_cast<PointLight>(light)) {
          return (pointLight->getPosition() - point).normalize();
       } else if (auto directionalLight = std::dynamic_pointer_cast<DirectionalLight>(light)) {
-         return directionalLight->getDirection();
+         return -directionalLight->getDirection();
       } else {
          throw std::invalid_argument("Unsupported light type for ToonMaterial");
       }
