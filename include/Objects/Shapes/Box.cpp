@@ -13,8 +13,20 @@ namespace raytracer {
             throw std::invalid_argument("Box requires a 'second_point' parameter");
         }
 
-        _first = params.retrieve<Point3>("first_point");
-        _second = params.retrieve<Point3>("second_point");
+        Point3 a = params.retrieve<Point3>("first_point");
+        Point3 b = params.retrieve<Point3>("second_point");
+
+        _first = Point3(
+            std::min(a.getX(), b.getX()),
+            std::min(a.getY(), b.getY()),
+            std::min(a.getZ(), b.getZ())
+        );
+
+        _second = Point3(
+            std::max(a.getX(), b.getX()),
+            std::max(a.getY(), b.getY()),
+            std::max(a.getZ(), b.getZ())
+        );
     }
 
     std::pair<float, float> Box::calculateIntersectPoints(const Ray& ray) const{
@@ -37,16 +49,9 @@ namespace raytracer {
             return true;
         };
 
-        double minX = std::min(_first.getX(), _second.getX());
-        double maxX = std::max(_first.getX(), _second.getX());
-        double minY = std::min(_first.getY(), _second.getY());
-        double maxY = std::max(_first.getY(), _second.getY());
-        double minZ = std::min(_first.getZ(), _second.getZ());
-        double maxZ = std::max(_first.getZ(), _second.getZ());
-
-        if (!checkAxis(ray.origin.getX(), ray.direction.getX(), minX, maxX)) return {-1.0f, -1.0f};
-        if (!checkAxis(ray.origin.getY(), ray.direction.getY(), minY, maxY)) return {-1.0f, -1.0f};
-        if (!checkAxis(ray.origin.getZ(), ray.direction.getZ(), minZ, maxZ)) return {-1.0f, -1.0f};
+        if (!checkAxis(ray.origin.getX(), ray.direction.getX(), _first.getX(), _second.getX())) return {-1.0f, -1.0f};
+        if (!checkAxis(ray.origin.getY(), ray.direction.getY(), _first.getY(), _second.getY())) return {-1.0f, -1.0f};
+        if (!checkAxis(ray.origin.getZ(), ray.direction.getZ(), _first.getZ(), _second.getZ())) return {-1.0f, -1.0f};
 
         return {tMin, tMax};
     }
@@ -88,20 +93,13 @@ namespace raytracer {
             sf->viewDir = Vector3(0, 0, 0) - ray.direction; 
             
             double eps = 1e-4;
-            double minX = std::min(_first.getX(), _second.getX());
-            double maxX = std::max(_first.getX(), _second.getX());
-            double minY = std::min(_first.getY(), _second.getY());
-            double maxY = std::max(_first.getY(), _second.getY());
-            double minZ = std::min(_first.getZ(), _second.getZ());
-            double maxZ = std::max(_first.getZ(), _second.getZ());
-            
             Vector3 normal(0, 0, 0);
-            if (std::abs(sf->point.getX() - minX) < eps) normal = Vector3(-1, 0, 0);
-            else if (std::abs(sf->point.getX() - maxX) < eps) normal = Vector3(1, 0, 0);
-            else if (std::abs(sf->point.getY() - minY) < eps) normal = Vector3(0, -1, 0);
-            else if (std::abs(sf->point.getY() - maxY) < eps) normal = Vector3(0, 1, 0);
-            else if (std::abs(sf->point.getZ() - minZ) < eps) normal = Vector3(0, 0, -1);
-            else if (std::abs(sf->point.getZ() - maxZ) < eps) normal = Vector3(0, 0, 1);
+            if (std::abs(sf->point.getX() - _first.getX()) < eps) normal = Vector3(-1, 0, 0);
+            else if (std::abs(sf->point.getX() - _second.getX()) < eps) normal = Vector3(1, 0, 0);
+            else if (std::abs(sf->point.getY() - _first.getY()) < eps) normal = Vector3(0, -1, 0);
+            else if (std::abs(sf->point.getY() - _second.getY()) < eps) normal = Vector3(0, 1, 0);
+            else if (std::abs(sf->point.getZ() - _first.getZ()) < eps) normal = Vector3(0, 0, -1);
+            else if (std::abs(sf->point.getZ() - _second.getZ()) < eps) normal = Vector3(0, 0, 1);
             
             sf->normal = normal;
         }
@@ -110,14 +108,7 @@ namespace raytracer {
     }
 
     Bounds3 Box::getBounds() const {
-        double minX = std::min(_first.getX(), _second.getX());
-        double maxX = std::max(_first.getX(), _second.getX());
-        double minY = std::min(_first.getY(), _second.getY());
-        double maxY = std::max(_first.getY(), _second.getY());
-        double minZ = std::min(_first.getZ(), _second.getZ());
-        double maxZ = std::max(_first.getZ(), _second.getZ());
-        
-        return Bounds3(Point3(minX, minY, minZ), Point3(maxX, maxY, maxZ));
+        return Bounds3(_first, _second);
     }
 
 };
