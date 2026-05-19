@@ -2,7 +2,7 @@
 #include "Objects/GeometricPrimitive.hpp"
 #include "Objects/Shapes/Sphere.hpp"
 #include "Objects/Shapes/Plane.hpp"
-#include "Objects/Shapes/Cube.hpp"
+#include "Objects/Shapes/Box.hpp"
 #include "Objects/Shapes/Shape.hpp"
 #include <iostream>
 
@@ -35,8 +35,8 @@ namespace raytracer {
          shape = std::make_shared<Sphere>(params);
       } else if (type == "plane") {
          shape = std::make_shared<Plane>(params);
-      } else if(type == "cube"){
-         shape = std::make_shared<Cube>(params);
+      } else if(type == "box"){
+         shape = std::make_shared<Box>(params);
       }else {
          throw std::invalid_argument("Unknown primitive type: " + type);
       }

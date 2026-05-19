@@ -1,5 +1,5 @@
-#ifndef CUBE_HPP
-#define CUVE_HPP
+#ifndef BOX_HPP
+#define BOX_HPP
 
 #include "Objects/Shapes/Shape.hpp"
 #include "Math/Point3.hpp"
@@ -7,7 +7,7 @@
 
 
 namespace raytracer{
-    class Cube : public Shape{
+    class Box : public Shape{
 
         private:
             Point3 _first;
@@ -17,14 +17,15 @@ namespace raytracer{
 
         public:
 
-            Cube (Point3 first, Point3 second) :
+            Box (Point3 first, Point3 second) :
                 _first(first), _second(second){}
             
-            Cube (const ParamSet& params);
-            ~Cube() = default;
+            Box (const ParamSet& params);
+            ~Box() = default;
 
             bool intersect(const Ray& ray) const override;
             bool intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const override;
+            Bounds3 getBounds() const override;
 
     };
 }
@@ -32,4 +33,4 @@ namespace raytracer{
 
 
 
-#endif // CUBE_HPP
+#endif // BOX_HPP
