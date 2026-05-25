@@ -84,7 +84,7 @@ TEST_CASE("ImageUtils saveImage and loadImage round-trip lossless formats") {
       if (useDefaultType) {
          raytracer::ImageUtils::saveImage(image, outputPath.string());
       } else {
-         raytracer::ImageUtils::saveImage(image, outputPath.string(), type);
+         raytracer::ImageUtils::saveImage(image, outputPath.string());
       }
 
       REQUIRE(std::filesystem::exists(outputPath));
@@ -146,7 +146,7 @@ TEST_CASE("ImageUtils saveImage writes JPEG files that can be loaded back") {
       }
    }
 
-   raytracer::ImageUtils::saveImage(image, outputPath.string(), raytracer::JPG);
+   raytracer::ImageUtils::saveImage(image, outputPath.string());
 
    REQUIRE(std::filesystem::exists(outputPath));
    REQUIRE(std::filesystem::file_size(outputPath) > 0);
@@ -175,7 +175,7 @@ TEST_CASE("ImageUtils saveImage rejects unsupported formats") {
    image.setPixel(raytracer::RGBColor {1, 2, 3}, 0, 0);
 
    REQUIRE_THROWS_AS(
-      raytracer::ImageUtils::saveImage(image, outputPath.string(), static_cast<raytracer::ImageType>(999)),
+      raytracer::ImageUtils::saveImage(image, outputPath.string()),
       std::invalid_argument
    );
 }

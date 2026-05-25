@@ -1,0 +1,50 @@
+<RT3>
+    <lookat look_from="0 6 -20" look_at="0 4 0" up="0 1 0" />
+    <camera type="perspective" fovy="35" />
+
+    <integrator type="toon" mapping_interval="10 30 50 70 85"/>
+
+    <film
+        type="image"
+        w_res="1600"
+        h_res="900"
+        filename="output/scene39.png"
+        img_type="png"
+        gamma_corrected="false"
+    />
+
+    <world_begin/>
+
+        <background
+            type="single_color"
+            color="0.92 0.92 1"
+        />
+
+        <light_source
+            type="directional"
+            from="-10 15 -10"
+            to="0 0 0"
+            I="1 1 1"
+            world_radius="100"
+        />
+
+        <material
+            type="toon"
+            name="toon_blue"
+            color_map="
+                0.02 0.02 0.10
+                0.05 0.05 0.25
+                0.10 0.15 0.45
+                0.20 0.35 0.70
+                0.45 0.65 1.00
+                0.85 0.90 1.00
+            "
+        />
+
+        <!-- Linha de esferas -->
+        <object type="sphere" radius="2" center="-6 4 0" material="toon_blue"/>
+        <object type="sphere" radius="2" center="0 4 0" material="toon_blue"/>
+        <object type="sphere" radius="2" center="6 4 0" material="toon_blue"/>
+
+    <world_end/>
+</RT3>

@@ -1,0 +1,76 @@
+<RT3>
+    <lookat look_from="0 4 -18" look_at="0 3 0" up="0 1 0" />
+    <camera type="perspective" fovy="45" />
+
+    <integrator type="toon" mapping_interval="15 35 55 75"/>
+
+    <film
+        type="image"
+        w_res="1920"
+        h_res="1080"
+        filename="output/scene38.png"
+        img_type="png"
+        gamma_corrected="false"
+    />
+
+    <world_begin/>
+
+        <background
+            type="4_colors"
+            bl="0.8 0.9 1"
+            br="0.8 0.9 1"
+            tl="0.2 0.4 0.8"
+            tr="0.2 0.4 0.8"
+        />
+
+        <!-- Vermelha -->
+        <light_source
+            type="point"
+            from="-8 8 -5"
+            I="1 0.2 0.2"
+        />
+
+        <!-- Azul -->
+        <light_source
+            type="point"
+            from="8 8 -5"
+            I="0.2 0.4 1"
+        />
+
+        <!-- Luz branca suave -->
+        <light_source
+            type="directional"
+            from="0 10 -10"
+            to="0 0 0"
+            I="0.4 0.4 0.4"
+            world_radius="50"
+        />
+
+        <material
+            type="toon"
+            name="toon_gray"
+            color_map="
+                0.05 0.05 0.05
+                0.20 0.20 0.20
+                0.45 0.45 0.45
+                0.75 0.75 0.75
+                1.00 1.00 1.00
+            "
+        />
+
+        <object
+            type="sphere"
+            radius="3"
+            center="-4 3 0"
+            material="toon_gray"
+        />
+
+        <object
+            type="sphere"
+            radius="3"
+            center="4 3 0"
+            material="toon_gray"
+        />
+
+    <world_end/>
+</RT3>

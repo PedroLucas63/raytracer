@@ -20,6 +20,7 @@ add_library(raytracer_core
 	include/Objects/Materials/GridMaterial.cpp
 	include/Objects/Materials/FlatMaterial.cpp
 	include/Objects/Materials/BlinnMaterial.cpp
+	include/Objects/Materials/ToonMaterial.cpp
 	include/Objects/Materials/MaterialFactory.cpp
 	include/Objects/PrimitiveFactory.cpp
 	include/Objects/GeometricPrimitive.cpp
@@ -39,6 +40,7 @@ add_library(raytracer_core
 	include/Integrator/DepthMapIntegrator.cpp
 	include/Integrator/NormalMapIntegrator.cpp
 	include/Integrator/BlinnPhongIntegrator.cpp
+	include/Integrator/ToonIntegrator.cpp
 	include/Integrator/IntegratorFactory.cpp
 	include/Core/ParamSet.cpp
 	include/Math/Vector3.cpp

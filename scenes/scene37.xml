@@ -1,0 +1,50 @@
+<RT3>
+    <lookat look_from="0 0 -12" look_at="0 0 0" up="0 1 0" />
+    <camera type="perspective" fovy="40" />
+
+    <integrator type="toon" mapping_interval="20 40 60 80"/>
+
+    <film
+        type="image"
+        w_res="1280"
+        h_res="720"
+        filename="output/scene37.png"
+        img_type="png"
+        gamma_corrected="false"
+    />
+
+    <world_begin/>
+
+        <background
+            type="single_color"
+            color="0.8 0.9 1"
+        />
+
+        <!-- Luz vindo da esquerda -->
+        <light_source
+            type="point"
+            from="-6 6 -6"
+            I="1 1 1"
+        />
+
+        <material
+            type="toon"
+            name="toon_red"
+            color_map="
+                0.08 0.00 0.00
+                0.25 0.02 0.02
+                0.50 0.05 0.05
+                0.80 0.15 0.15
+                1.00 0.35 0.35
+            "
+        />
+
+        <object
+            type="sphere"
+            radius="3"
+            center="0 0 0"
+            material="toon_red"
+        />
+
+    <world_end/>
+</RT3>

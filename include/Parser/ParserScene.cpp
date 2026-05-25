@@ -23,14 +23,14 @@ namespace raytracer{
       { "film",       { "type", "filename", "img_type", "x_res", "y_res",
                         "w_res", "h_res", "crop_window", "gamma_corrected" } },
       { "include",    { "filename" } },
-      { "integrator", { "type", "near_color", "far_color", "zmin", "zmax", "depth" } },
+      { "integrator", { "type", "near_color", "far_color", "zmin", "zmax", "depth", "mapping_interval", "n_intervals" } },
       { "world_begin",{} },
       { "world_end",  {} },
       { "render_again", {} },
       { "object",     { "type", "center", "origin", "radius", "norm", "material", "first_point", "second_point"  } },
       { "make_named_material", { "type", "name", "color", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness" } },
       { "named_material",      { "name" } },
-      { "material",   { "type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "mirror" } },
+      { "material",   { "type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "mirror", "color_map" } },
       { "light_source", { "type", "I", "scale", "from", "to", "attenuation", "cutoff", "falloff", "world_radius" } }
    };
 
@@ -74,6 +74,7 @@ namespace raytracer{
       { "material",        convert<std::string> },
       { "first_point",     convert<raytracer::Point3, double, 3> },
       { "second_point",     convert<raytracer::Point3, double, 3> },
+      { "color_map",       convert<std::vector<raytracer::RGBColor>> },
 
       { "color1",           convert<raytracer::RGBColor, std::uint8_t, 3> },
       { "color2",           convert<raytracer::RGBColor, std::uint8_t, 3> },
@@ -84,6 +85,8 @@ namespace raytracer{
       { "zmin",             convert<float> },
       { "zmax",             convert<float> },
       { "depth",            convert<uint> },
+      { "mapping_interval", convert<std::vector<float>> },
+      { "n_intervals",      convert<uint> },
 
       // Light attributes
       { "I",                convert_color },
