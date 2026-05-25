@@ -1,0 +1,147 @@
+<RT3>
+    <!-- Chessboard still life with table, pieces, and props -->
+    <lookat look_from="-8 6 -14" look_at="0 2 2" up="0 1 0" />
+    <camera type="perspective" fovy="35" />
+    <film type="image" w_res="1920" h_res="1080" filename="output/scene41_chessboard.png" img_type="png" gamma_corrected="false" />
+    <integrator type="blinn_phong" depth="4" />
+
+    <world_begin/>
+        <background type="4_colors" bl="230 225 210" tl="90 120 160" tr="90 120 160" br="230 225 210" />
+
+        <light_source type="ambient" I="0.08 0.08 0.08" scale="1 1 1" />
+        <light_source type="point" from="-8 10 -6" I="1 1 1" attenuation="1 0 0" />
+        <light_source type="point" from="6 6 4" I="0.8 0.8 0.8" attenuation="1 0 0" />
+        <light_source type="spot" from="0 10 10" to="0 1 3" I="0.7 0.7 0.9" cutoff="25" falloff="15" />
+
+        <make_named_material type="blinn" name="wood_dark" ambient="0.08 0.05 0.02" diffuse="0.35 0.2 0.1" specular="0.2 0.2 0.2" glossiness="32" />
+        <make_named_material type="blinn" name="wood_light" ambient="0.08 0.07 0.05" diffuse="0.65 0.55 0.35" specular="0.2 0.2 0.2" glossiness="32" />
+        <make_named_material type="blinn" name="stone" ambient="0.03 0.03 0.03" diffuse="0.22 0.22 0.22" specular="0.05 0.05 0.05" glossiness="8" />
+        <make_named_material type="blinn" name="ivory" ambient="0.2 0.2 0.18" diffuse="0.8 0.78 0.7" specular="0.6 0.6 0.6" glossiness="128" />
+        <make_named_material type="blinn" name="onyx" ambient="0.05 0.05 0.05" diffuse="0.12 0.12 0.12" specular="0.7 0.7 0.7" glossiness="256" />
+        <make_named_material type="blinn" name="glass" ambient="0.02 0.02 0.02" diffuse="0.3 0.4 0.6" specular="0.9 0.9 0.9" glossiness="256" mirror="0.25 0.25 0.25" />
+        <make_named_material type="blinn" name="brass" ambient="0.2 0.15 0.05" diffuse="0.8 0.6 0.2" specular="0.8 0.7 0.3" glossiness="128" />
+
+        <!-- Studio floor and backdrop -->
+        <object type="plane" origin="0 0 0" norm="0 1 0" material="stone" />
+        <object type="plane" origin="0 0 16" norm="0 0 1" material="stone" />
+
+        <!-- Table -->
+        <object type="box" first_point="-6 0 -2" second_point="6 0.4 10" material="wood_dark" />
+        <object type="box" first_point="-5.5 0.4 -1.5" second_point="5.5 0.9 9.5" material="wood_light" />
+
+        <!-- Chessboard base -->
+        <object type="box" first_point="-4 0.9 0" second_point="4 1.2 8" material="wood_dark" />
+
+        <!-- Chessboard squares (8x8) -->
+        <named_material name="wood_light" />
+        <object type="box" first_point="-4 1.2 0" second_point="-3 1.25 1" />
+        <object type="box" first_point="-2 1.2 0" second_point="-1 1.25 1" />
+        <object type="box" first_point="0 1.2 0" second_point="1 1.25 1" />
+        <object type="box" first_point="2 1.2 0" second_point="3 1.25 1" />
+        <object type="box" first_point="-3 1.2 1" second_point="-2 1.25 2" />
+        <object type="box" first_point="-1 1.2 1" second_point="0 1.25 2" />
+        <object type="box" first_point="1 1.2 1" second_point="2 1.25 2" />
+        <object type="box" first_point="3 1.2 1" second_point="4 1.25 2" />
+        <object type="box" first_point="-4 1.2 2" second_point="-3 1.25 3" />
+        <object type="box" first_point="-2 1.2 2" second_point="-1 1.25 3" />
+        <object type="box" first_point="0 1.2 2" second_point="1 1.25 3" />
+        <object type="box" first_point="2 1.2 2" second_point="3 1.25 3" />
+        <object type="box" first_point="-3 1.2 3" second_point="-2 1.25 4" />
+        <object type="box" first_point="-1 1.2 3" second_point="0 1.25 4" />
+        <object type="box" first_point="1 1.2 3" second_point="2 1.25 4" />
+        <object type="box" first_point="3 1.2 3" second_point="4 1.25 4" />
+        <object type="box" first_point="-4 1.2 4" second_point="-3 1.25 5" />
+        <object type="box" first_point="-2 1.2 4" second_point="-1 1.25 5" />
+        <object type="box" first_point="0 1.2 4" second_point="1 1.25 5" />
+        <object type="box" first_point="2 1.2 4" second_point="3 1.25 5" />
+        <object type="box" first_point="-3 1.2 5" second_point="-2 1.25 6" />
+        <object type="box" first_point="-1 1.2 5" second_point="0 1.25 6" />
+        <object type="box" first_point="1 1.2 5" second_point="2 1.25 6" />
+        <object type="box" first_point="3 1.2 5" second_point="4 1.25 6" />
+        <object type="box" first_point="-4 1.2 6" second_point="-3 1.25 7" />
+        <object type="box" first_point="-2 1.2 6" second_point="-1 1.25 7" />
+        <object type="box" first_point="0 1.2 6" second_point="1 1.25 7" />
+        <object type="box" first_point="2 1.2 6" second_point="3 1.25 7" />
+        <object type="box" first_point="-3 1.2 7" second_point="-2 1.25 8" />
+        <object type="box" first_point="-1 1.2 7" second_point="0 1.25 8" />
+        <object type="box" first_point="1 1.2 7" second_point="2 1.25 8" />
+        <object type="box" first_point="3 1.2 7" second_point="4 1.25 8" />
+
+        <named_material name="wood_dark" />
+        <object type="box" first_point="-3 1.2 0" second_point="-2 1.25 1" />
+        <object type="box" first_point="-1 1.2 0" second_point="0 1.25 1" />
+        <object type="box" first_point="1 1.2 0" second_point="2 1.25 1" />
+        <object type="box" first_point="3 1.2 0" second_point="4 1.25 1" />
+        <object type="box" first_point="-4 1.2 1" second_point="-3 1.25 2" />
+        <object type="box" first_point="-2 1.2 1" second_point="-1 1.25 2" />
+        <object type="box" first_point="0 1.2 1" second_point="1 1.25 2" />
+        <object type="box" first_point="2 1.2 1" second_point="3 1.25 2" />
+        <object type="box" first_point="-3 1.2 2" second_point="-2 1.25 3" />
+        <object type="box" first_point="-1 1.2 2" second_point="0 1.25 3" />
+        <object type="box" first_point="1 1.2 2" second_point="2 1.25 3" />
+        <object type="box" first_point="3 1.2 2" second_point="4 1.25 3" />
+        <object type="box" first_point="-4 1.2 3" second_point="-3 1.25 4" />
+        <object type="box" first_point="-2 1.2 3" second_point="-1 1.25 4" />
+        <object type="box" first_point="0 1.2 3" second_point="1 1.25 4" />
+        <object type="box" first_point="2 1.2 3" second_point="3 1.25 4" />
+        <object type="box" first_point="-3 1.2 4" second_point="-2 1.25 5" />
+        <object type="box" first_point="-1 1.2 4" second_point="0 1.25 5" />
+        <object type="box" first_point="1 1.2 4" second_point="2 1.25 5" />
+        <object type="box" first_point="3 1.2 4" second_point="4 1.25 5" />
+        <object type="box" first_point="-4 1.2 5" second_point="-3 1.25 6" />
+        <object type="box" first_point="-2 1.2 5" second_point="-1 1.25 6" />
+        <object type="box" first_point="0 1.2 5" second_point="1 1.25 6" />
+        <object type="box" first_point="2 1.2 5" second_point="3 1.25 6" />
+        <object type="box" first_point="-3 1.2 6" second_point="-2 1.25 7" />
+        <object type="box" first_point="-1 1.2 6" second_point="0 1.25 7" />
+        <object type="box" first_point="1 1.2 6" second_point="2 1.25 7" />
+        <object type="box" first_point="3 1.2 6" second_point="4 1.25 7" />
+        <object type="box" first_point="-4 1.2 7" second_point="-3 1.25 8" />
+        <object type="box" first_point="-2 1.2 7" second_point="-1 1.25 8" />
+        <object type="box" first_point="0 1.2 7" second_point="1 1.25 8" />
+        <object type="box" first_point="2 1.2 7" second_point="3 1.25 8" />
+
+        <!-- White pieces -->
+        <named_material name="ivory" />
+        <object type="sphere" center="-3.5 1.55 0.5" radius="0.25" />
+        <object type="sphere" center="-2.5 1.55 0.5" radius="0.25" />
+        <object type="sphere" center="-1.5 1.55 0.5" radius="0.25" />
+        <object type="sphere" center="-0.5 1.55 0.5" radius="0.25" />
+        <object type="sphere" center="0.5 1.55 0.5" radius="0.25" />
+        <object type="sphere" center="1.5 1.55 0.5" radius="0.25" />
+        <object type="sphere" center="2.5 1.55 0.5" radius="0.25" />
+        <object type="sphere" center="3.5 1.55 0.5" radius="0.25" />
+        <object type="sphere" center="-3 1.55 1.5" radius="0.3" />
+        <object type="sphere" center="-2 1.55 1.5" radius="0.3" />
+        <object type="sphere" center="-1 1.55 1.5" radius="0.3" />
+        <object type="sphere" center="0 1.55 1.5" radius="0.3" />
+        <object type="sphere" center="1 1.55 1.5" radius="0.3" />
+        <object type="sphere" center="2 1.55 1.5" radius="0.3" />
+        <object type="sphere" center="3 1.55 1.5" radius="0.3" />
+
+        <!-- Black pieces -->
+        <named_material name="onyx" />
+        <object type="sphere" center="-3.5 1.55 7.5" radius="0.25" />
+        <object type="sphere" center="-2.5 1.55 7.5" radius="0.25" />
+        <object type="sphere" center="-1.5 1.55 7.5" radius="0.25" />
+        <object type="sphere" center="-0.5 1.55 7.5" radius="0.25" />
+        <object type="sphere" center="0.5 1.55 7.5" radius="0.25" />
+        <object type="sphere" center="1.5 1.55 7.5" radius="0.25" />
+        <object type="sphere" center="2.5 1.55 7.5" radius="0.25" />
+        <object type="sphere" center="3.5 1.55 7.5" radius="0.25" />
+        <object type="sphere" center="-3 1.55 6.5" radius="0.3" />
+        <object type="sphere" center="-2 1.55 6.5" radius="0.3" />
+        <object type="sphere" center="-1 1.55 6.5" radius="0.3" />
+        <object type="sphere" center="0 1.55 6.5" radius="0.3" />
+        <object type="sphere" center="1 1.55 6.5" radius="0.3" />
+        <object type="sphere" center="2 1.55 6.5" radius="0.3" />
+        <object type="sphere" center="3 1.55 6.5" radius="0.3" />
+
+        <!-- Props: glass pieces and a brass coin -->
+        <named_material name="glass" />
+        <object type="sphere" center="-5 1.3 3" radius="0.4" />
+        <object type="sphere" center="5 1.3 5" radius="0.4" />
+        <named_material name="brass" />
+        <object type="box" first_point="-5.2 1.22 6.5" second_point="-4.4 1.32 7.3" />
+    <world_end/>
+</RT3>

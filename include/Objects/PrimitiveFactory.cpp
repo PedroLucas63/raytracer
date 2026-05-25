@@ -8,7 +8,7 @@
 
 namespace raytracer {
    bool PrimitiveFactory::isGeometricPrimitive(const std::string& type) {
-      return type == "sphere" || type == "plane" || type == "cube";
+      return type == "sphere" || type == "plane" || type == "box";
    }
 
    std::shared_ptr<Primitive> PrimitiveFactory::createGeometricPrimitive(

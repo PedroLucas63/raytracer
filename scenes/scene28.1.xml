@@ -4,7 +4,7 @@
     <camera type="perspective" fovy="45" /> 
     
     <integrator type="blinn_phong" depth="1" />
-    <film type="image" w_res="1920" h_res="1200" filename="output/scene28_cubes.png" img_type="png" gamma_corrected="false" />
+    <film type="image" w_res="1920" h_res="1200" filename="output/scene28.1.png" img_type="png" gamma_corrected="false" />
 
     <!-- The Scene -->
     <world_begin/>
