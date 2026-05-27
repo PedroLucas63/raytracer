@@ -6,13 +6,28 @@ namespace raytracer {
          throw std::invalid_argument("Cannot be assign vertex normal with length equal than 0.");
       }
    }
-   Vertex::Vertex(const Point3& position, const RGBColor& color)
-      : _position(position), _color(color), _normal(VECTOR3_UNIT_Y) {}
 
-   Vertex::Vertex(const Point3& position, const RGBColor& color, const Vector3 normal)
-      : _position(position), _color(color), _normal(normal)
+   void Vertex::checkTextureCoordinates() const {
+      auto u = _textureCoordinates.getX();
+      auto v = _textureCoordinates.getY();
+
+      if (u < 0.0 || u > 1.0 || v < 0.0 || v > 1.0) {
+         throw std::invalid_argument("You can assign texture coordinates with values beetween 0.0 and 1.0");
+      }
+   }
+
+   Vertex::Vertex(
+      const Point3& position, 
+      const Point2& textureCoordinates,
+      const RGBColor& color,
+      const Vector3 normal
+   ) : _position(position), 
+      _textureCoordinates(textureCoordinates),
+      _color(color), 
+      _normal(normal) 
    {
       checkNormal();
+      checkTextureCoordinates();
    }
 
    void Vertex::setPosition(const Point3& position) {
@@ -25,6 +40,10 @@ namespace raytracer {
       _normal = normal;
       checkNormal();
    }
+   void Vertex::setTextureCoordinates(const Point2& textureCoordinates) {
+      _textureCoordinates = textureCoordinates;
+      checkTextureCoordinates();
+   }
 
    Point3 Vertex::getPosition() const {
       return _position;
@@ -34,6 +53,9 @@ namespace raytracer {
    }
    Vector3 Vertex::getNormal() const {
       return _normal;
+   }
+   Point2 Vertex::getTextureCoordinates() const {
+      return _textureCoordinates;
    }
 
    void Triangle::checkVertices() const {
@@ -47,6 +69,12 @@ namespace raytracer {
    }
 
    std::optional<float> Triangle::intersectRay(const Ray& ray) const {
+      auto result = intersectRayWithUV(ray);
+      if (result.has_value()) return result.value().first;
+      return std::nullopt;
+   }
+
+   std::optional<std::pair<float, Point2>> Triangle::intersectRayWithUV(const Ray& ray) const {
       constexpr double EPSILON = std::numeric_limits<double>::epsilon();
 
       auto v0 = getVertex(0); 
@@ -75,18 +103,17 @@ namespace raytracer {
       float t = inverseDeterminant * edge2.dot(vertexCrossEdge1);
       if (t < ray.t_min || t > ray.t_max) return std::nullopt;
 
-      return t;
+      return std::make_pair(t, Point2(u, v));
    }
 
-
    Triangle::Triangle(const Triangle::Vertesis& vertesis, bool backfaceCull)
-      : _vertesis(vertesis), _backfaceCull(backfaceCull) 
+      : _vertesis(vertesis), _backfaceCull(backfaceCull), Shape()
    {
       checkVertices();
    }
 
    Triangle::Triangle(const std::shared_ptr<Vertex>& firstVextex, bool backfaceCull)
-      : _backfaceCull(backfaceCull) 
+      : _backfaceCull(backfaceCull), Shape()
    {
       setVertices(firstVextex);
    }
@@ -131,26 +158,44 @@ namespace raytracer {
       return _backfaceCull;
    }
 
-   bool Triangle::intersect(const Ray& ray) const {
-      return intersectRay(ray).has_value();
-   }
-
-   bool Triangle::intersectWithSurfel(const Ray& ray, float *tHit, Surfel* surfel) const  {
-      auto t = intersectRay(ray);
-      if (!t.has_value()) return false;
-
-      *tHit = t.value();
-      surfel->point = ray(*tHit);
-
+   Vector3 Triangle::getFaceNormal() const {
       auto v0 = getVertex(0); 
       auto v1 = getVertex(1); 
       auto v2 = getVertex(2); 
 
       auto edge1 = v1.getPosition() - v0.getPosition();
       auto edge2 = v2.getPosition() - v0.getPosition();
-      surfel->normal = edge1.cross(edge2).normalize();
+      return edge1.cross(edge2).normalize();
+   }
 
-      surfel->material = nullptr; // TODO: assign material to triangle and set it here
+   Vector3 Triangle::getBarycentricNormal(const Point2& uv) const {
+      auto u = uv.getX();
+      auto v = uv.getY();
+
+      auto n0 = getVertex(0).getNormal();
+      auto n1 = getVertex(1).getNormal();
+      auto n2 = getVertex(2).getNormal();
+
+      auto normal = n0 * (1 - u - v) + n1 * u + n2 * v;
+      return normal.normalize();
+   }
+
+
+   bool Triangle::intersect(const Ray& ray) const {
+      return intersectRay(ray).has_value();
+   }
+
+   bool Triangle::intersectWithSurfel(const Ray& ray, float *tHit, Surfel* surfel) const  {
+      auto result = intersectRayWithUV(ray);
+      if (!result.has_value()) return false;
+
+      auto [t, uv] = result.value();
+
+      *tHit = t;
+      surfel->point = ray(*tHit);
+
+      surfel->normal = getBarycentricNormal(uv);
+      surfel->material = nullptr;
 
       return true;
    }
@@ -172,5 +217,62 @@ namespace raytracer {
       }
 
       return Bounds3(min, max);
+   }
+
+   TriangleMesh::TriangleMesh(const ParamSet& params) {
+      uint ntriangles = std::numeric_limits<uint>::infinity();
+      std::vector<uint> indices;
+
+      if (params.has("indices")) {
+         indices = params.retrieve<std::vector<uint>>("indices");
+
+         if (indices.size() % 3 != 0)
+            throw std::invalid_argument(""); // TODO: Add message
+         
+         ntriangles = indices.size() / 3; // TODO: Add message
+      } else {
+         throw std::invalid_argument("");
+      }
+
+      if (params.has("ntriangles")) {
+         auto n = params.retrieve<uint>("ntriangles");
+         if (n < ntriangles)
+            ntriangles = n;
+      }
+
+      _reverseVertexOrder = params.retrieveOrDefault("reverse_vertex_order", false);
+      _computeNormals = params.retrieveOrDefault("compute_normals", false);
+      _backfaceCull = params.retrieveOrDefault("backface_cull", false);
+
+      if (!params.has("vertices")) {
+         throw std::invalid_argument("");// TODO: Add message
+      }
+      auto vertexPoints = params.retrieve<std::vector<Point3>>("vertices");
+
+      if (!params.has("normals")) { // TODO: Normals is optional
+         throw std::invalid_argument("");// TODO: Add message
+      }
+      auto vertexNormals = params.retrieve<std::vector<Point3>>("normals");
+
+      if (!params.has("uv")) {
+         throw std::invalid_argument("");// TODO: Add message
+      }
+      auto vertexTextureCoordinates = params.retrieve<std::vector<Point2>>("uv");
+
+      // TODO: Create Vertex list
+      // TODO: Validate triangle indices
+   }
+
+   std::vector<std::shared_ptr<Triangle>> TriangleMesh::makeTriangules() {
+      // [1] Create all triangles
+      // [1.1] For each triangle:
+      //    - compute face normal
+      //    - store triangle adjacency for each vertex
+
+      // [2] If computeNormals:
+      // [2.1] For each vertex:
+      //    - accumulate normals of adjacent triangles
+      // [2.2] Normalize accumulated vector
+      // [2.3] Store as vertex normal
    }
 }

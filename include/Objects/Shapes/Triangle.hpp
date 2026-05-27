@@ -3,36 +3,43 @@
 
 #include "Objects/Shapes/Shape.hpp"
 #include "Math/Point3.hpp"
+#include "Math/Point2.hpp"
 #include "Math/Vector3.hpp"
 #include "Image/RGBColor.hpp"
 #include <memory>
 #include <array>
 #include <optional>
+#include <vector>
 
 namespace raytracer {
    class Vertex {
       private:
          Point3 _position;
+         Point2 _textureCoordinates;
          RGBColor _color;
          Vector3 _normal;
 
          void checkNormal() const;
+         void checkTextureCoordinates() const;
 
       public:
-         Vertex(const Point3& position, const RGBColor& color);
-         Vertex(const Point3& position, const RGBColor& color, const Vector3 normal);
+         Vertex(
+            const Point3& position, 
+            const Point2& textureCoordinates,
+            const RGBColor& color,
+            const Vector3 normal = VECTOR3_UNIT_Y
+         );
          ~Vertex() = default;
 
          void setPosition(const Point3& position);
          void setColor(const RGBColor& color);
          void setNormal(const Vector3& normal);
+         void setTextureCoordinates(const Point2& textureCoordinates);
 
          Point3 getPosition() const;
          RGBColor getColor() const;
          Vector3 getNormal() const;
-   };
-
-   class Edge {
+         Point2 getTextureCoordinates() const;
    };
 
    class Triangle : public Shape {
@@ -45,6 +52,7 @@ namespace raytracer {
 
          void checkVertices() const;
          std::optional<float> intersectRay(const Ray& ray) const;
+         std::optional<std::pair<float, Point2>> intersectRayWithUV(const Ray& ray) const;
       
       public:
          Triangle(const Vertesis& vertesis, bool backfaceCull);
@@ -60,10 +68,27 @@ namespace raytracer {
          Vertex getVertex(uint index) const;
          Vertex operator[](uint index) const;
          bool getBackfaceCull(bool backfaceCull) const;
+         Vector3 getFaceNormal() const;
+         Vector3 getBarycentricNormal(const Point2& uv) const;
 
          bool intersect(const Ray& ray) const;
          bool intersectWithSurfel(const Ray& ray, float *tHit, Surfel* surfel) const;
          Bounds3 getBounds() const;
+
+   };
+
+   class TriangleMesh : public Shape {
+      private:
+         std::vector<std::shared_ptr<Vertex>> _vertesis;
+         std::vector<uint> _triangleIndices;
+         bool _reverseVertexOrder;
+         bool _computeNormals;
+         bool _backfaceCull;
+
+      public:
+         TriangleMesh(const ParamSet& params);
+         ~TriangleMesh() = default;
+         std::vector<std::shared_ptr<Triangle>> makeTriangules();
    };
 }
 
