@@ -1,4 +1,5 @@
 #include "Objects/Shapes/Triangle.hpp"
+#include <unordered_map>
 
 namespace raytracer {
    void Vertex::checkNormal() const {
@@ -259,20 +260,68 @@ namespace raytracer {
       }
       auto vertexTextureCoordinates = params.retrieve<std::vector<Point2>>("uv");
 
-      // TODO: Create Vertex list
+      // TODO: Permit to have less normals and texture coordinates than vertex points, but not more
+      if (vertexPoints.size() != vertexNormals.size() || vertexPoints.size() != vertexTextureCoordinates.size()) {
+         throw std::invalid_argument("");// TODO: Add message
+      }
+
+      for (size_t i = 0; i < vertexPoints.size(); i++) {
+         _vertesis.push_back(std::make_shared<Vertex>(
+            vertexPoints[i],
+            vertexTextureCoordinates[i],
+            PIXEL_BLACK,
+            vertexNormals[i]
+         ));
+      }
+
       // TODO: Validate triangle indices
+      for (size_t i = 0; i < ntriangles * 3; i++) {
+         if (indices[i] >= _vertesis.size()) {
+            throw std::invalid_argument(""); // TODO: Add message
+         }
+      }
+
+      _triangleIndices = indices;
    }
 
    std::vector<std::shared_ptr<Triangle>> TriangleMesh::makeTriangules() {
       // [1] Create all triangles
-      // [1.1] For each triangle:
-      //    - compute face normal
-      //    - store triangle adjacency for each vertex
+      std::vector<std::shared_ptr<Triangle>> triangles;
+      uint nTriangles = _triangleIndices.size() / 3;
 
-      // [2] If computeNormals:
-      // [2.1] For each vertex:
-      //    - accumulate normals of adjacent triangles
-      // [2.2] Normalize accumulated vector
-      // [2.3] Store as vertex normal
+      for (size_t i = 0; i < nTriangles; i++) {
+         auto v0_i = _triangleIndices[i * 3];
+         auto v1_i = _triangleIndices[i * 3 + 1];
+         auto v2_i = _triangleIndices[i * 3 + 2];
+
+         if (_reverseVertexOrder) {
+            std::swap(v1_i, v2_i);
+         }
+
+         auto v0 = _vertesis[v0_i];
+         auto v1 = _vertesis[v1_i];
+         auto v2 = _vertesis[v2_i];
+
+         auto triangle = std::make_shared<Triangle>(
+            std::array<std::shared_ptr<Vertex>, 3>{v0, v1, v2},
+            _backfaceCull
+         );
+
+         triangles.push_back(triangle);
+
+         if (_computeNormals) {
+            auto faceNormal = triangle->getFaceNormal();
+            v0->setNormal(v0->getNormal() + faceNormal);
+            v1->setNormal(v1->getNormal() + faceNormal);
+            v2->setNormal(v2->getNormal() + faceNormal);
+         }
+      }
+
+      if (_computeNormals) {
+         for (auto& vertex : _vertesis) {
+            auto normal = vertex->getNormal();
+            vertex->setNormal(normal.normalize());
+         }
+      }
    }
 }
