@@ -2,7 +2,7 @@
     <!-- Chessboard still life with table, pieces, and props -->
     <lookat look_from="-8 6 -14" look_at="0 2 2" up="0 1 0" />
     <camera type="perspective" fovy="35" />
-    <film type="image" w_res="1920" h_res="1080" filename="output/scene41_chessboard.png" img_type="png" gamma_corrected="false" />
+    <film type="image" w_res="1920" h_res="1080" filename="output/scene41.png" img_type="png" gamma_corrected="false" />
     <integrator type="blinn_phong" depth="4" />
 
     <world_begin/>

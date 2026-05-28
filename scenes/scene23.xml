@@ -20,13 +20,13 @@
         <light_source type="ambient" I="0.1 0.1 0.1"  scale="4 4 4" />
 
 
-        <object type="cube" first_point="-1 0 -1" second_point="1 2 1" material="m1"/>
+        <object type="box" first_point="-1 0 -1" second_point="1 2 1" material="m1"/>
 
-        <object type="cube" first_point="-3 0 2" second_point="-1 2 4" material="m2"/>
+        <object type="box" first_point="-3 0 2" second_point="-1 2 4" material="m2"/>
 
-        <object type="cube" first_point="1 0 -3" second_point="3 2 -1" material="m3"/>
+        <object type="box" first_point="1 0 -3" second_point="3 2 -1" material="m3"/>
 
-        <object type="cube" first_point="1 0 5" second_point="5 3.4 9" material="m4"/>
+        <object type="box" first_point="1 0 5" second_point="5 3.4 9" material="m4"/>
 
         <object type="plane" origin="0 0 0" norm="0 1 0" material="floor" />
     <world_end/>

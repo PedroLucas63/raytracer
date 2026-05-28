@@ -35,16 +35,16 @@
         <make_named_material type="blinn" name="blueish"  ambient="0.6 0.6 0.6" diffuse ="0.1 0.2 0.9"  specular ="0.8 0.8 0.8"  glossiness ="16"/>
         
         <named_material name="redish"/>
-        <object type="cube" first_point="-1 0 -1" second_point="1 2 1" />
+        <object type="box" first_point="-1 0 -1" second_point="1 2 1" />
 
         <named_material name="greenish"/>
-        <object type="cube" first_point="-3 0 2" second_point="-1 2 4" />
+        <object type="box" first_point="-3 0 2" second_point="-1 2 4" />
 
         <named_material name="blueish"/>
-        <object type="cube" first_point="1 0 -3" second_point="3 2 -1" />
+        <object type="box" first_point="1 0 -3" second_point="3 2 -1" />
 
         <named_material name="gold"/>
-        <object type="cube" first_point="1 0 5" second_point="5 3.4 9" />
+        <object type="box" first_point="1 0 5" second_point="5 3.4 9" />
 
         <named_material name="grey"/>
         <object type="plane" origin="0 0 0" norm="0 1 0" material="floor" />
