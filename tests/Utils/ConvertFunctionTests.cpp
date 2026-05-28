@@ -56,10 +56,10 @@ TEST_CASE("convert<T> throws when there are mixed token types") {
    );
 }
 
-TEST_CASE("convert<T,K,N> stores a valid fixed-size vector") {
+TEST_CASE("convert<T,N> stores a valid fixed-size vector") {
    raytracer::ParamSet ps;
 
-   REQUIRE(convert<std::vector<int>, int, 3>("rgb", "10 20 30", &ps));
+   REQUIRE(convert<std::vector<int>, 3>("rgb", "10 20 30", &ps));
 
    const auto rgb = ps.retrieve<std::vector<int>>("rgb");
    REQUIRE(rgb.size() == 3);
@@ -68,10 +68,10 @@ TEST_CASE("convert<T,K,N> stores a valid fixed-size vector") {
    REQUIRE(rgb[2] == 30);
 }
 
-TEST_CASE("convert<T,K,N> stores a valid fixed-size boolean vector") {
+TEST_CASE("convert<T,N> stores a valid fixed-size boolean vector") {
    raytracer::ParamSet ps;
 
-   REQUIRE(convert<std::vector<bool>, bool, 3>("flags", "true false true", &ps));
+   REQUIRE(convert<std::vector<bool>, 3>("flags", "true false true", &ps));
 
    const auto flags = ps.retrieve<std::vector<bool>>("flags");
    REQUIRE(flags.size() == 3);
@@ -80,20 +80,20 @@ TEST_CASE("convert<T,K,N> stores a valid fixed-size boolean vector") {
    REQUIRE(flags[2]);
 }
 
-TEST_CASE("convert<T,K,N> throws when fewer members than expected are provided") {
+TEST_CASE("convert<T,N> throws when fewer members than expected are provided") {
    raytracer::ParamSet ps;
 
    REQUIRE_THROWS_AS(
-      (convert<std::vector<int>, int, 3>("rgb", "10 20", &ps)),
+      (convert<std::vector<int>, 3>("rgb", "10 20", &ps)),
       std::invalid_argument
    );
 }
 
-TEST_CASE("convert<T,K,N> throws when more members than expected are provided") {
+TEST_CASE("convert<T,N> throws when more members than expected are provided") {
    raytracer::ParamSet ps;
 
    REQUIRE_THROWS_AS(
-      (convert<std::vector<int>, int, 3>("rgb", "10 20 30 40", &ps)),
+      (convert<std::vector<int>, 3>("rgb", "10 20 30 40", &ps)),
       std::invalid_argument
    );
 }
