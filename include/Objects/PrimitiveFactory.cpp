@@ -4,14 +4,15 @@
 #include "Objects/Shapes/Plane.hpp"
 #include "Objects/Shapes/Box.hpp"
 #include "Objects/Shapes/Shape.hpp"
+#include "Objects/Shapes/Triangle.hpp"
 #include <iostream>
 
 namespace raytracer {
    bool PrimitiveFactory::isGeometricPrimitive(const std::string& type) {
-      return type == "sphere" || type == "plane" || type == "box";
+      return type == "sphere" || type == "plane" || type == "box" || type == "trianglemesh";
    }
 
-   std::shared_ptr<Primitive> PrimitiveFactory::createGeometricPrimitive(
+   std::shared_ptr<PrimitiveList> PrimitiveFactory::createGeometricPrimitive(
       const ParamSet& params, const Scene& scene
    ) {
       std::shared_ptr<Material> material;
@@ -29,6 +30,7 @@ namespace raytracer {
       if (material == nullptr)
          std::cerr << "[WARN]: Primitive created without material" << std::endl;
 
+      auto primitiveList = std::make_shared<PrimitiveList>();
       std::string type = params.retrieve<std::string>("type");
       std::shared_ptr<Shape> shape;
       if (type == "sphere") {
@@ -37,24 +39,37 @@ namespace raytracer {
          shape = std::make_shared<Plane>(params);
       } else if(type == "box"){
          shape = std::make_shared<Box>(params);
-      }else {
+      } else if (type == "trianglemesh") {
+         auto shapes = std::make_shared<TriangleMesh>(params);
+
+         for (auto& shape : shapes->makeTriangules()) {
+            primitiveList->add(
+               std::make_shared<GeometricPrimitive>(shape, material)
+            );
+         }
+
+         return primitiveList;
+      } else {
          throw std::invalid_argument("Unknown primitive type: " + type);
       }
 
-      return std::make_shared<GeometricPrimitive>(shape, material);
+      auto primitive = std::make_shared<GeometricPrimitive>(shape, material);
+      primitiveList->add(primitive);
+      return primitiveList;
    }
 
-   std::shared_ptr<Primitive> PrimitiveFactory::create(
+   std::shared_ptr<PrimitiveList> PrimitiveFactory::create(
       const ParamSet& params, const Scene& scene
    ) {
       if (!params.has("type")) {
          throw std::invalid_argument("ObjectFactory requires a 'type' parameter");
       }
 
-      if (isGeometricPrimitive(params.retrieve<std::string>("type"))) {
+      auto type = params.retrieve<std::string>("type");
+      if (isGeometricPrimitive(type)) {
          return createGeometricPrimitive(params, scene);
       } else {
-         throw std::invalid_argument("Invalid primitive 'type'");
+         throw std::invalid_argument("Invalid primitive 'type', received: " + type);
       }
    }
 }

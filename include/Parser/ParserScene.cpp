@@ -27,13 +27,13 @@ namespace raytracer
        {"world_begin", {}},
        {"world_end", {}},
        {"render_again", {}},
-       {"object", {"type", "center", "origin", "radius", "norm", "material", "first_point", "second_point"}},
+       {"object", {"type", "center", "origin", "radius", "norm", "material", "first_point", "second_point", "filename", "ntriangles", "indices", "vertices", "normals", "uv", "reverse_vertex_order", "compute_normals", "backface_cull"}},
        {"make_named_material", {"type", "name", "color", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "mirror", "color_map"}},
        {"named_material", {"name"}},
        {"material", {"type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "mirror", "color_map"}},
        {"light_source", {"type", "I", "scale", "from", "to", "attenuation", "cutoff", "falloff", "world_radius"}}};
 
-   std::unordered_map<std::string, ConvertFunction> converters{
+   std::unordered_map<std::string, ConvertFunction> converters {
        {"type", convert<std::string>},
        {"name", convert<std::string>},
        {"filename", convert<std::string>},
@@ -41,17 +41,17 @@ namespace raytracer
        {"mapping", convert<std::string>},
        {"fovy", convert<int>},
 
-       {"color", convert_color},
-       {"bl", convert_color},
-       {"tl", convert_color},
-       {"tr", convert_color},
-       {"br", convert_color},
-       {"t", convert_color},
-       {"b", convert_color},
-       {"r", convert_color},
-       {"l", convert_color},
+       {"color", convert<RGBColor>},
+       {"bl", convert<RGBColor>},
+       {"tl", convert<RGBColor>},
+       {"tr", convert<RGBColor>},
+       {"br", convert<RGBColor>},
+       {"t", convert<RGBColor>},
+       {"b", convert<RGBColor>},
+       {"r", convert<RGBColor>},
+       {"l", convert<RGBColor>},
        {"spherical", convert<bool>},
-       {"screen_window", convert<std::vector<float>, float, 4>},
+       {"screen_window", convert<std::vector<float>, 4>},
 
        {"x_res", convert<int>},
        {"y_res", convert<int>},
@@ -61,25 +61,35 @@ namespace raytracer
        {"flip", convert<bool>},
        {"gamma_corrected", convert<bool>},
 
-       {"look_from", convert<raytracer::Point3, double, 3>},
-       {"look_at", convert<raytracer::Point3, double, 3>},
-       {"up", convert<raytracer::Vector3, double, 3>},
+       {"look_from", convert<raytracer::Point3>},
+       {"look_at", convert<raytracer::Point3>},
+       {"up", convert<raytracer::Vector3>},
 
        {"radius", convert<float>},
-       {"origin", convert<raytracer::Point3, double, 3>},
-       {"center", convert<raytracer::Point3, double, 3>},
-       {"norm", convert<raytracer::Vector3, double, 3>},
+       {"origin", convert<raytracer::Point3>},
+       {"center", convert<raytracer::Point3>},
+       {"norm", convert<raytracer::Vector3>},
        {"material", convert<std::string>},
-       {"first_point", convert<raytracer::Point3, double, 3>},
-       {"second_point", convert<raytracer::Point3, double, 3>},
+       {"first_point", convert<raytracer::Point3>},
+       {"second_point", convert<raytracer::Point3>},
        {"color_map", convert<std::vector<raytracer::RGBColor>>},
 
-       {"color1", convert<raytracer::RGBColor, std::uint8_t, 3>},
-       {"color2", convert<raytracer::RGBColor, std::uint8_t, 3>},
+       // Tringle Mesh
+       {"ntriangles", convert<uint>},
+       {"indices", convert<std::vector<uint>>},
+       {"vertices", convert<std::vector<Point3>>},
+       {"normals", convert<std::vector<Vector3>>},
+       {"uv", convert<std::vector<Point2>>},
+       {"reverse_vertex_order", convert<bool>},
+       {"compute_normals", convert<bool>},
+       {"backface_cull", convert<bool>},
+
+       {"color1", convert<raytracer::RGBColor>},
+       {"color2", convert<raytracer::RGBColor>},
        {"spacing", convert<float>},
 
-       {"near_color", convert<raytracer::RGBColor, std::uint8_t, 3>},
-       {"far_color", convert<raytracer::RGBColor, std::uint8_t, 3>},
+       {"near_color", convert<raytracer::RGBColor>},
+       {"far_color", convert<raytracer::RGBColor>},
        {"zmin", convert<float>},
        {"zmax", convert<float>},
        {"depth", convert<uint>},
@@ -88,15 +98,15 @@ namespace raytracer
 
        // Light attributes
        {"I", convert_color},
-       {"scale", convert<raytracer::Vector3, double, 3>},
-       {"from", convert<raytracer::Point3, double, 3>},
-       {"to", convert<raytracer::Point3, double, 3>},
-       {"attenuation", convert<raytracer::Vector3, double, 3>},
-       {"diffuse", convert<raytracer::Vector3, double, 3>},
-       {"specular", convert<raytracer::Vector3, double, 3>},
-       {"ambient", convert<raytracer::Vector3, double, 3>},
+       {"scale", convert<raytracer::Vector3>},
+       {"from", convert<raytracer::Point3>},
+       {"to", convert<raytracer::Point3>},
+       {"attenuation", convert<raytracer::Vector3>},
+       {"diffuse", convert<raytracer::Vector3>},
+       {"specular", convert<raytracer::Vector3>},
+       {"ambient", convert<raytracer::Vector3>},
        {"glossiness", convert<float>},
-       {"mirror", convert<raytracer::Vector3, double, 3>},
+       {"mirror", convert<raytracer::Vector3>},
        {"cutoff", convert<float>},
        {"falloff", convert<float>},
        {"world_radius", convert<float>},
@@ -297,8 +307,8 @@ namespace raytracer
          {
             try
             {
-               auto object = PrimitiveFactory::create(ps, scene);
-               scene.addPrimitive(object);
+               auto primitives = PrimitiveFactory::create(ps, scene);
+               scene.addPrimitives(primitives);
             }
             catch (const std::exception &e)
             {

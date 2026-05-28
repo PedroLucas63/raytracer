@@ -1,0 +1,48 @@
+<RT3>
+   <lookat look_from="0 5 -10" look_at="0 0 0" up="0 1 0" />
+   <camera type="perspective" fovy="45" />
+   <integrator type="blinn_phong" depth="1" />
+   <film type="image" w_res="900" h_res="700" filename="output/scene45.png" img_type="png" />
+
+   <world_begin/>
+      <background type="single_color" color="245 245 245"/>
+
+      <material
+         name="pyramid"
+         type="blinn"
+         diffuse="0.65 0.35 0.20"
+         specular="0.20 0.20 0.20"
+         ambient="0.03 0.03 0.03"
+         glossiness="70"
+      />
+
+      <light_source type="point" from="-3 4 -5" I="0.9 0.9 0.9" />
+      <light_source type="directional" from="3 5 -7" to="0 0 0" I="0.4 0.4 0.4" world_radius="50" />
+
+      <object
+         type="trianglemesh"
+         material="pyramid"
+         compute_normals="true"
+         reverse_vertex_order="true"
+         ntriangles="4"
+         indices="
+            0 1 2 
+            0 1 3 
+            0 2 3 
+            1 2 3
+         "
+         vertices="
+            -1 0 0 
+            1 0 -0.5 
+            1 0 0.5 
+            0 1 0
+         "
+         uv="
+            0 0 
+            1 0 
+            0.5 1 
+            0.5 0
+         "
+      />
+   <world_end/>
+</RT3>

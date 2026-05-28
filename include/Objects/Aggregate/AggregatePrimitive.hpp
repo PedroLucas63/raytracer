@@ -11,6 +11,8 @@ namespace raytracer {
 
          const std::shared_ptr<Material> getMaterial() const override;
          const bool hasMaterial() const override;
+
+         
    };
 }
 

@@ -43,6 +43,7 @@ namespace raytracer {
          void activateNamedMaterial(const std::string& name);
 
          void addPrimitive(const std::shared_ptr<Primitive>& primitive);
+         void addPrimitives(const std::shared_ptr<PrimitiveList>& primitives);
          void addMaterial(const std::shared_ptr<Material>& material);
          std::shared_ptr<Material> getMaterialAt(const std::string& name) const;
          std::shared_ptr<Material> getLastMaterial() const { return _lastMaterial; }

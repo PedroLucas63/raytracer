@@ -19,6 +19,10 @@ namespace raytracer {
       _aggregate->add(primitive);
    }
 
+   void Scene::addPrimitives(const std::shared_ptr<PrimitiveList>& primitives) {
+      _aggregate->merge(primitives);
+   }
+
    bool Scene::intersectWithSurfel(const Ray& r, Surfel* isect) const {
       return _aggregate->intersectWithSurfel(r, isect);
    }

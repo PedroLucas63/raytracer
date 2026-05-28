@@ -77,13 +77,15 @@ namespace raytracer {
 
    };
 
-   class TriangleMesh : public Shape {
+   class TriangleMesh {
       private:
          std::vector<std::shared_ptr<Vertex>> _vertesis;
          std::vector<uint> _triangleIndices;
          bool _reverseVertexOrder;
          bool _computeNormals;
          bool _backfaceCull;
+
+         void loadByObjectFile(std::string filename);
 
       public:
          TriangleMesh(const ParamSet& params);
