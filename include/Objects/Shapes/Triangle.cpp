@@ -1,5 +1,10 @@
 #include "Objects/Shapes/Triangle.hpp"
 #include <unordered_map>
+#include <tiny_obj_loader.h>
+#include <iostream>
+
+#define TINYOBJLOADER_IMPLEMENTATION
+
 
 namespace raytracer {
    void Vertex::checkNormal() const {
@@ -166,7 +171,10 @@ namespace raytracer {
 
       auto edge1 = v1.getPosition() - v0.getPosition();
       auto edge2 = v2.getPosition() - v0.getPosition();
-      return edge1.cross(edge2).normalize();
+      auto cross = edge1.cross(edge2);
+      if (cross.length() == 0.0f)
+         return VECTOR3_UNIT_Y; // degenerate triangle fallback
+      return cross.normalize();
    }
 
    Vector3 Triangle::getBarycentricNormal(const Point2& uv) const {
@@ -178,7 +186,10 @@ namespace raytracer {
       auto n2 = getVertex(2).getNormal();
 
       auto normal = n0 * (1 - u - v) + n1 * u + n2 * v;
-      return normal.normalize();
+      if (normal.length() > 0.0f)
+         return normal.normalize();
+      // fallback: use geometric face normal
+      return getFaceNormal();
    }
 
 
@@ -198,9 +209,9 @@ namespace raytracer {
       if (!surfel)
          return true;
 
-      surfel->point = ray(t);
-
-      surfel->normal = getBarycentricNormal(uv);
+      surfel->point   = ray(t);
+      surfel->normal  = getBarycentricNormal(uv);
+      surfel->viewDir = -ray.direction.normalize();
       surfel->material = nullptr;
 
       return true;
@@ -225,18 +236,101 @@ namespace raytracer {
       return Bounds3(min, max);
    }
 
-   void TriangleMesh::loadByObjectFile(std::string filename) {
-
-   }
-
    TriangleMesh::TriangleMesh(const ParamSet& params) {
+
+      _reverseVertexOrder = params.retrieveOrDefault("reverse_vertex_order", false);
+      _computeNormals     = params.retrieveOrDefault("compute_normals", false);
+      _backfaceCull       = params.retrieveOrDefault("backface_cull", false);
+      _nTriangles         = 0;
       
       if (params.has("filename")) {
          loadByObjectFile(params.retrieve<std::string>("filename"));
-         return;
+      }else{
+         loadFromParamSet(params);
+      }
+   }
+
+   void TriangleMesh::loadByObjectFile(std::string filename) {
+
+      tinyobj::attrib_t attrib;
+      std::vector<tinyobj::shape_t> shapes;
+      std::vector<tinyobj::material_t> materials;
+      std::string warn, err;
+
+      bool ret = tinyobj::LoadObj(&attrib,
+         &shapes,
+         &materials, 
+         &warn, 
+         &err, 
+         filename.c_str(), 
+         nullptr, 
+         true //always triangulate faces
+      ); 
+
+      if (!warn.empty()) {
+         std::cerr << "WARN: " << warn << std::endl;
+      }if (!err.empty()) {
+         throw std::runtime_error("Failed to load OBJ file: " + err);
+      }if (shapes.empty()) {
+         throw std::runtime_error("No shapes found in OBJ file: " + filename);
+      }if (!ret) {
+         throw std::runtime_error("Failed to load OBJ file: " + filename);
       }
 
-      uint ntriangles = std::numeric_limits<uint>::infinity();
+      const size_t nVerts = attrib.vertices.size() / 3;
+      const size_t nNormals = attrib.normals.size() / 3;
+      const size_t nUVs = attrib.texcoords.size() / 2;
+   
+      _vertesis.reserve(nVerts);
+      _normals.reserve(nNormals);
+      _uvcoords.reserve(nUVs);
+
+      for (size_t i = 0; i < nVerts; i++){
+         _vertesis.emplace_back(
+            attrib.vertices[3 * i],
+            attrib.vertices[3 * i + 1],
+            attrib.vertices[3 * i + 2]
+         );
+      }
+      
+      for (size_t i = 0; i < nNormals; i++){
+         _normals.emplace_back(
+            attrib.normals[3 * i],
+            attrib.normals[3 * i + 1],
+            attrib.normals[3 * i + 2]
+         );
+      }
+
+      for (size_t i = 0; i < nUVs; i++){
+         _uvcoords.emplace_back( 
+            std::clamp(attrib.texcoords[2 * i], 0.0f, 1.0f),
+            std::clamp(attrib.texcoords[2 * i + 1], 0.0f, 1.0f)
+         );
+      }
+      
+      _nTriangles = 0;
+      for (const auto& shape : shapes) {
+         size_t indexOffset = 0;
+         for(size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++){
+            const size_t fv = shape.mesh.num_face_vertices[f];
+
+            for (size_t v = 0; v < fv; v++) {
+               int realVi = _reverseVertexOrder ? (fv - 1 - v) : v; // backwards vertex order if needed
+
+               tinyobj::index_t idx = shape.mesh.indices[indexOffset + realVi];
+               _vertexIndices.push_back(idx.vertex_index);
+               _normalIndices.push_back(idx.normal_index);
+               _uvIndices.push_back(idx.texcoord_index);
+            }
+            indexOffset += fv;
+            _nTriangles++;
+         }
+      }
+   }
+
+
+   void TriangleMesh::loadFromParamSet(const ParamSet& params) {
+
       std::vector<uint> indices;
 
       if (params.has("indices")) {
@@ -245,81 +339,97 @@ namespace raytracer {
          if (indices.size() % 3 != 0)
             throw std::invalid_argument("Invalid number of indices for triangles");
          
-         ntriangles = indices.size() / 3;
+         _nTriangles = indices.size() / 3;
       } else {
          throw std::invalid_argument("No indices provided for triangle mesh");
       }
 
       if (params.has("ntriangles")) {
          auto n = params.retrieve<uint>("ntriangles");
-         if (n < ntriangles)
-            ntriangles = n;
+         if (n < _nTriangles)
+            _nTriangles = n;
       }
-
-      _reverseVertexOrder = params.retrieveOrDefault("reverse_vertex_order", false);
-      _computeNormals = params.retrieveOrDefault("compute_normals", false);
-      _backfaceCull = params.retrieveOrDefault("backface_cull", false);
 
       if (!params.has("vertices")) {
          throw std::invalid_argument("No vertices provided for triangle mesh");
       }
-      auto vertexPoints = params.retrieve<std::vector<Point3>>("vertices");
+      _vertesis = params.retrieve<std::vector<Point3>>("vertices");
 
       bool hasNormals = params.has("normals");
-      std::vector<Vector3> vertexNormals;
 
       if (hasNormals) {
-         vertexNormals = params.retrieve<std::vector<Vector3>>("normals");
+         _normals = params.retrieve<std::vector<Vector3>>("normals");
       }
 
       if (!params.has("uv")) {
          throw std::invalid_argument("No texture coordinates provided for triangle mesh");
       }
-      auto vertexTextureCoordinates = params.retrieve<std::vector<Point2>>("uv");
+      _uvcoords = params.retrieve<std::vector<Point2>>("uv");
 
-      if (vertexPoints.size() != vertexTextureCoordinates.size()) {
+      if (_vertesis.size() != _uvcoords.size()) {
          throw std::invalid_argument("Inconsistent number of vertices and texture coordinates");
       }
 
-      if (vertexNormals.size() > vertexPoints.size()) {
+      if (_normals.size() > _vertesis.size()) {
          throw std::invalid_argument("Inconsistent number of vertices and normals");
       }
 
-      vertexNormals.resize(vertexPoints.size(), VECTOR3_UNIT_Y);
+      for (size_t i = 0; i < _nTriangles * 3; i++) {
+         int idx = indices[i];
 
-      for (size_t i = 0; i < vertexPoints.size(); i++) {
-         _vertesis.push_back(
-            std::make_shared<Vertex>(
-               vertexPoints[i],
-               vertexTextureCoordinates[i],
-               PIXEL_BLACK,
-               vertexNormals[i]
-            )
-         );
-      }
-
-      for (size_t i = 0; i < ntriangles * 3; i++) {
-         if (indices[i] >= _vertesis.size()) {
+         if (idx >= _vertesis.size()) {
             throw std::invalid_argument("Invalid vertex index in triangle mesh");
+         }
+
+         _vertexIndices.push_back(idx);
+
+         if(!_normals.empty() && idx < _normals.size()){
+            _normalIndices.push_back(idx);
+         }  else{
+            _normalIndices.push_back(-1);
+         }
+
+         if(!_uvcoords.empty() && idx < _uvcoords.size()){
+            _uvIndices.push_back(idx);
+         } else{
+            _uvIndices.push_back(-1);
          }
       }
 
-      _triangleIndices = indices;
+   }
+
+   Point2 TriangleMesh::getUV(uint triIdx, uint vertInTri) const {
+      int ui = _uvIndices[triIdx * 3 + vertInTri];
+      if (ui >= 0 && static_cast<size_t>(ui) < _uvcoords.size())
+         return _uvcoords[ui];
+      return Point2(0.0f, 0.0f);
+   }
+
+   Vector3 TriangleMesh::getNormal(uint triIdx, uint vertInTri, const Point3& p0, const Point3& p1, const Point3& p2) const {
+      int ni = _normalIndices[triIdx * 3 + vertInTri];
+      if (ni >= 0 && static_cast<size_t>(ni) < _normals.size())
+         return _normals[ni];
+
+      // Fallback: compute geometric face normal
+      auto e1 = p1 - p0;
+      auto e2 = p2 - p0;
+      auto cross = e1.cross(e2);
+      if (cross.length() == 0.0f)
+         return VECTOR3_UNIT_Y; // degenerate triangle
+      return cross.normalize();
    }
 
    std::vector<std::shared_ptr<Triangle>> TriangleMesh::makeTriangules() {
+
       std::vector<std::shared_ptr<Triangle>> triangles;
-      uint nTriangles = _triangleIndices.size() / 3;
-      std::vector<Vector3> accumulatedNormals;
+      triangles.reserve(_nTriangles);
 
-      if (_computeNormals) {
-         accumulatedNormals.assign(_vertesis.size(), VECTOR3_ZERO);
-      }
+      std::vector<Vector3> accumulatedNormals(_vertesis.size(), VECTOR3_ZERO);
 
-      for (size_t i = 0; i < nTriangles; i++) {
-         auto v0_i = _triangleIndices[i * 3];
-         auto v1_i = _triangleIndices[i * 3 + 1];
-         auto v2_i = _triangleIndices[i * 3 + 2];
+      for (size_t i = 0; i < _nTriangles; i++) {
+         auto v0_i = _vertexIndices[i * 3];
+         auto v1_i = _vertexIndices[i * 3 + 1];
+         auto v2_i = _vertexIndices[i * 3 + 2];
 
          if (_reverseVertexOrder) {
             std::swap(v1_i, v2_i);
@@ -329,8 +439,20 @@ namespace raytracer {
          auto v1 = _vertesis[v1_i];
          auto v2 = _vertesis[v2_i];
 
+         auto uv0 = getUV(i, 0);
+         auto uv1 = getUV(i, 1);
+         auto uv2 = getUV(i, 2);
+
+         auto n0 = getNormal(i, 0, v0, v1, v2);
+         auto n1 = getNormal(i, 1, v0, v1, v2);
+         auto n2 = getNormal(i, 2, v0, v1, v2); 
+
+         auto vertex0 = std::make_shared<Vertex>(v0, uv0, PIXEL_BLACK, n0);
+         auto vertex1 = std::make_shared<Vertex>(v1, uv1, PIXEL_BLACK, n1);
+         auto vertex2 = std::make_shared<Vertex>(v2, uv2, PIXEL_BLACK, n2);
+
          auto triangle = std::make_shared<Triangle>(
-            std::array<std::shared_ptr<Vertex>, 3>{v0, v1, v2},
+            std::array<std::shared_ptr<Vertex>, 3>{vertex0, vertex1, vertex2},
             _backfaceCull
          );
 
@@ -345,13 +467,14 @@ namespace raytracer {
       }
 
       if (_computeNormals) {
-         for (size_t i = 0; i < _vertesis.size(); i++) {
-            auto normal = accumulatedNormals[i];
-            if (normal.length() == 0.0) {
-               _vertesis[i]->setNormal(VECTOR3_UNIT_Y);
-               continue;
+         for (int i = 0; i < _nTriangles; i++) {
+            auto vertesis = triangles[i]->getVertices();
+            for (size_t k = 0; k < 3; k++) {
+               int vi = _vertexIndices[i * 3 + k];
+               auto& accum = accumulatedNormals[vi];
+               if (accum.length() > 0.0f)
+                  vertesis[k]->setNormal(accum.normalize());
             }
-            _vertesis[i]->setNormal(normal.normalize());
          }
       }
 

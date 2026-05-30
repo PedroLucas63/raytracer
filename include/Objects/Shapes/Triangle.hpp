@@ -79,13 +79,23 @@ namespace raytracer {
 
    class TriangleMesh {
       private:
-         std::vector<std::shared_ptr<Vertex>> _vertesis;
-         std::vector<uint> _triangleIndices;
+         std::vector<Point3> _vertesis;
+         std::vector<Vector3> _normals;
+         std::vector<Point2> _uvcoords;
+
+         std::vector<int> _vertexIndices;
+         std::vector<int> _normalIndices;
+         std::vector<int> _uvIndices;
+ 
+         int _nTriangles;
          bool _reverseVertexOrder;
          bool _computeNormals;
          bool _backfaceCull;
 
          void loadByObjectFile(std::string filename);
+         void loadFromParamSet(const ParamSet& params);
+         Point2 getUV(uint triIdx, uint vertInTri) const;
+         Vector3 getNormal(uint triIdx, uint vertInTri, const Point3& p0, const Point3& p1, const Point3& p2) const;
 
       public:
          TriangleMesh(const ParamSet& params);

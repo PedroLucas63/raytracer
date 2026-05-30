@@ -1,0 +1,46 @@
+<RT3>
+   <lookat look_from="0 25 -45" look_at="0 3 5" up="0 1 0" />]
+   <camera type="perspective" fovy="45" />
+   <integrator type="blinn_phong" depth="1" />
+   <film type="image" w_res="900" h_res="700" filename="output/scene46-mesh.png" img_type="png" />
+
+   <world_begin/>
+      <background type="single_color" color="245 245 245"/>
+      <make_named_material type="blinn" name="stone" ambient="0.03 0.03 0.03" diffuse="0.22 0.22 0.22" specular="0.05 0.05 0.05" glossiness="8" />
+
+      <make_named_material
+         name="pyramid"
+         type="blinn"
+         diffuse="0.65 0.35 0.20"
+         specular="0.20 0.20 0.20"
+         ambient="0.03 0.03 0.03"
+         glossiness="70"
+      />
+
+   <make_named_material
+      name="metal"
+      type="blinn"
+      diffuse="0.05 0.05 0.05"
+      specular="0.3 0.3 0.3" 
+      ambient="0.0 0.0 0.0"
+      glossiness="512"
+      mirror="0.7 0.7 0.7"
+      
+   />
+      
+      <light_source type="point" from="-10 15 -10" I="0.9 0.9 0.9" />
+      <light_source type="directional" from="10 20 -15" to="0 0 7" I="0.4 0.4 0.4" world_radius="50" />
+
+      <object type="plane" origin="0 -10 0" norm="0 1 0" material="stone" />
+
+      <object type="plane" origin="0 0 25" norm="0 0 1" material="stone" />
+
+      <object type="trianglemesh"
+               filename="scenes/obj/teapot.obj"
+               compute_normals="true"
+               backface_cull="false"
+               material="metal"
+      />
+
+   <world_end/>
+</RT3>

@@ -3,6 +3,7 @@
       "catch2",
       "stb",
       "cli11",
-      "tinyxml2"
+      "tinyxml2",
+      "tinyobjloader"
    ]
 }

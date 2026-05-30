@@ -80,6 +80,10 @@ find_package(tinyxml2 CONFIG REQUIRED)
 target_link_libraries(raytracer PRIVATE tinyxml2::tinyxml2)
 target_link_libraries(raytracer_core PRIVATE tinyxml2::tinyxml2)
 
+find_package(tinyobjloader CONFIG REQUIRED)
+target_link_libraries(raytracer_core PRIVATE tinyobjloader::tinyobjloader)
+
+
 if(BUILD_TESTING)
 	find_package(Catch2 3 CONFIG REQUIRED)
 	add_subdirectory(tests)
