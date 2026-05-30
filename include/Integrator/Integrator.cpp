@@ -2,6 +2,8 @@
 #include "Scene/Camera.hpp"
 #include "Utils/ProgressBar.hpp"
 #include <iostream>
+#include <omp.h>
+#include <atomic>
 
 namespace raytracer {
    ProgressBar SamplerIntegrator::makeProgressBar() {
@@ -70,17 +72,34 @@ namespace raytracer {
    void SamplerIntegrator::render(const Scene& scene) {
       preprocess(scene);
 
-      auto progress = makeProgressBar();
       auto film = _camera->film();
+      int width = film->getWidth();
+      int height = film->getHeight();
 
-      for (auto it : progress) {
-         auto [i, j] = getIAndJ(it);
-         Ray ray = _camera->generate_ray(i, j);
+      auto progress = makeProgressBar();
 
-         auto tempColor = Li(ray, scene);
-         auto color = tempColor.has_value() ? tempColor.value() : sampleBackground(scene, i, j, &ray);
+      #pragma omp parallel for schedule(dynamic, 1) shared(film, scene, progress)
+      for (int row = 0; row < height; ++row) {
+         int j = height - 1 - row;
+         for (int col = 0; col < width; ++col) {
+            int i = col;
+            Ray ray = _camera->generate_ray(i, j);
+   
+            auto tempColor = Li(ray, scene);
+            auto color = tempColor.has_value() ? tempColor.value() : sampleBackground(scene, i, j, &ray);
+   
+            film->setPixel(color, j, i);
+         }
 
-         film->setPixel(color, j, i);
+         #pragma omp critical(ProgressBarUpdate)
+         {
+            for (int k = 0; k < width; ++k) {
+               if (!progress.isComplete()) {
+                  progress.step();
+               }
+            }
+            progress.render();
+         }
       }
 
    }
