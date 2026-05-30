@@ -28,8 +28,10 @@ namespace raytracer {
       if (!scene.intersectWithSurfel(ray, surfel))
          return false;
 
-      if(ray.direction.dot(surfel->normal) > 0) {
-         return false;
+      // Flip the normal to always face the incoming ray (two-sided shading).
+      // This is critical for OBJ meshes where winding order may be inconsistent.
+      if (ray.direction.dot(surfel->normal) > 0) {
+         surfel->normal = -surfel->normal;
       }
 
       return true;

@@ -83,6 +83,10 @@ target_link_libraries(raytracer_core PRIVATE tinyxml2::tinyxml2)
 find_package(tinyobjloader CONFIG REQUIRED)
 target_link_libraries(raytracer_core PRIVATE tinyobjloader::tinyobjloader)
 
+find_package(OpenMP REQUIRED)
+target_link_libraries(raytracer_core PUBLIC OpenMP::OpenMP_CXX)
+
+
 
 if(BUILD_TESTING)
 	find_package(Catch2 3 CONFIG REQUIRED)

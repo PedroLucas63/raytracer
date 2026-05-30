@@ -209,6 +209,7 @@ namespace raytracer {
       if (!surfel)
          return true;
 
+      surfel->t       = t;
       surfel->point   = ray(t);
       surfel->normal  = getBarycentricNormal(uv);
       surfel->viewDir = -ray.direction.normalize();
@@ -430,10 +431,6 @@ namespace raytracer {
          auto v0_i = _vertexIndices[i * 3];
          auto v1_i = _vertexIndices[i * 3 + 1];
          auto v2_i = _vertexIndices[i * 3 + 2];
-
-         if (_reverseVertexOrder) {
-            std::swap(v1_i, v2_i);
-         }
 
          auto v0 = _vertesis[v0_i];
          auto v1 = _vertesis[v1_i];
