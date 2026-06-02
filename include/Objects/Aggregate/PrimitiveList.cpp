@@ -62,16 +62,27 @@ namespace raytracer {
       return bound;
    } 
 
-      void PrimitiveList::add(const std::shared_ptr<Primitive>& primitive) {
-            _primitives.push_back(primitive);
-         }
+   void PrimitiveList::add(const std::shared_ptr<Primitive>& primitive) {
+      _primitives.push_back(primitive);
+   }
 
 
-      void PrimitiveList::merge(const std::shared_ptr<PrimitiveList>& other) {
-         _primitives.insert(
-            _primitives.end(),
-            other->_primitives.begin(),
-            other->_primitives.end()
-         );
-      }
+   void PrimitiveList::merge(const std::shared_ptr<AggregatePrimitive>& other) {
+      auto otherList = std::dynamic_pointer_cast<PrimitiveList>(other);
+      if (!otherList)
+         throw std::invalid_argument("The other aggregate primitive must be a PrimitiveList");
+      
+      _primitives.insert(
+         _primitives.end(),
+         otherList->_primitives.begin(),
+         otherList->_primitives.end()
+      );
+   }
+
+   void PrimitiveList::insert(
+      iterator const& begin, 
+      iterator const& end
+   ) {
+      _primitives.insert(_primitives.end(), begin, end);
+   }
 }

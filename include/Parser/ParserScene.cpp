@@ -11,6 +11,7 @@
 #include "Objects/Materials/MaterialFactory.hpp"
 #include "Objects/PrimitiveFactory.hpp"
 #include "Objects/Light/LightFactory.hpp"
+#include "Objects/Aggregate/AggregateFactory.hpp"
 
 namespace raytracer
 {
@@ -31,7 +32,9 @@ namespace raytracer
        {"make_named_material", {"type", "name", "color", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "mirror", "color_map"}},
        {"named_material", {"name"}},
        {"material", {"type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "mirror", "color_map"}},
-       {"light_source", {"type", "I", "scale", "from", "to", "attenuation", "cutoff", "falloff", "world_radius"}}};
+       {"light_source", {"type", "I", "scale", "from", "to", "attenuation", "cutoff", "falloff", "world_radius"}},
+       {"aggregator", {"type", "split_method", "max_prims_per_node"}},
+      };
 
    std::unordered_map<std::string, ConvertFunction> converters {
        {"type", convert<std::string>},
@@ -110,6 +113,10 @@ namespace raytracer
        {"cutoff", convert<float>},
        {"falloff", convert<float>},
        {"world_radius", convert<float>},
+
+       // Aggregator
+       {"split_method", convert<std::string>},
+       {"max_prims_per_node", convert<uint>}
    };
 
    // ── helpers ──────────────────────────────────────────────────────────────────
@@ -255,8 +262,22 @@ namespace raytracer
                if (onElement)
                   onElement(scene, "world_end", empty);
             }
-         }
-         else if (element == "material")
+      } else if (element == "aggregator") {
+            try
+            {
+               auto aggregator = AggregateFactory::create(ps);
+               if (aggregator) {
+                  scene.addAggregate(aggregator);
+               }
+            }
+            catch (const std::exception &e)
+            {
+               std::cerr << "[Parser] Failed to create aggregator: " << e.what() << '\n';
+            }
+            
+            if (onElement)
+               onElement(scene, element, ps);
+      } else if (element == "material")
          {
             try
             {
@@ -305,6 +326,10 @@ namespace raytracer
          }
          else if (element == "object")
          {
+            if (!scene.hasAggregate()) {
+               scene.addAggregate(std::make_shared<PrimitiveList>());
+            }
+
             try
             {
                auto primitives = PrimitiveFactory::create(ps, scene);

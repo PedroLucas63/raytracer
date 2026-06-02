@@ -4,7 +4,7 @@
 
 namespace raytracer {
 
-    void DepthMapIntegrator::preprocess(const Scene& scene) {
+    void DepthMapIntegrator::preprocess(Scene& scene) {
         // First: create camera (base class preprocess sets _camera)
         SamplerIntegrator::preprocess(scene);
 

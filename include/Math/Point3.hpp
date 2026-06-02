@@ -64,6 +64,9 @@ namespace raytracer {
          Vector3 operator-(const Point3& other) const {
             return Vector3(_x - other._x, _y - other._y, _z - other._z);
          }
+         Point3 operator-() const {
+            return Point3(-_x, -_y, -_z);
+         }
  
          bool operator==(const Point3& other) const {
             return _x == other._x && _y == other._y && _z == other._z;
@@ -72,6 +75,8 @@ namespace raytracer {
             return !(*this == other);
          }
    };
+
+   constexpr const Point3 POINT3_ZERO(0.0, 0.0, 0.0);
 }
 
 #endif // !POINT3_HPP

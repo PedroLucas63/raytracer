@@ -24,7 +24,7 @@ namespace raytracer {
 
             ~DepthMapIntegrator() noexcept override = default;
 
-            void preprocess(const Scene& scene) override;
+            void preprocess(Scene& scene) override;
 
             std::optional<RGBColor> Li(const Ray& ray, const Scene& scene) const override;
     };

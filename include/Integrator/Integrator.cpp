@@ -69,7 +69,7 @@ namespace raytracer {
       return nullptr;
    }
 
-   void SamplerIntegrator::render(const Scene& scene) {
+   void SamplerIntegrator::render(Scene& scene) {
       preprocess(scene);
 
       auto film = _camera->film();
@@ -104,8 +104,9 @@ namespace raytracer {
 
    }
 
-   void SamplerIntegrator::preprocess(const Scene& scene) {
+   void SamplerIntegrator::preprocess(Scene& scene) {
       _camera = CameraFactory::create(scene.getParams());
+      scene.prepareAggregate();
    }
 
    void SamplerIntegrator::saveImage(bool noOverwrite) const {

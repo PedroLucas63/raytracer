@@ -12,9 +12,6 @@ namespace raytracer{
         private:
             Point3 _first;
             Point3 _second;
-
-            std::pair<float, float> calculateIntersectPoints(const Ray& ray) const;
-
         public:
 
             Box (Point3 first, Point3 second) :

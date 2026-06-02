@@ -55,12 +55,12 @@ namespace raytracer {
          return static_cast<char>(std::tolower(c));
       });
 
-      if (token == "true" || token == "1") {
+      if (token == "true" || token == "1" || token == "on") {
          value = true;
          return true;
       }
 
-      if (token == "false" || token == "0") {
+      if (token == "false" || token == "0" || token == "off") {
          value = false;
          return true;
       }

@@ -3,6 +3,7 @@
 
 #include "Math/Point3.hpp"
 #include "Math/Ray.hpp"
+#include "Math/Axis.hpp"
 
 namespace raytracer {
    class Bounds3 {
@@ -17,6 +18,12 @@ namespace raytracer {
 
          const Point3& min() const;
          const Point3& max() const;
+
+         Bounds3 merge(const Bounds3& point) const;
+         Vector3 diagonal() const;
+         Axis maxExtent() const;
+
+         bool intersect(const Ray& ray, float &hit1, float &hit2) const;
    };
 }
 

@@ -1,5 +1,6 @@
 #include "Scene/Scene.hpp"
 #include "Scene/Background/BackgroundFactory.hpp"
+#include "Objects/Aggregate/BVHAccel.hpp"
 #include <iostream>
 
 namespace raytracer {   
@@ -15,19 +16,38 @@ namespace raytracer {
       return *this;
    }
    
+   void Scene::addAggregate(const std::shared_ptr<AggregatePrimitive>& aggregate) {
+      _aggregate = aggregate;
+   }
+
    void Scene::addPrimitive(const std::shared_ptr<Primitive>& primitive) {
+      if (!_aggregate) {
+         throw std::runtime_error("Aggregate primitive not set. Call addAggregate() before adding primitives.");
+      }
       _aggregate->add(primitive);
    }
 
-   void Scene::addPrimitives(const std::shared_ptr<PrimitiveList>& primitives) {
+   void Scene::addPrimitives(const std::shared_ptr<AggregatePrimitive>& primitives) {
+      if (!_aggregate) {
+         throw std::runtime_error("Aggregate primitive not set. Call addAggregate() before adding primitives.");
+      }
+
       _aggregate->merge(primitives);
    }
 
    bool Scene::intersectWithSurfel(const Ray& r, Surfel* isect) const {
+      if (!_aggregate) {
+         return false;
+      }
+
       return _aggregate->intersectWithSurfel(r, isect);
    }
  
    bool Scene::intersect(const Ray& r) const {
+      if (!_aggregate) {
+         return false;
+      }
+
       return _aggregate->intersect(r);
    }
 
@@ -146,8 +166,20 @@ namespace raytracer {
       _materialMap.insert(other._materialMap.begin(), other._materialMap.end());
  
       const auto& otherAggregate = other._aggregate;
-      if (otherAggregate) {
+      if (_aggregate && otherAggregate) {
          _aggregate->merge(otherAggregate);
+      } else if (otherAggregate) {
+         _aggregate = otherAggregate;
       }
+   }
+
+   void Scene::prepareAggregate() {
+      if (auto bvh = std::dynamic_pointer_cast<BVHAccel>(_aggregate)) {
+         bvh->buildBVH();
+      }
+   }
+
+   bool Scene::hasAggregate() const {
+      return _aggregate != nullptr;
    }
 }

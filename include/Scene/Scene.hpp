@@ -6,7 +6,7 @@
 #include "Objects/Primitive.hpp"
 #include "Objects/Materials/Material.hpp"
 #include "Objects/Materials/MaterialFactory.hpp"
-#include "Objects/Aggregate/PrimitiveList.hpp"
+#include "Objects/Aggregate/AggregatePrimitive.hpp"
 #include "Objects/Light/Light.hpp"
 #include "Objects/Light/AmbientLight.hpp"
 #include <vector>
@@ -18,7 +18,7 @@ namespace raytracer {
 
    class Scene {
       private:
-         std::shared_ptr<PrimitiveList> _aggregate;
+         std::shared_ptr<AggregatePrimitive> _aggregate;
          std::unordered_map<std::string, std::shared_ptr<Material>> _materialMap;
          std::shared_ptr<Material> _lastMaterial = nullptr;
 
@@ -30,9 +30,7 @@ namespace raytracer {
          ParamSets _params;
          
       public:
-         Scene(){
-            _aggregate = std::make_shared<PrimitiveList>();
-         }
+         Scene() = default;
          ~Scene() = default;
          Scene& operator=(const Scene& other);
 
@@ -42,8 +40,10 @@ namespace raytracer {
          void addNamedMaterial(const std::shared_ptr<Material>& material);
          void activateNamedMaterial(const std::string& name);
 
+         bool hasAggregate() const;
+         void addAggregate(const std::shared_ptr<AggregatePrimitive>& aggregate);
          void addPrimitive(const std::shared_ptr<Primitive>& primitive);
-         void addPrimitives(const std::shared_ptr<PrimitiveList>& primitives);
+         void addPrimitives(const std::shared_ptr<AggregatePrimitive>& primitives);
          void addMaterial(const std::shared_ptr<Material>& material);
          std::shared_ptr<Material> getMaterialAt(const std::string& name) const;
          std::shared_ptr<Material> getLastMaterial() const { return _lastMaterial; }
@@ -62,6 +62,8 @@ namespace raytracer {
          const ParamSets& getParams() const;
 
          void include(const Scene& other);
+
+         void prepareAggregate();
    };
 }
 

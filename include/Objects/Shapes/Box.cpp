@@ -29,38 +29,14 @@ namespace raytracer {
         );
     }
 
-    std::pair<float, float> Box::calculateIntersectPoints(const Ray& ray) const{
-        float tMin = -std::numeric_limits<float>::infinity();
-        float tMax = std::numeric_limits<float>::infinity();
-
-        auto checkAxis = [&](double originCoord, double dirCoord, double minCoord, double maxCoord) {
-            if (std::abs(dirCoord) < 1e-6) {
-                if (originCoord < minCoord || originCoord > maxCoord) {
-                    return false;
-                }
-            } else {
-                double t0 = (minCoord - originCoord) / dirCoord;
-                double t1 = (maxCoord - originCoord) / dirCoord;
-                if (t0 > t1) std::swap(t0, t1);
-                tMin = std::max(tMin, static_cast<float>(t0));
-                tMax = std::min(tMax, static_cast<float>(t1));
-                if (tMin > tMax) return false;
-            }
-            return true;
-        };
-
-        if (!checkAxis(ray.origin.getX(), ray.direction.getX(), _first.getX(), _second.getX())) return {-1.0f, -1.0f};
-        if (!checkAxis(ray.origin.getY(), ray.direction.getY(), _first.getY(), _second.getY())) return {-1.0f, -1.0f};
-        if (!checkAxis(ray.origin.getZ(), ray.direction.getZ(), _first.getZ(), _second.getZ())) return {-1.0f, -1.0f};
-
-        return {tMin, tMax};
-    }
-
     bool Box::intersect(const Ray& ray) const{
-        auto points = calculateIntersectPoints(ray);
-        float tMin = points.first;
-        float tMax = points.second;
-        
+        Bounds3 bounds = getBounds();
+
+        float tMin, tMax;
+        if (!bounds.intersect(ray, tMin, tMax)) {
+            return false;
+        }
+            
         if (tMin > tMax || tMax < ray.t_min || tMin > ray.t_max) return false;
         
         float tHit = tMin;
@@ -72,10 +48,13 @@ namespace raytracer {
         return true;
     }
 
-    bool Box::intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const{
-        auto points = calculateIntersectPoints(ray);
-        float tMin = points.first;
-        float tMax = points.second;
+    bool Box::intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const { 
+        Bounds3 bounds = getBounds();
+
+        float tMin, tMax;
+        if (!bounds.intersect(ray, tMin, tMax)) {
+            return false;
+        }
         
         if (tMin > tMax || tMax < ray.t_min || tMin > ray.t_max) return false;
         
@@ -110,5 +89,4 @@ namespace raytracer {
     Bounds3 Box::getBounds() const {
         return Bounds3(_first, _second);
     }
-
 };

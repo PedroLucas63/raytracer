@@ -20,9 +20,14 @@ namespace raytracer {
 
          const Bounds3 getBounds() const override; 
 
-         void add(const std::shared_ptr<Primitive>& primitive);
+         void add(const std::shared_ptr<Primitive>& primitive) override;
+         void merge(const std::shared_ptr<AggregatePrimitive>& other) override;
+         void insert(iterator const& begin, iterator const& end) override;
 
-         void merge(const std::shared_ptr<PrimitiveList>& other);
+         auto size() { return _primitives.size(); }
+         auto begin() { return _primitives.begin(); }
+         auto end() { return _primitives.end(); }
+         void clear() { _primitives.clear(); }
    };
 }
 
