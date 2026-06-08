@@ -37,7 +37,7 @@
       <object type="plane" origin="0 0 25" norm="0 0 1" material="stone" />
 
       <object type="trianglemesh"
-               filename="scenes/obj/teapot.obj"
+               filename="scenes/obj/smaug.obj"
                compute_normals="true"
                backface_cull="false"
                material="metal"

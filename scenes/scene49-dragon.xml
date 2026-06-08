@@ -1,12 +1,15 @@
 <RT3>
-    <lookat look_from="0 35 10" look_at="0 3 5" up="0 0 1" />
+    <lookat look_from="40 35 40" look_at="0 0 -25" up="0 1 0" />
     <camera type="perspective" fovy="45" />
-    <film type="image" w_res="2560" h_res="1440" filename="output/scene48.png" img_type="png" />
+    <film type="image" w_res="2560" h_res="1440" filename="output/scene49-dragon.png" img_type="png" />
     <aggregator type="bvh" split_method="middle" max_prims_per_node="4" />
     <integrator type="blinn_phong" depth="5" />
 
     <world_begin/>
         <background type="single_color" color="242 242 242"/>
+
+        <make_named_material type="blinn" name="ground" ambient="0.03 0.03 0.03" diffuse="0.22 0.22 0.22" specular="0.05 0.05 0.05" glossiness="8" />
+
 
         <material name="green" type="blinn"
             diffuse="0.2 0.95 0.2"
@@ -32,10 +35,10 @@
             ambient="0.02 0.02 0.3"
             glossiness="1024"/>
 
-        <material name="metal" type="blinn"
-            diffuse="0.05 0.05 0.05"
+        <material name="metal-red" type="blinn"
+            diffuse="0.7 0.1 0.1"
             specular="1 1 1"
-            ambient="0.02 0.02 0.02"
+            ambient="0.01 0.05 0.05"
             glossiness="512"
             mirror="0.7 0.7 0.7"/>
 
@@ -46,33 +49,25 @@
             glossiness="0"
             mirror="0.95 0.95 0.95"/>
 
-        <light_source type="ambient" I="0.1 0.1 0.1" scale="3 3 3" />
-        <!-- Luzes posicionadas no espaço world, acima do teapot em Y -->
-        <light_source type="point" from="0 20 5"  I="1.0 1.0 1.0" attenuation="1 0 0"/>
-        <light_source type="point" from="5 18 8"  I="0.7 0.7 0.7" attenuation="1 0 0"/>
-        <light_source type="point" from="-5 18 8" I="0.7 0.7 0.7" attenuation="1 0 0"/>
+        <light_source type="ambient" I="0.2 0.2 0.2" scale="3 3 3" />
 
-        <!-- CHÃO: plano em Z, pois a câmera vê Z como "baixo" -->
-        <object type="plane" origin="0 0 -15" norm="0 0 1" material="mirror" />
+        <light_source type="point" from="0 30 0"  I="1.0 1.0 1.0" attenuation="0.3 0 0"/>
+        <light_source type="point" from="0 10 -25"  I="1.0 1.0 1.0" attenuation="0.3 0 0"/>
+        <light_source type="directional" from="100 35 -30" to="0 0 0" I="1.0 1.0 1.0" attenuation="0.1 0 0" world_radius="50" />
 
-        <!-- TETO: acima em Z -->
-        <object type="plane" origin="0 0 25" norm="0 0 -1" material="mirror" />
 
-        <!-- PAREDE DE FUNDO (longe da câmera em Y) -->
-        <object type="plane" origin="0 -25 0" norm="0 1 0" material="mirror" />
+        <object type="plane" origin="0 0 0" norm="0 1 0" material="ground" />
 
-        <!-- PAREDE ESQUERDA -->
-        <object type="plane" origin="-20 0 0" norm="1 0 0" material="mirror" />
-
-        <!-- PAREDE DIREITA -->
-        <object type="plane" origin="20 0 0" norm="-1 0 0" material="mirror" />
 
         <object type="trianglemesh"
-                filename="scenes/obj/teapot.obj"
+                filename="scenes/obj/dragon.obj"
                 compute_normals="false"
                 backface_cull="false"
-                material="metal"
+                material="metal-red"
         />
+
+      <object type="sphere" center="0 2 -25" radius="1.5" material="metal-red"/>
+
 
     <world_end/>
 </RT3>
