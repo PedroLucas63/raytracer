@@ -7,18 +7,21 @@
 #include <vector>
 
 namespace raytracer {
-   class BVHAccel : public AggregatePrimitive {
-      private:
-         
 
+   class BVHAccel : public AggregatePrimitive {
+      public:
+      enum SplitMethod {
+         MIDDLE
+      };
+      private:
+      
          Bounds3 _bounds;
          std::shared_ptr<PrimitiveList> _primitives;
          std::shared_ptr<BVHAccel> _left;
          std::shared_ptr<BVHAccel> _right;
          int _maxPrimitivesPerNode;
-         enum SplitMethod {
-            MIDDLE
-         } _splitMethod;
+         SplitMethod _splitMethod;
+         Axis _lastSplitAxis;
 
          void updateSurfel(Surfel* sf, const Surfel candidate) const;
          void updateBounds();
@@ -39,6 +42,11 @@ namespace raytracer {
          void buildBVH();
 
          const Bounds3 getBounds() const override;
+
+         const BVHAccel* getLeft()  const;
+         const BVHAccel* getRight() const;
+         const PrimitiveList* getPrimitives() const;
+         Axis getSplitAxis() const;
    };
 }
 

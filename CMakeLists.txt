@@ -32,6 +32,7 @@ add_library(raytracer_core
 	include/Objects/Aggregate/AggregateFactory.cpp
 	include/Objects/Aggregate/PrimitiveList.cpp
 	include/Objects/Aggregate/BVHAccel.cpp
+	include/Objects/Aggregate/LinearBVHAccel.cpp
 	include/Objects/Light/Light.cpp
 	include/Objects/Light/PointLight.cpp
 	include/Objects/Light/AmbientLight.cpp

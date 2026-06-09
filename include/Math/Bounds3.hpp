@@ -4,6 +4,7 @@
 #include "Math/Point3.hpp"
 #include "Math/Ray.hpp"
 #include "Math/Axis.hpp"
+#include <limits>
 
 namespace raytracer {
    class Bounds3 {
@@ -12,6 +13,14 @@ namespace raytracer {
          Point3 _max;
 
       public:
+         Bounds3()
+            : _min( std::numeric_limits<double>::infinity(),
+                    std::numeric_limits<double>::infinity(),
+                    std::numeric_limits<double>::infinity()),
+              _max(-std::numeric_limits<double>::infinity(),
+                   -std::numeric_limits<double>::infinity(),
+                   -std::numeric_limits<double>::infinity()) {}
+
          Bounds3(const Point3& min, const Point3& max): 
             _min(min), _max(max) {}
          ~Bounds3() = default;
