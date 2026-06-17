@@ -3,7 +3,7 @@
    <lookat look_from="-5 7 -12" look_at="0 1 1" up="0 1 0" />
    <camera type="perspective" fovy="45" /> 
    <integrator type="blinn_phong" depth="3" />
-   <film type="image" w_res="1920" h_res="1200" filename="output/scene49.png" img_type="png" gamma_corrected="false" />
+   <film type="image" w_res="1920" h_res="1200" filename="output/scene50.png" img_type="png" gamma_corrected="false" />
 
    <!-- The Scene -->
    <world_begin/>

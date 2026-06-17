@@ -196,6 +196,10 @@ namespace raytracer {
          }
       }
 
+      if (sf) {
+         sf->viewDir = -ray.direction.normalize();
+      }
+
       return hitSide || hitCap;
    }
 

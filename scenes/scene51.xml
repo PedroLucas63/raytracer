@@ -3,7 +3,7 @@
     <lookat look_from="0 5 -10" look_at="0 5 10" up="0 1 0" />
     <camera type="perspective" fovy="60" /> 
     <integrator type="toon" mapping_interval="30 65 70 85"/>
-    <film type="image" w_res="1920" h_res="1200" filename="output/scene50.png" img_type="png" gamma_corrected="false" />
+    <film type="image" w_res="1920" h_res="1200" filename="output/scene51.png" img_type="png" gamma_corrected="false" />
 
     <!-- The Scene -->
     <world_begin/>

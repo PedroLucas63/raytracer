@@ -1,7 +1,7 @@
 <RT3>
     <lookat look_from="40 35 40" look_at="0 0 -25" up="0 1 0" />
     <camera type="perspective" fovy="45" />
-    <film type="image" w_res="2560" h_res="1440" filename="output/scene49-dragon.png" img_type="png" />
+    <film type="image" w_res="2560" h_res="1440" filename="output/scene49.png" img_type="png" />
     <aggregator type="lbvh" split_method="middle" max_prims_per_node="4" />
     <integrator type="blinn_phong" depth="5" />
 
