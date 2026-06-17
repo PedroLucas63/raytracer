@@ -23,12 +23,13 @@ namespace raytracer {
 
          Bounds3(const Point3& min, const Point3& max): 
             _min(min), _max(max) {}
+         static Bounds3 fromPoints(const Point3& p1, const Point3& p2);
          ~Bounds3() = default;
 
          const Point3& min() const;
          const Point3& max() const;
 
-         Bounds3 merge(const Bounds3& point) const;
+         Bounds3 merge(const Bounds3& bounds) const;
          Vector3 diagonal() const;
          Axis maxExtent() const;
 

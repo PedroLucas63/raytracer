@@ -28,6 +28,7 @@ add_library(raytracer_core
 	include/Objects/Shapes/Plane.cpp
 	include/Objects/Shapes/Box.cpp
 	include/Objects/Shapes/Triangle.cpp
+	include/Objects/Shapes/Cylinder.cpp
 	include/Objects/Aggregate/AggregatePrimitive.cpp
 	include/Objects/Aggregate/AggregateFactory.cpp
 	include/Objects/Aggregate/PrimitiveList.cpp
@@ -51,6 +52,7 @@ add_library(raytracer_core
 	include/Math/Point3.cpp
 	include/Math/Bounds3.cpp
 	include/Math/Point2.cpp
+	include/Math/Routines.cpp
 	include/Utils/ImageUtils.cpp
 	include/Utils/RunningOptions.cpp
 	include/Utils/ConvertFunction.cpp

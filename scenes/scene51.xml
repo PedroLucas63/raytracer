@@ -1,0 +1,27 @@
+
+<RT3>
+    <lookat look_from="0 5 -10" look_at="0 5 10" up="0 1 0" />
+    <camera type="perspective" fovy="60" /> 
+    <integrator type="toon" mapping_interval="30 65 70 85"/>
+    <film type="image" w_res="1920" h_res="1200" filename="output/scene51.png" img_type="png" gamma_corrected="false" />
+
+    <!-- The Scene -->
+    <world_begin/>
+
+        <!-- The Background -->
+        <background type="4_colors" bl="176 214 175" tl="4 99 202" tr="4 99 202" br="176 214 175" />
+
+        <!-- Lights -->
+        <light_source type="point" I="0.95 0.9 0.8" scale="0.8 0.8 0.8" from="-5 8 -5" />
+
+        <!-- Material Library -->
+        <material 
+            type="toon" 
+            name="green_toon"
+            color_map="0 0.3 0.1 0.1 0.5 0.2 0.15 0.7 0.25 0.2 0.8 0.3 0.3 1 0.5"
+        />
+
+        <object type="cylinder" radius="2" base="-3 3 0" top="-3 6 0"/>
+        <object type="cylinder" radius="2" base="3 3 0" top="4 6 -2"/>
+    <world_end/>
+</RT3>

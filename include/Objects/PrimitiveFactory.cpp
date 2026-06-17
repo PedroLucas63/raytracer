@@ -5,11 +5,12 @@
 #include "Objects/Shapes/Box.hpp"
 #include "Objects/Shapes/Shape.hpp"
 #include "Objects/Shapes/Triangle.hpp"
+#include "Objects/Shapes/Cylinder.hpp"
 #include <iostream>
 
 namespace raytracer {
    bool PrimitiveFactory::isGeometricPrimitive(const std::string& type) {
-      return type == "sphere" || type == "plane" || type == "box" || type == "trianglemesh";
+      return type == "sphere" || type == "plane" || type == "box" || type == "trianglemesh" || type == "cylinder";
    }
 
    std::shared_ptr<PrimitiveList> PrimitiveFactory::createGeometricPrimitive(
@@ -49,6 +50,8 @@ namespace raytracer {
          }
 
          return primitiveList;
+      } else if (type == "cylinder") {
+         shape = std::make_shared<Cylinder>(params);
       } else {
          throw std::invalid_argument("Unknown primitive type: " + type);
       }

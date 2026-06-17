@@ -73,17 +73,31 @@ Este ray tracer possui:
 
 ## Recursos Extras Implementados (Diferenciais)
 
-Além dos requisitos obrigatórios, as seguintes otimizações e recursos adicionais foram incluídos:
+Além dos requisitos obrigatórios, os seguintes recursos adicionais e otimizações foram incluídos no Ray Tracer:
 
-1. **Linear BVH (`LinearBVHAccel`)** - Estrutura de aceleração contígua (flattened) com travessia iterativa livre de recursão, otimizada para cache de CPU.
-2. **Renderização Multithreaded (OpenMP)** - Paralelização dinâmica em nível de linhas de pixels com atualização thread-safe da barra de progresso.
-3. **Cel / Toon Shading** - Integrador e material estilizado não-fotorrealista para visual cartoon.
-4. **Mapeamento de Fundo Esférico (360°)** - Suporte a texturas panorâmicas de ambiente 360° projetadas segundo a direção do raio.
-5. **Novas Primitivas Geométricas** - Suporte a planos infinitos (`plan`) e caixas alinhadas (`box` / AABB).
-6. **Textura Quadriculada Procedural (`grid`)** - Material xadrez com cores e espaçamentos configuráveis.
-7. **Atenuação Física de Luz** - Decaimento de iluminação linear e quadrático configurável para fontes pontuais.
-8. **Integradores de Diagnóstico** - Renderização de mapa de profundidade (`depth_map`) e mapa de normais (`normal_map`).
-9. **Gerador Procedural de Esferas (`extras/sphere-builder.cpp`)** - Utilitário CLI que gera aglomerados estruturados de esferas (linhas, triângulos, tetraedros ou pirâmides) formatados em XML.
+1. **Linear BVH (`LinearBVHAccel`)**:
+   - Uma estrutura de aceleração espacial otimizada que reorganiza a árvore BVH em um vetor plano contíguo em memória (`_nodes`).
+   - Algoritmo de travessia iterativo usando uma pilha de ponteiros de tamanho fixo, eliminando completamente a recursão durante os testes de interseção.
+   - Design *cache-friendly* que reduz falhas de cache da CPU, trazendo renderizações muito mais rápidas para cenas complexas com malhas densas.
+2. **Renderização Concorrente / Multithreaded (OpenMP)**:
+   - Paralelização no laço principal de rendering em nível de linha de pixels usando OpenMP (`#pragma omp parallel for schedule(dynamic, 1)`).
+   - Utilização de zonas críticas (`#pragma omp critical`) para atualização e redesenho thread-safe da barra de progresso no terminal.
+3. **Toon / Cel Shading**:
+   - Material Cel/Toon (`ToonMaterial`) que discretiza o sombreamento difuso em degraus/intervalos bem definidos de tons.
+   - Integrador dedicado (`ToonIntegrator`) para renderização estilizada (não-fotorrealista).
+4. **Mapeamento de Fundo Esférico (360° / Panorama)**:
+   - Suporte ao uso de mapas esféricos em backgrounds (`background type="image"` com atributo `spherical="true"`), onde a direção de raios que não atingem nenhum objeto é mapeada para coordenadas UV de uma imagem panorâmica 360°.
+5. **Forma Geométrica Plana (`plan`)**:
+   - Primitiva analítica rápida para planos infinitos no espaço 3D, útil para pisos e paredes reflexivas/quadriculadas.
+6. **Forma Geométrica Caixa (`box`)**:
+   - Primitiva geométrica de caixa (AABB) definida por dois cantos opostos.
+7. **Material Quadriculado procedural (`grid`)**:
+   - Padrão procedural de xadrez com espaçamento, cor 1 e cor 2 ajustáveis.
+8. **Atenuação Física de Luz**:
+   - Cálculo de atenuação quadrática e linear em fontes de luz pontuais (`PointLight` e `SpotLight`) a partir de um vetor de atenuação `(c1, c2, c3)` na fórmula $\frac{1}{c_1 + c_2 d + c_3 d^2}$.
+9. **Integradores de Diagnóstico**:
+   - **`NormalMapIntegrator`**: Mapeia as normais de interseção de superfície dos objetos como cores RGB (ideal para depuração visual de normais e carregamento de malhas).
+   - **`DepthMapIntegrator`**: Mapeia a profundidade ($z$) da interseção da câmera ao objeto como uma rampa de escala de cinza configurável por `zmin` e `zmax` (mapa de profundidade/z-buffer).
 
 ---
 

@@ -1,6 +1,11 @@
-#include "Bounds3.hpp"
+#include "Math/Bounds3.hpp"
+#include "Math/Routines.hpp"
 
 namespace raytracer {
+   Bounds3 Bounds3::fromPoints(const Point3& p1, const Point3& p2) {
+      return Bounds3(raytracer::min(p1, p2), raytracer::max(p1, p2));
+   }
+
    const Point3& Bounds3::min() const {
       return _min;
    }
@@ -9,16 +14,11 @@ namespace raytracer {
       return _max;
    }
 
-   Bounds3 Bounds3::merge(const Bounds3& point) const {
-      Point3 newMin(std::min(_min.getX(), point._min.getX()),
-                     std::min(_min.getY(), point._min.getY()),
-                     std::min(_min.getZ(), point._min.getZ()));
+   Bounds3 Bounds3::merge(const Bounds3& bounds) const {
+      auto p_min = raytracer::min(_min, bounds._min);
+      auto p_max = raytracer::max(_max, bounds._max);
 
-      Point3 newMax(std::max(_max.getX(), point._max.getX()),
-                     std::max(_max.getY(), point._max.getY()),
-                     std::max(_max.getZ(), point._max.getZ()));
-
-      return Bounds3(newMin, newMax);
+      return Bounds3(p_min, p_max);
    }
 
    Vector3 Bounds3::diagonal() const {

@@ -8,6 +8,7 @@
 #include "Math/Ray.hpp"
 #include <cmath>
 #include <limits>
+#include <iostream>
 
 namespace raytracer {
 
@@ -210,6 +211,7 @@ namespace raytracer {
    ) const {
       auto I = -surfel.viewDir;
       auto N = surfel.normal;
+
       auto reflectionDir = (I - N * 2 * (I.dot(N))).normalize();
       auto origin = surfel.point + N * 1e-4; // Offset to avoid self-intersection
       auto reflectionRay = Ray(origin, reflectionDir);
