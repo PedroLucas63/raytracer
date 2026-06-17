@@ -1,6 +1,7 @@
 #include "Scene/Scene.hpp"
 #include "Scene/Background/BackgroundFactory.hpp"
 #include "Objects/Aggregate/BVHAccel.hpp"
+#include "Objects/Aggregate/LinearBVHAccel.hpp"
 #include <iostream>
 
 namespace raytracer {   
@@ -174,7 +175,9 @@ namespace raytracer {
    }
 
    void Scene::prepareAggregate() {
-      if (auto bvh = std::dynamic_pointer_cast<BVHAccel>(_aggregate)) {
+      if (auto lbvh = std::dynamic_pointer_cast<LinearBVHAccel>(_aggregate)) {
+         lbvh->buildLBVH();
+      } else if (auto bvh = std::dynamic_pointer_cast<BVHAccel>(_aggregate)) {
          bvh->buildBVH();
       }
    }

@@ -2,6 +2,7 @@
     <lookat look_from="0 35 10" look_at="0 3 5" up="0 0 1" />
     <camera type="perspective" fovy="45" />
     <film type="image" w_res="2560" h_res="1440" filename="output/scene48.png" img_type="png" />
+    <aggregator type="bvh" split_method="middle" max_prims_per_node="4" />
     <integrator type="blinn_phong" depth="5" />
 
     <world_begin/>
@@ -67,7 +68,7 @@
         <object type="plane" origin="20 0 0" norm="-1 0 0" material="mirror" />
 
         <object type="trianglemesh"
-                filename="scenes/obj/teapot-low.obj"
+                filename="scenes/obj/teapot.obj"
                 compute_normals="false"
                 backface_cull="false"
                 material="metal"

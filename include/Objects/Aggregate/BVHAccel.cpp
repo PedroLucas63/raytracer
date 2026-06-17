@@ -88,6 +88,7 @@ namespace raytracer {
          int elementsPerLeaf = _primitives->size() / 2;
 
          Axis randomAxis = getRandomAxis();
+         _lastSplitAxis = randomAxis;
 
          std::sort(
             _primitives->begin(), 
@@ -163,5 +164,22 @@ namespace raytracer {
       int axis = dist(rng);
 
       return Axis(axis);
+   }
+
+
+   const BVHAccel* BVHAccel::getLeft()  const { 
+      return _left.get(); 
+   }
+
+   const BVHAccel* BVHAccel::getRight() const { 
+      return _right.get(); 
+   }
+
+   const PrimitiveList* BVHAccel::getPrimitives() const { 
+      return _primitives.get(); 
+   }
+
+   Axis BVHAccel::getSplitAxis() const { 
+      return _lastSplitAxis; 
    }
 }

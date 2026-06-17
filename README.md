@@ -31,41 +31,91 @@ Este ray tracer possui:
 - [x] Fundo com interpolacao de 2 e 4 cores (incluindo bilinear).
 - [x] Leitura de cena XML para camera, film e background.
 
-### Projeto 02 - Raios e Cameras
+### Projeto 02 - Raios e Câmeras
+- [x] Implementação da estrutura de Raios (`Ray`).
+- [x] Câmera Ortográfica.
+- [x] Câmera Perspectiva baseada no campo de visão vertical (`fovy`).
+- [x] Geração de frame de câmera a partir dos vetores de enquadramento (`look_from`, `look_at`, `up`).
+- [x] Mapeamento de pixels na imagem para coordenadas na janela da câmera (`screen_window`).
 
-- [x] Classe Ray integrada ao fluxo de render.
-- [x] Camera ortografica.
-- [x] Camera perspectiva com `fovy`.
-- [x] Mapeamento pixel -> coordenadas da janela da camera (`screen_window`).
-- [x] Frame da camera a partir de `look_from`, `look_at` e `up`.
+### Projeto 03 - Interseção Raio-Objeto Básica
+- [x] Interface unificada para primitivas geométricas (`Primitive`) e dados de colisão (`Surfel`).
+- [x] Teste de interseção raio-esfera analítico e correto.
+- [x] Suporte a materiais vinculados individualmente a objetos.
+- [x] Renderização Flat da cor dos objetos com base na interseção mais próxima do raio.
 
-### Projeto 03 - Intersecao Raio-Objeto
+### Projeto 04 - Integradores & Materiais
+- [x] Arquitetura modular de integradores baseada em herança (`Integrator` e `SamplerIntegrator`).
+- [x] Integrador Flat (`RayCastIntegrator` / `Flat`).
+- [x] Gerenciamento e reuso de materiais nomeados na cena (`make_named_material` / `named_material`).
 
-- [x] Estrutura de primitivas (`Primitive`) com `Surfel`.
-- [x] Intersecao raio-esfera.
-- [x] Registro de materiais e associacao material-objeto.
-- [x] Renderizacao por cor do material no ponto de intersecao mais proximo.
+### Projeto 05 - Modelo de Reflexão de Blinn-Phong
+- [x] Suporte a fontes de luz direcionais (`DirectionalLight`) e pontuais (`PointLight`).
+- [x] Componentes de iluminação ambiente, difusa e especular usando a formulação Blinn-Phong.
+- [x] Integrador Blinn-Phong completo (`BlinnPhongIntegrator`).
 
-### Extras Implementados
+### Projeto 06 - Sombras e Reflexões Perfeitas
+- [x] Sombras duras geradas por testes de visibilidade para luzes (`VisibilityTester`).
+- [x] Fonte de luz cônica projetora (`SpotLight`).
+- [x] Reflexões especulares ideais recursivas (espelhamento perfeito).
 
-- [x] **Objeto plano** (`object type="plan"`).
-- [x] **Material quadriculado** (`material type="grid"`) com `color1`, `color2` e `spacing`.
-- [x] Background a partir de **imagem** (`background type="image"`).
+### Projeto 07 - Malhas Triangulares (Meshes)
+- [x] Primitiva geométrica de Triângulo (`Triangle`).
+- [x] Teste de interseção raio-triângulo rápido com obtenção de coordenadas baricêntricas.
+- [x] Carregamento automático de malhas triangulares complexas (`TriangleMesh`) a partir de arquivos `.obj` externos (usando a biblioteca `tinyobjloader`).
+- [x] Interpolação automática de coordenadas normais por vértice para sombreamento suave.
+
+### Projeto 08 - Estruturas de Aceleração Espacial
+- [x] Representação tridimensional de caixas delimitadoras alinhadas aos eixos (`Bounds3` / AABB) com algoritmo rápido de interseção de raios.
+- [x] Árvore de partição espacial Bounding Volume Hierarchy (`BVHAccel`) com divisão mediana dos objetos (`split_method="middle"`).
+
+---
+
+## Recursos Extras Implementados (Diferenciais)
+
+Além dos requisitos obrigatórios, os seguintes recursos adicionais e otimizações foram incluídos no Ray Tracer:
+
+1. **Linear BVH (`LinearBVHAccel`)**:
+   - Uma estrutura de aceleração espacial otimizada que reorganiza a árvore BVH em um vetor plano contíguo em memória (`_nodes`).
+   - Algoritmo de travessia iterativo usando uma pilha de ponteiros de tamanho fixo, eliminando completamente a recursão durante os testes de interseção.
+   - Design *cache-friendly* que reduz falhas de cache da CPU, trazendo renderizações muito mais rápidas para cenas complexas com malhas densas.
+2. **Renderização Concorrente / Multithreaded (OpenMP)**:
+   - Paralelização no laço principal de rendering em nível de linha de pixels usando OpenMP (`#pragma omp parallel for schedule(dynamic, 1)`).
+   - Utilização de zonas críticas (`#pragma omp critical`) para atualização e redesenho thread-safe da barra de progresso no terminal.
+3. **Toon / Cel Shading**:
+   - Material Cel/Toon (`ToonMaterial`) que discretiza o sombreamento difuso em degraus/intervalos bem definidos de tons.
+   - Integrador dedicado (`ToonIntegrator`) para renderização estilizada (não-fotorrealista).
+4. **Mapeamento de Fundo Esférico (360° / Panorama)**:
+   - Suporte ao uso de mapas esféricos em backgrounds (`background type="image"` com atributo `spherical="true"`), onde a direção de raios que não atingem nenhum objeto é mapeada para coordenadas UV de uma imagem panorâmica 360°.
+5. **Forma Geométrica Plana (`plan`)**:
+   - Primitiva analítica rápida para planos infinitos no espaço 3D, útil para pisos e paredes reflexivas/quadriculadas.
+6. **Forma Geométrica Caixa (`box`)**:
+   - Primitiva geométrica de caixa (AABB) definida por dois cantos opostos.
+7. **Material Quadriculado procedural (`grid`)**:
+   - Padrão procedural de xadrez com espaçamento, cor 1 e cor 2 ajustáveis.
+8. **Atenuação Física de Luz**:
+   - Cálculo de atenuação quadrática e linear em fontes de luz pontuais (`PointLight` e `SpotLight`) a partir de um vetor de atenuação `(c1, c2, c3)` na fórmula $\frac{1}{c_1 + c_2 d + c_3 d^2}$.
+9. **Integradores de Diagnóstico**:
+   - **`NormalMapIntegrator`**: Mapeia as normais de interseção de superfície dos objetos como cores RGB (ideal para depuração visual de normais e carregamento de malhas).
+   - **`DepthMapIntegrator`**: Mapeia a profundidade ($z$) da interseção da câmera ao objeto como uma rampa de escala de cinza configurável por `zmin` e `zmax` (mapa de profundidade/z-buffer).
+
+---
 
 ## Dependencias
 
-Gerenciadas por `vcpkg`:
+Gerenciadas automaticamente pelo `vcpkg`:
 
-- `cli11` (CLI)
-- `tinyxml2` (parser XML)
-- `stb` (leitura/escrita de imagens)
-- `catch2` (testes)
+- `cli11` (Parser de linha de comando)
+- `tinyxml2` (Parser de cenas em XML)
+- `stb` (Leitura e gravação de arquivos de imagem)
+- `catch2` (Estrutura de testes unitários)
+- `tinyobjloader` (Carregador de arquivos de modelo OBJ)
 
 Requisitos de ambiente:
 
 - CMake 3.31+
-- Compilador com suporte a C++23
-- Ninja (preset padrao)
+- Compilador C++ com suporte completo a C++23 e OpenMP
+- Ninja (preset de build recomendado)
 
 ## Uso Com Devcontainer (Recomendado)
 
@@ -75,76 +125,50 @@ Este repositorio pode ser aberto em um devcontainer no VS Code, garantindo ambie
 
 1. Instale a extensao **Dev Containers** no VS Code.
 2. Abra a pasta do projeto no VS Code.
-3. Execute o comando **Dev Containers: Reopen in Container**.
+3. Use o atalho `Ctrl+Shift+P` e escolha **Dev Containers: Reopen in Container**.
 
 ### 2. Build dentro do container
-
-Com o terminal ja dentro do container:
-
 ```bash
 cmake --preset default
 cmake --build build
 ```
 
-## Build
+## Build Local
 
-### 1. Instalar dependencias
-
+### 1. Instalar dependências e configurar
 ```bash
 vcpkg install
-```
-
-### 2. Configurar projeto
-
-```bash
 cmake --preset default
 ```
 
-### 3. Compilar
-
+### 2. Compilar
 ```bash
 cmake --build build
 ```
+O executável principal será gerado no caminho `build/raytracer`.
 
-O executavel principal sera gerado como `build/raytracer`.
+## Execução
 
-## Execucao
-
-Uso basico:
-
+Uso básico:
 ```bash
 ./build/raytracer <arquivo_cena.xml>
 ```
 
-Exemplo:
-
-```bash
-./build/raytracer scenes/scene12.xml
-```
-
-Opcoes de linha de comando:
-
+Parâmetros adicionais da linha de comando:
 ```text
-input_scene_file          Arquivo XML da cena (obrigatorio)
--c, --cropwindow          Janela de crop: x0,x1,y0,y1
--q, --quick               Modo rapido
--o, --output              Sobrescreve arquivo de saida
+input_scene_file          Arquivo XML contendo a descrição da cena (obrigatório)
+-c, --cropwindow          Janela de recorte/crop para renderizar apenas um retângulo: x0,x1,y0,y1
+-q, --quick               Modo rápido de renderização rápida
+-o, --output              Sobrescreve/especifica o arquivo de saída de imagem
+--no-overwrite            Não sobrescreve arquivos existentes. (Default: false)
 ```
 
-Exemplo com saida customizada:
-
+Exemplo:
 ```bash
-./build/raytracer scenes/scene12.xml -o output/minha_cena.png
+./build/raytracer scenes/scene47.xml -o output/cena_teapot.png --no-overwrite
 ```
 
-Formatos de saida suportados para `--output`:
-
-- `.png`
-- `.jpg` / `.jpeg`
-- `.bmp`
-- `.tiff`
-- `.ppm`
-- `.tga`
+Formatos de gravação suportados: `.png`, `.jpg`, `.bmp`, `.tga`, `.ppm`, entre outros.
 
 ## Testes
 
@@ -158,99 +182,126 @@ A suite cobre parsing, opcoes de execucao, utilitarios de imagem, `RGBColor`, `B
 
 ## Formato Dos Elementos Da Cena (XML)
 
-Estrutura geral:
-
+### Estrutura Geral da Cena
 ```xml
 <RT3>
-	<lookat ... />
-	<camera ... />
-	<film ... />
+   <lookat look_from="x y z" look_at="x y z" up="x y z" />
+   <camera type="orthographic|perspective" fovy="graus" screen_window="l r b t" />
+   <film type="image" w_res="largura" h_res="altura" filename="caminho" img_type="png" gamma_corrected="yes|no" />
+   <integrator type="flat|blinn_phong|depth_map|normal_map|toon" ... />
+   <aggregator type="list|bvh|lbvh" ... />
 
-	<world_begin/>
-		<background ... />
-		<material ... />
-		<object ... />
-	<world_end/>
+   <world_begin/>
+      <background type="single_color|2_colors_l_r|2_colors_t_b|2_colors_tl_br|2_colors_tr_bl|4_colors|image" ... />
+      
+      <!-- Definição de materiais -->
+      <make_named_material name="nome" type="color|grid|blinn|toon" ... />
+      
+      <!-- Luzes da cena -->
+      <light_source type="ambient|directional|point|spot" ... />
+      
+      <!-- Objetos -->
+      <object type="sphere|plan|box|trianglemesh" ... />
+   <world_end/>
 </RT3>
 ```
 
-### `lookat`
+### Detalhamento das Tags
 
-- `look_from="x y z"`
-- `look_at="x y z"`
-- `up="x y z"`
+#### `integrator`
+Configura como a cor de cada pixel é computada:
+- `type="flat"`: Renderização flat sem iluminação.
+- `type="blinn_phong"`: Iluminação Phong clássica com suporte a sombras e reflexões recursivas (espelho).
+- `type="depth_map"`: Renderiza a profundidade em escala de cinza. Atributos opcionais: `zmin`, `zmax`, `near_color`, `far_color`.
+- `type="normal_map"`: Mapeia as normais do surfel no espaço 3D para cores RGB.
+- `type="toon"`: Sombreamento estilizado Cel-Shading.
 
-### `camera`
+#### `aggregator`
+Define a estrutura de aceleração espacial para interseções:
+- `type="list"`: Lista linear simples (busca linear, $O(N)$).
+- `type="bvh"`: Árvore Bounding Volume Hierarchy clássica. Atributos: `split_method="middle"`, `max_prims_per_node="4"`.
+- `type="lbvh"`: Linear BVH baseada em array contíguo e travessia iterativa altamente otimizada (LBVH). Atributos equivalentes aos da BVH.
 
-- `type="orthographic"` ou `type="perspective"`
-- `screen_window="l r b t"` (opcional; padrao `-1.555 1.555 -1.0 1.0`)
-- `fovy="angulo"` (obrigatorio para perspectiva)
+#### `background`
+- `type="single_color"` com `color="r g b"` (valores 0-255 ou 0-1.0).
+- `type="4_colors"` com cantos `tl`, `tr`, `bl`, `br`.
+- `type="image"` com `filename="imagem.png"` e opcional `spherical="true"` para imagens panorâmicas de ambiente 360°.
 
-### `film`
+#### `make_named_material` / `material`
+- `type="color"`: Cor plana simples. Atributo: `color`.
+- `type="grid"`: Procedural quadriculado. Atributos: `color1`, `color2`, `spacing`.
+- `type="blinn"`: Sombreamento físico Blinn-Phong. Atributos:
+  - `diffuse="r g b"`: Coeficiente de reflexão difusa.
+  - `specular="r g b"`: Coeficiente de reflexão especular.
+  - `ambient="r g b"`: Coeficiente de reflexão ambiente.
+  - `glossiness="valor"`: Brilho especular (exponencial de Phong).
+  - `mirror="r g b"`: Coeficiente de reflexão especular ideal (material espelhado recursivo, opcional).
+- `type="toon"`: Cel shading. Atributos: `color` e `n_intervals` ou `color_map`.
 
-- `type="image"`
-- Resolucao por `x_res`/`y_res` **ou** `w_res`/`h_res`
-- `filename="output/cena.png"`
-- `img_type` e `gamma_corrected` podem ser informados no XML
+#### `light_source`
+- `type="ambient"`: Luz ambiente uniforme. Atributo: `I="r g b"`.
+- `type="point"`: Luz pontual omnidirecional. Atributos: `from="x y z"`, `I="r g b"`, `attenuation="c1 c2 c3"` (padrão `1 0 0`).
+- `type="directional"`: Luz direcional paralela. Atributos: `from="x y z"` (direção da luz em direção à origem), `to="x y z"`, `I="r g b"`.
+- `type="spot"`: Holofote cônico. Atributos: `from="x y z"`, `to="x y z"`, `I="r g b"`, `cutoff="angulo_graus"` (ângulo de abertura), `falloff="angulo_graus"`, `attenuation="c1 c2 c3"`.
 
-### `background`
+#### `object`
+- `type="sphere"`: Esfera tridimensional. Atributos: `center="x y z"` ou `origin="x y z"`, `radius="valor"`, `material="nome"`.
+- `type="plan"`: Plano infinito. Atributos: `origin="x y z"`, `norm="x y z"`, `material="nome"`.
+- `type="box"`: Caixa AABB. Atributos: `first_point="x y z"`, `second_point="x y z"`, `material="nome"`.
+- `type="trianglemesh"`: Malha triangular carregada de arquivo OBJ. Atributos:
+  - `filename="scenes/model.obj"`: Caminho para o modelo 3D.
+  - `compute_normals="true|false"`: Calcula as normais geometricamente caso o arquivo OBJ não as possua.
+  - `backface_cull="true|false"`: Ativa descarte de faces traseiras.
+  - `material="nome"`.
 
-Tipos suportados:
+---
 
-- `single_color` com `color`
-- `2_colors_l_r` com `l` e `r`
-- `2_colors_t_b` com `t` e `b`
-- `2_colors_tl_br` com `tl` e `br`
-- `2_colors_tr_bl` com `tr` e `bl`
-- `4_colors` com `tl`, `tr`, `bl`, `br`
-- `image` com `filename`
+## Exemplo Completo de Cena (XML)
 
-### `material`
-
-- `type="color"` com `name` e `color`
-- `type="grid"` com `name`, `color1`, `color2`, `spacing`
-
-### `object`
-
-- `type="sphere"` com `origin`, `radius`, `material`
-- `type="plan"` com `origin`, `norm`, `material`
-
-## Exemplo Completo
+O exemplo a seguir ilustra o uso da estrutura avançada de aceleração Linear BVH, iluminação Blinn-Phong com sombras, reflexão recursiva metálica em uma malha OBJ e plano quadriculado:
 
 ```xml
 <RT3>
-	<lookat look_from="0 10 -5" look_at="0 0 10" up="0 1 0" />
-	<camera type="perspective" fovy="30" screen_window="-6 6 -3.5 3.5" />
-	<film type="image" w_res="1280" h_res="720" filename="output/scene12.png" img_type="png" />
+   <lookat look_from="0 45 10" look_at="0 3 5" up="0 0 1" />
+   <camera type="perspective" fovy="45" />
+   <integrator type="blinn_phong" depth="3" />
+   <film type="image" w_res="900" h_res="700" filename="output/scene47.png" img_type="png" />
+   <aggregator type="lbvh" split_method="middle" max_prims_per_node="4" />
 
-	<world_begin/>
-		<background type="single_color" color="242 242 242"/>
+   <world_begin/>
+      <background type="single_color" color="245 245 245"/>
+      
+      <!-- Materiais -->
+      <make_named_material name="stone" type="blinn" ambient="0.03 0.03 0.03" diffuse="0.22 0.22 0.22" specular="0.05 0.05 0.05" glossiness="8" />
+      <make_named_material name="metal" type="blinn" diffuse="0.05 0.05 0.05" specular="0.3 0.3 0.6" ambient="0.5 0.5 0.8" glossiness="512" mirror="0.7 0.7 0.7" />
+      <make_named_material name="grid" type="grid" color1="200 200 200" color2="100 100 100" spacing="2"/>
 
-		<material name="grid" type="grid" color1="123 123 123" color2="232 232 232" spacing="2"/>
-		<material name="magenta" type="color" color="220 40 180"/>
+      <!-- Fontes de Luz -->
+      <light_source type="point" from="5 15 15" I="0.9 0.9 0.9" attenuation="1 0.05 0.005" />
+      <light_source type="directional" from="10 20 -15" to="0 0 7" I="0.4 0.4 0.6" />
 
-		<object type="sphere" origin="2.2 2 6.0" radius="2.0" material="magenta" />
-		<object type="plan" origin="0 0 0" norm="0 1 0" material="grid" />
-	<world_end/>
+      <!-- Cenário e Malha de Triângulos (OBJ) -->
+      <object type="plan" origin="0 -10 0" norm="0 1 0" material="grid" />
+      <object type="plan" origin="0 0 25" norm="0 0 1" material="stone" />
+      <object type="trianglemesh" filename="scenes/obj/teapot-low.obj" compute_normals="false" backface_cull="false" material="metal" />
+   <world_end/>
 </RT3>
 ```
 
-## Estrutura Do Projeto
+## Estrutura do Projeto
 
-- `include/Api`: orquestracao da execucao.
-- `include/Parser`: parser XML de cenas.
-- `include/Scene`: camera, film, scene e background.
-- `include/Objects`: primitivas e materiais.
-- `include/Image`, `include/Math`, `include/Utils`: bases de suporte.
-- `scenes/`: cenas de exemplo.
-- `tests/`: testes automatizados.
+- `include/Api` / `src`: Ponto de entrada e orquestração do programa.
+- `include/Core`: Estrutura de dados genéricas, `ParamSet` para atributos.
+- `include/Parser`: Parser XML genérico e mapeamento de tags para objetos C++.
+- `include/Scene`: Gerenciador da câmera (ortográfica/perspectiva), film/film buffer e backgrounds.
+- `include/Objects/Aggregate`: Estruturas de agregação linear (`PrimitiveList`), recursiva (`BVHAccel`) e contígua (`LinearBVHAccel`).
+- `include/Objects/Shapes`: Definições geométricas: Esferas, Planos, Caixas e Malhas/Triângulos.
+- `include/Objects/Materials`: Modelos de sombreamento (Flat, Blinn-Phong, Cel/Toon e texturas procedurais).
+- `include/Objects/Light`: Fontes de luz (ambiente, direcional, pontual e spot).
+- `include/Integrator`: Execução do pipeline de renderização (Flat, Blinn-Phong, Toon, Mapas de profundidade/normais).
+- `include/Math`: Classes algébricas básicas: vetores, pontos, raios, eixos e caixas delimitadoras (`Bounds3`).
+- `include/Utils`: Elementos utilitários de suporte, como a barra de progresso em terminal.
 
-## Observacoes Importantes
+## Licença
 
-- O render salva a imagem no caminho definido em `film filename` ou sobrescrito por `--output`.
-- Caso o arquivo de saida ja exista, o sistema gera um novo nome com sufixo incremental (`-1`, `-2`, ...).
-- As opcoes `--quick` e `--cropwindow` ja sao aceitas pela CLI e validadas; a aplicacao direta no render pode ser evoluida em iteracoes futuras.
-
-## Licenca
-
-Este projeto esta sob a licenca definida no arquivo `LICENSE`.
+Este projeto está licenciado sob os termos do arquivo `LICENSE`.
