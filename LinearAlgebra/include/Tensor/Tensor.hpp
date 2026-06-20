@@ -20,6 +20,8 @@
 #include <variant>
 #include <vector>
 #include <functional>
+#include <span>
+#include <tuple>
 
 namespace linalg {
    template <typename T>
@@ -31,6 +33,74 @@ namespace linalg {
 
                TensorInitializerList(std::initializer_list<TensorInitializerList> list) : value(list) {}
                TensorInitializerList(T val) : value(val) {}
+         };
+
+         class Iterator {
+            private:
+               const std::vector<size_t>& _shape;
+               const std::vector<size_t>& _strides;
+               std::shared_ptr<Storage<T>> _storage;
+               std::vector<size_t> _index;
+               size_t _offset;
+               bool _end;
+            public:
+               Iterator(
+                  const std::vector<size_t>& shape, 
+                  const std::vector<size_t>& strides,
+                  const std::shared_ptr<Storage<T>> storage,
+                  const size_t start_offset = 0
+               ) : _shape(shape), 
+                  _strides(strides), 
+                  _index(shape.size(), 0),
+                  _storage(storage),
+                  _offset(start_offset),
+                  _end(shape.empty())
+               {}
+
+               size_t offset() const { return _offset; }
+               bool done() const { return _end; }
+               bool start() const { 
+                  return !_end && std::all_of(
+                     _index.begin(), 
+                     _index.end(), 
+                     [](size_t idx) { return idx == 0; }
+                  ); 
+               }
+
+               T get() const {
+                  return _storage->at(_offset);
+               }
+
+               void next() {
+                  for (int dim = (int)_shape.size() - 1; dim >= 0; --dim) {
+                     _index[dim]++;
+                     _offset += _strides[dim];
+
+                     if (_index[dim] < _shape[dim]) {
+                        return;
+                     }
+
+                     _offset -= (_shape[dim]  - 1) * _strides[dim];
+                     _index[dim] = 0;
+                  }
+
+                  _end = true;
+               }
+
+               void previous() {
+                  _end = false;
+                  for (int dim = (int)_shape.size() - 1; dim >= 0; --dim) {
+                     if (_index[dim] == 0) {
+                        _index[dim] = _shape[dim] - 1;
+                        _offset += (_shape[dim] - 1) * _strides[dim];
+                        continue;
+                     }
+
+                     _index[dim]--;
+                     _offset -= _strides[dim];
+                     return;
+                  }
+               }
          };
 
          std::shared_ptr<Storage<T>> _storage;
@@ -71,7 +141,7 @@ namespace linalg {
             return std::make_shared<CpuStorage<T>>(size);
          }
 
-         size_t compute_storage_index(const std::vector<size_t>& index) const {
+         size_t compute_storage_index(std::span<const size_t> index) const {
             if (index.size() != _shape.size()) {
                throw std::invalid_argument("Index rank must match tensor rank.");
             }
@@ -169,7 +239,7 @@ namespace linalg {
          }
 
 
-         T& at(const std::vector<size_t>& index) {
+         T& at(std::span<const size_t> index) {
             auto idx = compute_storage_index(index);
 
             if (idx >= _storage->size()) {
@@ -177,6 +247,10 @@ namespace linalg {
             }
 
             return _storage->at(idx);
+         }
+
+         T& at(std::initializer_list<size_t> index) {
+            return at(std::span<const size_t>(index.begin(), index.size()));
          }
 
       public:
@@ -223,7 +297,7 @@ namespace linalg {
                throw std::invalid_argument("Size of the identity matrix must be greater than 0.");
             }
 
-            Tensor<T> tensor(std::vector<size_t>{n, n});
+            auto tensor = Tensor<T>::zeros({n, n});
             for (size_t i = 0; i < n; ++i) {
                tensor._storage->at(i * (n + 1)) = T(1);
             }
@@ -294,7 +368,7 @@ namespace linalg {
             return true;
          }
 
-         T at(const std::vector<size_t>& index) const {
+         const T& at(std::span<const size_t> index) const {
             auto idx = compute_storage_index(index);
 
             if (idx >= _storage->size()) {
@@ -302,6 +376,10 @@ namespace linalg {
             }
 
             return _storage->at(idx);
+         }
+
+         const T& at(std::initializer_list<size_t> index) const {
+            return at(std::span<const size_t>(index.begin(), index.size()));
          }
 
          Tensor<T> reshape(const std::vector<size_t>& new_shape) const {
@@ -456,11 +534,12 @@ namespace linalg {
                return *this;
             }
 
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             Tensor<T> result(_shape);
 
             for (size_t linear = 0; linear < _numel; ++linear) {
-               auto idx = result.unravel_index(linear);
-               result._storage->at(linear) = at(idx);
+               result._storage->at(linear) = it.get();
+               it.next();
             }
 
             return result;
@@ -469,12 +548,28 @@ namespace linalg {
       private:
          template <typename BinaryOp>
          Tensor<T> elementwise_binary(const Tensor<T>& other, BinaryOp op) const {
-            auto lhs = contiguous();
-            auto rhs = other.contiguous();
-
             Tensor<T> result(_shape);
+
+            if (this->is_contiguous() && other.is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  result._storage->at(i) = op(
+                     this->_storage->at(this->_offset + i),
+                     other._storage->at(other._offset + i)
+                  );
+               }
+               return result;
+            }
+
+            auto lhsIt = Iterator(_shape, _strides, _storage, _offset);
+            auto rhsIt = Iterator(other._shape, other._strides, other._storage, other._offset);
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = op(lhs._storage->at(i), rhs._storage->at(i));
+               result._storage->at(i) = op(
+                  lhsIt.get(),
+                  rhsIt.get()
+               );
+
+               lhsIt.next();
+               rhsIt.next();
             }
 
             return result;
@@ -482,11 +577,19 @@ namespace linalg {
 
          template <typename UnaryOp>
          Tensor<T> elementwise_unary(UnaryOp op) const {
-            auto src = contiguous();
             Tensor<T> result(_shape);
 
+            if (this->is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  result._storage->at(i) = op(this->_storage->at(this->_offset + i));
+               }
+               return result;
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = op(src._storage->at(i));
+               result._storage->at(i) = op(it.get());
+               it.next();
             }
 
             return result;
@@ -514,7 +617,7 @@ namespace linalg {
                throw std::invalid_argument("Tensor shapes must match");
             }
 
-            return elementwise_binary(other, [](const T& a, const T& b) { return a - b; });
+            return elementwise_binary(other, [](const T& a, const T& b) { return a * b; });
          }
 
          Tensor<T> operator/(const Tensor<T>& other) const {
@@ -522,11 +625,12 @@ namespace linalg {
                throw std::invalid_argument("Tensor shapes must match");
             }
 
-            auto rhs = other.contiguous();
+            auto it = Iterator(other._shape, other._strides, other._storage, other._offset);
             for (size_t i = 0; i < _numel; ++i) {
-               if (rhs._storage->at(i) == T(0)) {
+               if (it.get() == T(0)) {
                   throw std::domain_error("Division by zero in tensor division.");
                }
+               it.next();
             }
 
             return elementwise_binary(other, [](const T& a, const T& b) { return a / b; });
@@ -545,17 +649,25 @@ namespace linalg {
             size_t n = _shape[1];
             size_t p = other._shape[1];
 
-            auto lhs = contiguous();
-            auto rhs = other.contiguous();
-
             Tensor<T> result({m, p});
+
+            size_t l_row_stride = _strides[0], l_col_stride = _strides[1];
+            size_t r_row_stride = other._strides[0], r_col_stride = other._strides[1];
+            size_t res_row_stride = result._strides[0], res_col_stride = result._strides[1];
+
+            const T* l_data = _storage->data() + _offset;
+            const T* r_data = other._storage->data() + other._offset;
+            T* res_data = result._storage->data();
+
             for (size_t i = 0; i < m; ++i) {
                for (size_t j = 0; j < p; ++j) {
                   T sum = T(0);
                   for (size_t k = 0; k < n; ++k) {
-                     sum += lhs._storage->at(i * n + k) * rhs._storage->at(k * p + j);
+                     T a = l_data[i * l_row_stride + k * l_col_stride];
+                     T b = r_data[k * r_row_stride + j * r_col_stride];
+                     sum += a * b;
                   }
-                  result._storage->at(i * p + j) = sum;
+                  res_data[i * res_row_stride + j * res_col_stride] = sum;
                }
             }
 
@@ -563,33 +675,15 @@ namespace linalg {
          }
 
          Tensor<T> operator+(T scalar) const {
-            auto src = contiguous();
-
-            Tensor<T> result(_shape);
-            for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = src._storage->at(i) + scalar;
-            }
-            return result;
+            return elementwise_unary([scalar](const T& a) { return a + scalar; });
          }
 
          Tensor<T> operator-(T scalar) const {
-            auto src = contiguous();
-
-            Tensor<T> result(_shape);
-            for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = src._storage->at(i) - scalar;
-            }
-            return result;
+            return elementwise_unary([scalar](const T& a) { return a - scalar; });
          }
 
          Tensor<T> operator*(T scalar) const {
-            auto src = contiguous();
-
-            Tensor<T> result(_shape);
-            for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = src._storage->at(i) * scalar;
-            }
-            return result;
+            return elementwise_unary([scalar](const T& a) { return a * scalar; });
          }
 
          Tensor<T> operator/(T scalar) const {
@@ -597,21 +691,23 @@ namespace linalg {
                throw std::domain_error("Division by zero in tensor-scalar division.");
             }
 
-            auto src = contiguous();
-
-            Tensor<T> result(_shape);
-            for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = src._storage->at(i) / scalar;
-            }
-            return result;
+            return elementwise_unary([scalar](const T& a) { return a / scalar; });
          }
 
          T sum() const {
-            auto src = contiguous();
             T total = T(0);
 
+            if (this->is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  total += _storage->at(_offset + i);
+               }
+               return total;
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               total += src._storage->at(i);
+               total += it.get();
+               it.next();
             }
 
             return total;
@@ -630,11 +726,22 @@ namespace linalg {
                throw std::domain_error("Cannot compute min of an empty tensor.");
             }
 
-            auto src = contiguous();
-            T minimum = src._storage->at(0);
+            auto it = Iterator(_shape, _strides, _storage, _offset);
+            T minimum = it.get();
+
+            if (this->is_contiguous()) {
+               for (size_t i = 1; i < _numel; ++i) {
+                  T value = _storage->at(_offset + i);
+                  if (value < minimum) {
+                     minimum = value;
+                  }
+               }
+               return minimum;
+            }
 
             for (size_t i = 1; i < _numel; ++i) {
-               T value = src._storage->at(i);
+               it.next();
+               T value = it.get();
                if (value < minimum) {
                   minimum = value;
                }
@@ -648,11 +755,22 @@ namespace linalg {
                throw std::domain_error("Cannot compute max of an empty tensor.");
             }
 
-            auto src = contiguous();
-            T maximum = src._storage->at(0);
+            auto it = Iterator(_shape, _strides, _storage, _offset);
+            T maximum = it.get();
+
+            if (this->is_contiguous()) {
+               for (size_t i = 1; i < _numel; ++i) {
+                  T value = _storage->at(_offset + i);
+                  if (value > maximum) {
+                     maximum = value;
+                  }
+               }
+               return maximum;
+            }
 
             for (size_t i = 1; i < _numel; ++i) {
-               T value = src._storage->at(i);
+               it.next();
+               T value = it.get();
                if (value > maximum) {
                   maximum = value;
                }
@@ -662,123 +780,219 @@ namespace linalg {
          }
 
          Tensor<T> abs() const {
-            auto src = contiguous();
             Tensor<T> result(_shape);
 
+            if (this->is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  result._storage->at(i) = std::abs(this->_storage->at(this->_offset + i));
+               }
+               return result;
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               using std::abs;
-               result._storage->at(i) = abs(src._storage->at(i));
+               result._storage->at(i) = std::abs(it.get());
+               it.next();
             }
 
             return result;
          }
 
          Tensor<T> sqrt() const {
-            auto src = contiguous();
             Tensor<T> result(_shape);
 
+            if (this->is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  T value = this->_storage->at(this->_offset + i);
+                  if (value < T(0)) {
+                     throw std::domain_error("Cannot compute square root of a negative value in tensor.");
+                  }
+                  result._storage->at(i) = std::sqrt(value);
+               }
+               return result;
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               T value = src._storage->at(i);
+               T value = it.get();
                if (value < T(0)) {
                   throw std::domain_error("Cannot compute square root of a negative value in tensor.");
                }
                result._storage->at(i) = std::sqrt(value);
+               it.next();
             }
 
             return result;
          }
 
          Tensor<T> exp() const {
-            auto src = contiguous();
             Tensor<T> result(_shape);
 
+            if (this->is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  result._storage->at(i) = std::exp(this->_storage->at(this->_offset + i));
+               }
+               return result;
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = std::exp(src._storage->at(i));
+               result._storage->at(i) = std::exp(it.get());
+               it.next();
             }
 
             return result;
          }
 
          Tensor<T> log() const {
-            auto src = contiguous();
             Tensor<T> result(_shape);
 
+            if (this->is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  T value = this->_storage->at(this->_offset + i);
+                  if (value <= T(0)) {
+                     throw std::domain_error("Cannot compute natural logarithm of a non-positive value in tensor.");
+                  }
+                  result._storage->at(i) = std::log(value);
+               }
+               return result;
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               T value = src._storage->at(i);
+               T value = it.get();
                if (value <= T(0)) {
                   throw std::domain_error("Cannot compute natural logarithm of a non-positive value in tensor.");
                }
                result._storage->at(i) = std::log(value);
+               it.next();
             }
 
             return result;
          }
 
          Tensor<T> pow(T exponent) const {
-            auto src = contiguous();
             Tensor<T> result(_shape);
 
+            if (this->is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  result._storage->at(i) = std::pow(this->_storage->at(this->_offset + i), exponent);
+               }
+               return result;
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = std::pow(src._storage->at(i), exponent);
+               result._storage->at(i) = std::pow(it.get(), exponent);
+               it.next();
             }
 
             return result;
          }
 
          Tensor<T> clamp(T min, T max) const {
-            auto src = contiguous();
-            Tensor<T> result(_shape);
 
+            if (min > max) {
+               throw std::invalid_argument("min must be less than or equal to max for clamp operation.");
+            }
+
+            Tensor<T> result(_shape);
+            if (this->is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  T value = this->_storage->at(this->_offset + i);
+                  result._storage->at(i) = std::clamp(value, min, max);
+               }
+               return result;
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = std::clamp(src._storage->at(i), min, max);
+               result._storage->at(i) = std::clamp(it.get(), min, max);
+               it.next();
             }
 
             return result;
          }
 
          bool any(std::function<bool(const T&)>& predicate) const {
-            auto src = contiguous();
+            if (is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  if (predicate(_storage->at(_offset + i))) {
+                     return true;
+                  }
+               }
+               return false;
+            }
 
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               if (predicate(src._storage->at(i))) {
+               if (predicate(it.get())) {
                   return true;
                }
+               it.next();
             }
 
             return false;
          }
 
          bool all(std::function<bool(const T&)>& predicate) const {
-            auto src = contiguous();
+            if (is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  if (!predicate(_storage->at(_offset + i))) {
+                     return false;
+                  }
+               }
+               return true;
+            }
 
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               if (!predicate(src._storage->at(i))) {
+               if (!predicate(it.get())) {
                   return false;
                }
+               it.next();
             }
 
             return true;
          }
 
          size_t count(std::function<bool(const T&)>& predicate) const {
-            auto src = contiguous();
             size_t count = 0;
 
+            if (is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  if (predicate(_storage->at(_offset + i))) {
+                     count++;
+                  }
+               }
+               return count;
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               if (predicate(src._storage->at(i))) {
+               if (predicate(it.get())) {
                   count++;
                }
+               it.next();
             }
 
             return count;
          }
 
          Tensor<T> where(std::function<bool(const T&)>& predicate) const {
-            auto src = contiguous();
             Tensor<bool> result({_numel});
 
+            if (is_contiguous()) {
+               for (size_t i = 0; i < _numel; ++i) {
+                  result._storage->at(i) = predicate(this->_storage->at(this->_offset + i));
+               }
+               return result.reshape(_shape);
+            }
+
+            auto it = Iterator(_shape, _strides, _storage, _offset);
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = predicate(src._storage->at(i));
+               result._storage->at(i) = predicate(it.get());
+               it.next();
             }
 
             return result.reshape(_shape);
@@ -789,49 +1003,94 @@ namespace linalg {
                throw std::invalid_argument("Trace requires a square 2D tensor.");
             }
 
-            auto src = contiguous();
             T total = T(0);
             size_t n = _shape[0];
+            size_t row_stride = _strides[0];
+            size_t col_stride = _strides[1];
 
             for (size_t i = 0; i < n; ++i) {
-               total += src._storage->at(i * n + i);
+               total += _storage->at(_offset + (i * row_stride) + (i * col_stride));
             }
 
             return total;
+         }
+
+         // Retorna {Matriz_LU, Vetor_de_Permutacao, Numero_de_Trocas}
+         std::tuple<Tensor<T>, std::vector<size_t>, int> lu_decomposition() const {
+            if (_shape.size() != 2 || _shape[0] != _shape[1]) {
+               throw std::invalid_argument("LU decomposition requires a square 2D tensor.");
+            }
+
+            size_t n = _shape[0];
+            auto LU = this->clone(); 
+            auto lu_at = [&](size_t r, size_t c) -> T& { return LU._storage->at(r * n + c); };
+
+            // Vetor para rastrear as permutações (essencial para a Inversa)
+            std::vector<size_t> P(n);
+            for (size_t i = 0; i < n; ++i) {
+               P[i] = i;
+            }
+            
+            int swaps = 0;
+
+            for (size_t j = 0; j < n; ++j) {
+               // 1. Atualiza a coluna j para L e U ANTES do pivotamento
+               for (size_t i = 0; i < n; ++i) {
+                  size_t limit = std::min(i, j);
+                  T sum = T(0);
+                  for (size_t k = 0; k < limit; ++k) {
+                     sum += lu_at(i, k) * lu_at(k, j);
+                  }
+                  lu_at(i, j) -= sum;
+               }
+
+               // 2. Pivotamento Parcial: procura da diagonal (j) para baixo
+               size_t max_row = j;
+               T max_value = std::abs(lu_at(j, j));
+               for (size_t i = j + 1; i < n; ++i) {
+                  if (std::abs(lu_at(i, j)) > max_value) {
+                     max_value = std::abs(lu_at(i, j));
+                     max_row = i;
+                  }
+               }
+
+               if (max_value == T(0)) {
+                  throw std::domain_error("Matrix is singular (zero pivot encountered).");
+               }
+
+               // 3. Troca as linhas na matriz e atualiza o rastreador P
+               if (max_row != j) {
+                  for (size_t k = 0; k < n; ++k) {
+                     std::swap(lu_at(j, k), lu_at(max_row, k));
+                  }
+                  std::swap(P[j], P[max_row]);
+                  swaps++;
+               }
+
+               // 4. Calcula os multiplicadores de L (divide pelo pivô)
+               for (size_t i = j + 1; i < n; ++i) {
+                  lu_at(i, j) /= lu_at(j, j);
+               }
+            }
+
+            return {LU, P, swaps};
          }
 
          T determinant() const {
             if (_shape.size() != 2 || _shape[0] != _shape[1]) {
                throw std::invalid_argument("Determinant requires a square 2D tensor.");
             }
+         
+            auto [LU, P, swaps] = lu_decomposition();
+            
+            // Inverte o sinal dependendo se a quantidade de trocas foi par ou ímpar
+            T det = (swaps % 2 == 0) ? T(1) : T(-1);
 
-            auto src = contiguous();
-            size_t n = _shape[0];
-
-            if (n == 1) {
-               return src._storage->at(0);
-            } else if (n == 2) {
-               return src._storage->at(0) * src._storage->at(3) - src._storage->at(1) * src._storage->at(2);
-            } else {
-               T det = T(0);
-               for (size_t j = 0; j < n; ++j) {
-
-                  Tensor<T> submatrix({n - 1, n - 1});
-                  for (size_t i = 1; i < n; ++i) {
-                     for (size_t k = 0; k < n; ++k) {
-                        if (k < j) {
-                           submatrix._storage->at((i - 1) * (n - 1) + k) = src._storage->at(i * n + k);
-                        } else if (k > j) {
-                           submatrix._storage->at((i - 1) * (n - 1) + (k - 1)) = src._storage->at(i * n + k);
-                        }
-                     }
-                  }
-
-                  auto sub_det = submatrix.determinant();
-                  det += ((j % 2 == 0) ? src._storage->at(j) : -src._storage->at(j)) * sub_det;
-               }
-               return det;
+            for (size_t i = 0; i < _shape[0]; ++i) {
+               det *= LU._storage->at(i * _shape[0] + i);
             }
+
+            return det;
          }
 
          Tensor<T> inverse() const {
@@ -839,69 +1098,47 @@ namespace linalg {
                throw std::invalid_argument("Inverse requires a square 2D tensor.");
             }
 
-            T det = determinant();
-            if (det == T(0)) {
-               throw std::domain_error("Matrix is singular and cannot be inverted.");
+            size_t n = _shape[0];
+            
+            // 1. Fazemos a decomposição LU. 
+            // Não precisamos verificar o determinante aqui, pois se a matriz 
+            // for singular, lu_decomposition() já lançará uma exceção no pivô nulo.
+            auto [LU, P, swaps] = lu_decomposition();
+            
+            // Inicia a matriz resultante com zeros
+            Tensor<T> result = Tensor<T>::zeros({n, n});
+            
+            T* lu_data = LU._storage->data();
+            T* res_data = result._storage->data();
+
+            auto lu_at = [&](size_t r, size_t c) -> const T& { return lu_data[r * n + c]; };
+            auto res_at = [&](size_t r, size_t c) -> T& { return res_data[r * n + c]; };
+
+            // 2. Monta a matriz Identidade Permutada (P * I) no resultado.
+            // O vetor P guardou o índice original de cada linha.
+            for (size_t i = 0; i < n; ++i) {
+               res_at(i, P[i]) = T(1);
             }
 
-            auto src = contiguous();
-            size_t n = _shape[0];
-            Tensor<T> result({n, n});
-
-            if (n == 1) {
-               result._storage->at(0) = T(1) / src._storage->at(0);
-            } else if (n == 2) {
-               result._storage->at(0) = src._storage->at(3) / det;
-               result._storage->at(1) = -src._storage->at(1) / det;
-               result._storage->at(2) = -src._storage->at(2) / det;
-               result._storage->at(3) = src._storage->at(0) / det;
-            } else {
-               result = eye(n);
-
-               for (size_t i = 0, j = 0; i < n && j < n;) {
-                  // ETAPA 1
-                  auto a = src.at({i, j});
-                  if (a == 0) {
-                     // ETAPA 1.1
-                     size_t swap_row = i + 1;
-                     while (swap_row < n && src.at({swap_row, j}) == 0) {
-                        swap_row++;
-                     }
-
-                     if (swap_row != n) {
-                        for (size_t k = 0; k < n; ++k) {
-                           std::swap(src._storage->at(i * n + k), src._storage->at(swap_row * n + k));
-                           std::swap(result._storage->at(i * n + k), result._storage->at(swap_row * n + k));
-                        }
-                        a = src.at({i, j});
-                     } else {
-                        // ETAPA 1.2
-                        j++;
-                        continue;
-                     }
+            // 3. Forward Substitution: Resolve L * Y = P * I
+            // Como L tem 1s implícitos na diagonal, a divisão por L(i,i) não é necessária.
+            for (size_t col = 0; col < n; ++col) {
+               for (size_t i = 0; i < n; ++i) {
+                  for (size_t k = 0; k < i; ++k) {
+                     res_at(i, col) -= lu_at(i, k) * res_at(k, col);
                   }
+               }
+            }
 
-                  // ETAPA 2
-                  for (size_t k = 0; k < n; ++k) {
-                     src.at({i, k}) /= a;
-                     result.at({i, k}) /= a;
+            // 4. Backward Substitution: Resolve U * X = Y
+            // U contém elementos não unitários na diagonal principal, então precisamos dividir.
+            for (size_t col = 0; col < n; ++col) {
+               // Usamos (int) para i não dar underflow, já que size_t é unsigned
+               for (int i = (int)n - 1; i >= 0; --i) {
+                  for (size_t k = i + 1; k < n; ++k) {
+                     res_at(i, col) -= lu_at(i, k) * res_at(k, col);
                   }
-
-                  // ETAPA 3
-                  for (size_t r = 0; r < n; ++r) {
-                     if (r != i) {
-                        T factor = src.at({r, j});
-
-                        for (size_t k = 0; k < n; ++k) {
-                           src.at({r, k}) -= factor * src.at({i, k});
-                           result.at({r, k}) -= factor * result.at({i, k});
-                        }
-                     }
-                  }
-
-                  // ETAPA 4
-                  i++;
-                  j++;
+                  res_at(i, col) /= lu_at(i, i);
                }
             }
 
@@ -913,12 +1150,14 @@ namespace linalg {
                throw std::invalid_argument("Tensor shapes must match");
             }
 
-            auto lhs = contiguous();
-            auto rhs = other.contiguous();
+            auto lhsIt = Iterator(_shape, _strides, _storage, _offset);
+            auto rhsIt = Iterator(other._shape, other._strides, other._storage, other._offset);
             Tensor<bool> result(_shape);
 
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = (lhs._storage->at(i) == rhs._storage->at(i));
+               result._storage->at(i) = (lhsIt.get() == rhsIt.get());
+               lhsIt.next();
+               rhsIt.next();
             }
 
             return result;
@@ -929,12 +1168,14 @@ namespace linalg {
                throw std::invalid_argument("Tensor shapes must match");
             }
 
-            auto lhs = contiguous();
-            auto rhs = other.contiguous();
+            auto lhsIt = Iterator(_shape, _strides, _storage, _offset);
+            auto rhsIt = Iterator(other._shape, other._strides, other._storage, other._offset);
             Tensor<bool> result(_shape);
 
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = (lhs._storage->at(i) != rhs._storage->at(i));
+               result._storage->at(i) = (lhsIt.get() != rhsIt.get());
+               lhsIt.next();
+               rhsIt.next();
             }
 
             return result;
@@ -945,12 +1186,14 @@ namespace linalg {
                throw std::invalid_argument("Tensor shapes must match");
             }
 
-            auto lhs = contiguous();
-            auto rhs = other.contiguous();
+            auto lhsIt = Iterator(_shape, _strides, _storage, _offset);
+            auto rhsIt = Iterator(other._shape, other._strides, other._storage, other._offset);
             Tensor<bool> result(_shape);
 
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = (lhs._storage->at(i) < rhs._storage->at(i));
+               result._storage->at(i) = (lhsIt.get() < rhsIt.get());
+               lhsIt.next();
+               rhsIt.next();
             }
 
             return result;
@@ -961,12 +1204,14 @@ namespace linalg {
                throw std::invalid_argument("Tensor shapes must match");
             }
 
-            auto lhs = contiguous();
-            auto rhs = other.contiguous();
+            auto lhsIt = Iterator(_shape, _strides, _storage, _offset);
+            auto rhsIt = Iterator(other._shape, other._strides, other._storage, other._offset);
             Tensor<bool> result(_shape);
 
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = (lhs._storage->at(i) > rhs._storage->at(i));
+               result._storage->at(i) = (lhsIt.get() > rhsIt.get());
+               lhsIt.next();
+               rhsIt.next();
             }
 
             return result;
@@ -977,12 +1222,14 @@ namespace linalg {
                throw std::invalid_argument("Tensor shapes must match");
             }
 
-            auto lhs = contiguous();
-            auto rhs = other.contiguous();
+            auto lhsIt = Iterator(_shape, _strides, _storage, _offset);
+            auto rhsIt = Iterator(other._shape, other._strides, other._storage, other._offset);
             Tensor<bool> result(_shape);
 
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = (lhs._storage->at(i) >= rhs._storage->at(i));
+               result._storage->at(i) = (lhsIt.get() >= rhsIt.get());
+               lhsIt.next();
+               rhsIt.next();
             }
 
             return result;
@@ -993,18 +1240,18 @@ namespace linalg {
                throw std::invalid_argument("Tensor shapes must match");
             }
 
-            auto lhs = contiguous();
-            auto rhs = other.contiguous();
+            auto lhsIt = Iterator(_shape, _strides, _storage, _offset);
+            auto rhsIt = Iterator(other._shape, other._strides, other._storage, other._offset);
             Tensor<bool> result(_shape);
 
             for (size_t i = 0; i < _numel; ++i) {
-               result._storage->at(i) = (lhs._storage->at(i) <= rhs._storage->at(i));
+               result._storage->at(i) = (lhsIt.get() <= rhsIt.get());
+               lhsIt.next();
+               rhsIt.next();
             }
 
             return result;
          }
-
-
    };
 
    template<typename T>
