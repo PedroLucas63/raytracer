@@ -1,7 +1,7 @@
 #ifndef TENSOR_HPP
 #define TENSOR_HPP
 
-#include "Storage.hpp"
+#include "Math/Tensor/Storage.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -23,7 +23,7 @@
 #include <span>
 #include <tuple>
 
-namespace linalg {
+namespace raytracer {
    template <typename T>
    class Tensor {
       private:

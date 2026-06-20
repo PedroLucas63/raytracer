@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <utility>
 
-namespace linalg
+namespace raytracer
 {
    template <typename T>
    class Storage
