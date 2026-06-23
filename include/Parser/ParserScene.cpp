@@ -34,6 +34,12 @@ namespace raytracer
        {"material", {"type", "color", "name", "color1", "color2", "spacing", "diffuse", "specular", "ambient", "glossiness", "mirror", "color_map"}},
        {"light_source", {"type", "I", "scale", "from", "to", "attenuation", "cutoff", "falloff", "world_radius"}},
        {"aggregator", {"type", "split_method", "max_prims_per_node"}},
+       {"object_instance_begin", {"name"}},
+       {"object_instance_end", {}},
+       {"push_CTM", {}},
+       {"pop_CTM", {}},
+       {"translate", {"value"}},
+       {"rotate", {"axis", "angle"}},
       };
 
    std::unordered_map<std::string, ConvertFunction> converters {
@@ -120,7 +126,13 @@ namespace raytracer
 
       // Aggregator
       {"split_method", convert<std::string>},
-      {"max_prims_per_node", convert<uint>}
+      {"max_prims_per_node", convert<uint>},
+
+      // Geometric Transformation
+      {"axis", convert<Vector3>},
+      {"value", convert<Vector3>},
+      {"angle", convert<float>}
+
    };
 
    // ── helpers ──────────────────────────────────────────────────────────────────
@@ -360,6 +372,16 @@ namespace raytracer
 
             if (onElement)
                onElement(scene, element, ps);
+         }
+         else if(element == "push_CTM"
+               || element == "pop_CTM"
+               || element == "translate"
+               || element == "rotate"
+               || element == "scale") {
+
+            if (onElement){
+               onElement(scene, element, ps);
+            }
          }
          else
          {
