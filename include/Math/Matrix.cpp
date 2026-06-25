@@ -90,9 +90,54 @@ Matrix4x4 Matrix4x4::transpose() const {
     };
 }
 
-// Inverse — Gauss-Jordan elimination with full pivoting on 4×4
 Matrix4x4 Matrix4x4::inverse() const {
+    float gauss[4][8];
+    float pivot;
 
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < 4; j++){
+            gauss[i][j] = m[i][j];
+        }
+        for (int j = 0; j < 4; j++){
+            gauss[i][j + 4] = (i == j) ? 1.0f : 0.0f;
+        }
+    }
+
+    for (int col = 0; col < 4; ++col) {
+        int pivot = col;
+        for (int row = col + 1; row < 4; ++row){
+            if (std::fabs(gauss[row][col]) > std::fabs(gauss[pivot][col])){
+                pivot = row;
+            }
+        }
+
+        if (std::fabs(gauss[pivot][col]) < 1e-6f)
+            throw std::runtime_error("Matrix4x4::inverse(): matrix is singular");
+
+        if (pivot != col) {
+            std::swap_ranges(gauss[col], gauss[col] + 8, gauss[pivot]);
+        }
+
+        float scale = gauss[col][col];
+        for (int j = 0; j < 8; ++j) {
+            gauss[col][j] /= scale;
+        }
+
+        for (int row = 0; row < 4; ++row) {
+            if (row == col) continue;
+            float factor = gauss[row][col];
+            for (int j = 0; j < 8; ++j){
+                gauss[row][j] -= factor * gauss[col][j];
+            }
+        }
+    }
+    
+    Matrix4x4 result;
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            result.m[i][j] = gauss[i][j + 4];
+
+    return result;
 }
 
 // Apply to geometric primitives
