@@ -382,6 +382,14 @@ namespace raytracer {
             return at(std::span<const size_t>(index.begin(), index.size()));
          }
 
+         const T& operator()(std::span<const size_t> index) const {
+            return at(index);
+         }
+
+         const T& operator()(std::initializer_list<size_t> index) const {
+            return at(index);
+         }
+
          Tensor<T> reshape(const std::vector<size_t>& new_shape) const {
             validate_shape_or_throw(new_shape);
 
