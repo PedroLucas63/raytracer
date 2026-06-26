@@ -55,8 +55,8 @@ namespace raytracer {
          std::optional<std::pair<float, Point2>> intersectRayWithUV(const Ray& ray) const;
       
       public:
-         Triangle(const Vertesis& vertesis, bool backfaceCull, const Transform* objToWorld = nullptr, const Transform* worldToObj = nullptr, bool flipNormals = false);
-         Triangle(const std::shared_ptr<Vertex>& firstVextex, bool backfaceCull, const Transform* objToWorld = nullptr, const Transform* worldToObj = nullptr, bool flipNormals = false);
+         Triangle(const Vertesis& vertesis, bool backfaceCull, const Transform* transform = nullptr, bool flipNormals = false);
+         Triangle(const std::shared_ptr<Vertex>& firstVextex, bool backfaceCull, const Transform* transform = nullptr, bool flipNormals = false);
 
          ~Triangle() = default;
 
@@ -100,7 +100,7 @@ namespace raytracer {
       public:
          TriangleMesh(const ParamSet& params);
          ~TriangleMesh() = default;
-         std::vector<std::shared_ptr<Triangle>> makeTriangules(const Transform* objToWorld = nullptr, const Transform* worldToObj = nullptr, bool flipNormals = false);
+         std::vector<std::shared_ptr<Triangle>> makeTriangules(const Transform* transform = nullptr, bool flipNormals = false);
    };
 }
 

@@ -1,59 +1,54 @@
 #include "Transform.hpp"
+#include "Utils/TensorUtils.hpp"
 
 namespace raytracer {
-    Transform::Transform() : m(Matrix::identity()), mInv(Matrix::identity()) {}
-    Transform::Transform(const Matrix& m) : m(m), mInv(m.inverse()) {}
-    Transform::Transform(const Matrix& m, const Matrix& mInv) : m(m), mInv(mInv) {}
+    Transform::Transform() : m(identity()), mInv(identity()) {}
+    Transform::Transform(const Tensor<double>& m) : m(m), mInv(m.inverse()) {}
+    Transform::Transform(const Tensor<double>& m, const Tensor<double>& mInv) : m(m), mInv(mInv) {}
 
-    const Matrix& Transform::getMatrix() const {
+    const Tensor<double>& Transform::getMatrix() const {
         return m; 
     }
-    const Matrix& Transform::getInverseMatrix() const { 
+    const Tensor<double>& Transform::getInverseMatrix() const { 
         return mInv; 
     }
 
     Transform Transform::inverse() const { 
         return Transform(mInv, m); 
-    
     }
 
-    Point3 Transform::operator()(const Point3& p) const { 
-        return m.applyPoint(p); 
+    Point3 Transform::operator()(const Point3& p, bool inverse) const { 
+        return inverse ? applyPoint(mInv, p) : applyPoint(m, p); 
     }
-    Vector3 Transform::operator()(const Vector3& v) const { 
-        return m.applyVector(v); 
-    }
-
-    Ray Transform::operator()(const Ray& r) const { 
-        return m.applyRay(r); 
+    Vector3 Transform::operator()(const Vector3& v, bool inverse) const { 
+        return inverse ? applyVector(mInv, v) : applyVector(m, v); 
     }
 
-    Bounds3 Transform::operator()(const Bounds3& b) const {
-        const Transform& t = *this;
-        Point3 p0 = t(Point3(b.min().getX(), b.min().getY(), b.min().getZ()));
-        double minX = p0.getX(), minY = p0.getY(), minZ = p0.getZ();
-        double maxX = p0.getX(), maxY = p0.getY(), maxZ = p0.getZ();
+    Ray Transform::operator()(const Ray& r, bool inverse) const { 
+        return inverse ? applyRay(mInv, r) : applyRay(m, r); 
+    }
 
-        for (int i = 1; i < 8; ++i) {
-            double x = (i & 1) ? b.max().getX() : b.min().getX();
-            double y = (i & 2) ? b.max().getY() : b.min().getY();
-            double z = (i & 4) ? b.max().getZ() : b.min().getZ();
-            Point3 p = t(Point3(x, y, z));
-            minX = std::min(minX, p.getX());
-            minY = std::min(minY, p.getY());
-            minZ = std::min(minZ, p.getZ());
-            maxX = std::max(maxX, p.getX());
-            maxY = std::max(maxY, p.getY());
-            maxZ = std::max(maxZ, p.getZ());
+    Bounds3 Transform::operator()(const Bounds3& b, bool inverse) const {
+        return inverse ? applyBounds(mInv, b) : applyBounds(m, b);
+    }
+
+    Vector3 Transform::applyNormal(const Vector3& n, bool inverse) const { 
+        if (inverse) {
+            return applyVector(m.transpose(), n).normalize();
         }
-        return Bounds3(Point3(minX, minY, minZ), Point3(maxX, maxY, maxZ));
-    }
 
-    Vector3 Transform::applyNormal(const Vector3& n) const { 
-        return mInv.transpose().applyNormal(n); 
+        return applyVector(mInv.transpose(), n).normalize();
     }
 
     Transform Transform::operator*(const Transform& t2) const {
-        return Transform(m * t2.m, t2.mInv * mInv);
+        return Transform(compose(m, t2.m), compose(t2.mInv, mInv));
+    }
+
+    Transform Transform::dot(const Transform& t2, bool inverse) const {
+        if (inverse) {
+            return Transform(compose(mInv, t2.m), compose(t2.mInv, m));
+        }
+
+        return Transform(compose(m, t2.m), compose(t2.mInv, mInv));
     }
 }

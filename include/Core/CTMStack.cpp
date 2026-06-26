@@ -1,10 +1,11 @@
 #include "Core/CTMStack.hpp"
+#include "Utils/TensorUtils.hpp"
 
 namespace raytracer {
 
 CTMStack::CTMStack()
-    : _current(Matrix4x4::identity()),
-      _currentInverse(Matrix4x4::identity())
+    : _current(identity()),
+      _currentInverse(identity())
 {}
 
 void CTMStack::push() {
@@ -22,21 +23,26 @@ void CTMStack::pop() {
     _inverses.pop();
 }
 
-void CTMStack::apply(const Matrix& m) {
-    _current = _current * m;
+void CTMStack::apply(const Tensor<double>& m) {
+    _current = compose(_current, m);
     _currentInverse = _currentInverse.inverse();
 }
 
 void CTMStack::reset() {
-    _current = Matrix4x4::identity();
-    _currentInverse = Matrix4x4::identity();
+    _current = identity();
+    _currentInverse = identity();
+
+    while (!_transforms.empty()) {
+        _transforms.pop();
+        _inverses.pop();
+    }
 }
 
-const Matrix& CTMStack::current() const {
+const Tensor<double>& CTMStack::current() const {
     return _current;
 }
 
-Matrix CTMStack::currentInverse() const {
+Tensor<double> CTMStack::currentInverse() const {
     return _currentInverse;
 }
 

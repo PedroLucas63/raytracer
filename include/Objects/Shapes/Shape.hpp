@@ -10,12 +10,11 @@
 namespace raytracer {
    class Shape {
       public:
-         const Transform* objToWorld{ nullptr };
-         const Transform* worldToObj{ nullptr };
+         const Transform* transform{ nullptr };
          const bool flipNormals{ false };
           
-         Shape(const Transform* objToWorld = nullptr, const Transform* worldToObj = nullptr, bool flipNormals = false) 
-            : objToWorld(objToWorld), worldToObj(worldToObj), flipNormals(flipNormals) {}
+         Shape(const Transform* transform = nullptr, bool flipNormals = false) 
+            : transform(transform), flipNormals(flipNormals) {}
 
          Shape(bool flipNormals) : flipNormals(flipNormals) {}
 

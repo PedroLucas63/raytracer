@@ -32,10 +32,9 @@ namespace raytracer {
       if (material == nullptr)
          std::cerr << "[WARN]: Primitive created without material" << std::endl;
 
-      const Transform* objToWorld = nullptr;
-      const Transform* worldToObj = nullptr;
+      const Transform* transform = nullptr;
       bool flipNormals = false;
-      Api::getCurrentTransform(&objToWorld, &worldToObj, &flipNormals);
+      Api::getCurrentTransform(&transform, &flipNormals);
 
       auto primitiveList = std::make_shared<PrimitiveList>();
       std::string type = params.retrieve<std::string>("type");
@@ -49,7 +48,7 @@ namespace raytracer {
       } else if (type == "trianglemesh") {
          auto shapes = std::make_shared<TriangleMesh>(params);
 
-         for (auto& shape : shapes->makeTriangules(objToWorld, worldToObj, flipNormals)) {
+         for (auto& shape : shapes->makeTriangules(transform, flipNormals)) {
             primitiveList->add(
                std::make_shared<GeometricPrimitive>(shape, material)
             );

@@ -25,7 +25,7 @@ namespace raytracer {
       const Tensor<double>& transform, const Bounds3& bounds
    );
    Tensor<double> translation(const Vector3& translation);
-   Tensor<double> translation(const Vector3& translation);
+   Tensor<double> scale(const Vector3& scale);
    Tensor<double> rotation(const Vector3& axis, double angleDeg);
    Tensor<double> compose(const Tensor<double>& parent, const Tensor<double>& child);
 }

@@ -1153,6 +1153,25 @@ namespace raytracer {
             return result;
          }
 
+         bool equals_to(const Tensor<T>& other) const {
+            if (_shape != other._shape) {
+               return false;
+            }
+
+            auto lhsIt = Iterator(_shape, _strides, _storage, _offset);
+            auto rhsIt = Iterator(other._shape, other._strides, other._storage, other._offset);
+
+            for (size_t i = 0; i < _numel; ++i) {
+               if (lhsIt.get() != rhsIt.get()) {
+                  return false;
+               }
+               lhsIt.next();
+               rhsIt.next();
+            }
+
+            return true;
+         }
+
          Tensor<bool> operator==(const Tensor<T>& other) const {
             if (_shape != other._shape) {
                throw std::invalid_argument("Tensor shapes must match");

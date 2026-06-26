@@ -1,28 +1,27 @@
 #pragma once
 
-#include "Math/Matrix.hpp"
+#include "Math/Tensor/Tensor.hpp"
 #include <stack>
 #include <stdexcept>
 
 namespace raytracer {
-
     class CTMStack {
     private:
-        Matrix _current;
-        Matrix _currentInverse;
-        std::stack<Matrix>  _transforms;
-        std::stack<Matrix>  _inverses;
+        Tensor<double> _current;
+        Tensor<double> _currentInverse;
+        std::stack<Tensor<double>>  _transforms;
+        std::stack<Tensor<double>>  _inverses;
 
     public:
         CTMStack();
 
         void push();
         void pop();
-        void apply(const Matrix& m);
+        void apply(const Tensor<double>& m);
         void reset();
 
-        const Matrix& current() const;
-        Matrix currentInverse() const;
+        const Tensor<double>& current() const;
+        Tensor<double> currentInverse() const;
 
         bool   empty() const;
         size_t depth() const;

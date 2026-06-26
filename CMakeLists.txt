@@ -49,7 +49,6 @@ add_library(raytracer_core
 	include/Integrator/IntegratorFactory.cpp
 	include/Core/ParamSet.cpp
 	include/Core/CTMStack.cpp
-	include/Math/Matrix.cpp
 	include/Math/Transform.cpp
 	include/Math/Vector3.cpp
 	include/Math/Point3.cpp
@@ -61,6 +60,7 @@ add_library(raytracer_core
 	include/Utils/ConvertFunction.cpp
 	include/Utils/ProgressBar.cpp
 	include/Utils/Utils.cpp
+	include/Utils/TensorUtils.cpp
 	include/Parser/ParserScene.cpp
 	include/Api/Api.cpp
 )
@@ -93,8 +93,6 @@ target_link_libraries(raytracer_core PRIVATE tinyobjloader::tinyobjloader)
 
 find_package(OpenMP REQUIRED)
 target_link_libraries(raytracer_core PUBLIC OpenMP::OpenMP_CXX)
-
-
 
 if(BUILD_TESTING)
 	find_package(Catch2 3 CONFIG REQUIRED)

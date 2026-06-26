@@ -4,8 +4,7 @@
 #include "Utils/ProgressBar.hpp"
 #include "Objects/Shapes/Sphere.hpp"
 #include "Integrator/IntegratorFactory.hpp"
-#include "Math/Matrix.hpp"
-
+#include "Utils/TensorUtils.hpp"
 #include <iostream>
 #include <stdexcept>
 
@@ -14,10 +13,10 @@ namespace raytracer {
    RunningOptions Api::_options;
    Scene Api::_scene;
    CTMStack Api::_currCTM;
-   std::unordered_map<std::string, Matrix> Api::_namedCoordSystem;
+   std::unordered_map<std::string, Tensor<double>> Api::_namedCoordSystem;
    GraphicsState Api::_currGS;
    std::stack<GraphicsState> Api::_savedGS;
-   std::stack<Matrix> Api::_savedTM;
+   std::stack<Tensor<double>> Api::_savedTM;
    std::vector<std::shared_ptr<const Transform>> Api::_transformationCache;
 
    void Api::generate() {
@@ -55,20 +54,12 @@ namespace raytracer {
 
       handlers["translate"] = [&](Scene&, const ParamSet& ps) {
          Vector3 v = ps.retrieve<Vector3>("value");
-         _currCTM.apply(translation(
-            static_cast<float>(v.getX()),
-            static_cast<float>(v.getY()),
-            static_cast<float>(v.getZ())
-         ));
+         _currCTM.apply(translation(v));
       };
 
       handlers["scale"] = [&](Scene&, const ParamSet& ps) {
          Vector3 v = ps.retrieve<Vector3>("value");
-         _currCTM.apply(scale(
-            static_cast<float>(v.getX()),
-            static_cast<float>(v.getY()),
-            static_cast<float>(v.getZ())
-         ));
+         _currCTM.apply(scale(v));
       };
 
       handlers["rotate"] = [&](Scene&, const ParamSet& ps) {
@@ -79,7 +70,7 @@ namespace raytracer {
 
       handlers["save_coord_system"] = [&](Scene&, const ParamSet& ps) {
          std::string name = ps.retrieve<std::string>("name");
-         _namedCoordSystem[name] = _currCTM.current();
+         _namedCoordSystem.insert_or_assign(name, _currCTM.current());
       };
 
       handlers["restore_coord_system"] = [&](Scene&, const ParamSet& ps) {
@@ -136,41 +127,23 @@ namespace raytracer {
    }
 
 
-   void Api::getCurrentTransform(const Transform** objToWorld, const Transform** worldToObj, bool* flipNormals) {
-      Matrix m = _currCTM.current();
-      Matrix mInv = _currCTM.currentInverse();
+   void Api::getCurrentTransform(const Transform** transform, bool* flipNormals) {
+      auto m = _currCTM.current();
+      auto mInv = _currCTM.currentInverse();
 
-      const Transform* t_direct = nullptr;
-      const Transform* t_inverse = nullptr;
-
-      // Find or create direct
       for (const auto& t : _transformationCache) {
-         if (t->getMatrix() == m) {
-            t_direct = t.get();
-            break;
+         if (m.equals_to(t->getMatrix())) {
+            *transform = t.get();
+            if (flipNormals)
+               *flipNormals = _currGS.flipNormals;
+            return;
          }
       }
-      if (!t_direct) {
-         auto t = std::make_shared<Transform>(m, mInv);
-         _transformationCache.push_back(t);
-         t_direct = t.get();
-      }
+      
+      auto t = std::make_shared<Transform>(m, mInv);
+      _transformationCache.push_back(t);
 
-      // Find or create inverse
-      for (const auto& t : _transformationCache) {
-         if (t->getMatrix() == mInv) {
-            t_inverse = t.get();
-            break;
-         }
-      }
-      if (!t_inverse) {
-         auto t = std::make_shared<Transform>(mInv, m);
-         _transformationCache.push_back(t);
-         t_inverse = t.get();
-      }
-
-      *objToWorld = t_direct;
-      *worldToObj = t_inverse;
+      *transform = t.get();
       if (flipNormals) {
          *flipNormals = _currGS.flipNormals;
       }

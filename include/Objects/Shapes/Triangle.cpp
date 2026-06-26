@@ -81,7 +81,7 @@ namespace raytracer {
    }
 
    std::optional<std::pair<float, Point2>> Triangle::intersectRayWithUV(const Ray& ray) const {
-      Ray localRay = worldToObj ? (*worldToObj)(ray) : ray;
+      Ray localRay = transform ? (*transform)(ray, true) : ray;
       constexpr double EPSILON = std::numeric_limits<double>::epsilon();
 
       auto v0 = getVertex(0); 
@@ -113,14 +113,14 @@ namespace raytracer {
       return std::make_pair(t, Point2(u, v));
    }
 
-   Triangle::Triangle(const Triangle::Vertesis& vertesis, bool backfaceCull, const Transform* objToWorld, const Transform* worldToObj, bool flipNormals)
-      : Shape(objToWorld, worldToObj, flipNormals), _vertesis(vertesis), _backfaceCull(backfaceCull)
+   Triangle::Triangle(const Triangle::Vertesis& vertesis, bool backfaceCull, const Transform* transform, bool flipNormals)
+      : Shape(transform, flipNormals), _vertesis(vertesis), _backfaceCull(backfaceCull)
    {
       checkVertices();
    }
 
-   Triangle::Triangle(const std::shared_ptr<Vertex>& firstVextex, bool backfaceCull, const Transform* objToWorld, const Transform* worldToObj, bool flipNormals)
-      : Shape(objToWorld, worldToObj, flipNormals), _backfaceCull(backfaceCull)
+   Triangle::Triangle(const std::shared_ptr<Vertex>& firstVextex, bool backfaceCull, const Transform* transform, bool flipNormals)
+      : Shape(transform, flipNormals), _backfaceCull(backfaceCull)
    {
       setVertices(firstVextex);
    }
@@ -210,12 +210,12 @@ namespace raytracer {
       if (!surfel)
          return true;
 
-      Ray localRay = worldToObj ? (*worldToObj)(ray) : ray;
+      Ray localRay = transform ? (*transform)(ray, true) : ray;
       auto localPoint = localRay(t);
       auto localNormal = getBarycentricNormal(uv);
 
-      Point3 worldIntersectPoint = objToWorld ? (*objToWorld)(localPoint) : localPoint;
-      Vector3 worldNormal = objToWorld ? objToWorld->applyNormal(localNormal).normalize() : localNormal;
+      Point3 worldIntersectPoint = transform ? (*transform)(localPoint) : localPoint;
+      Vector3 worldNormal = transform ? transform->applyNormal(localNormal).normalize() : localNormal;
 
       if (flipNormals) {
          worldNormal = -worldNormal;
@@ -247,7 +247,7 @@ namespace raytracer {
       }
 
       Bounds3 localBounds(min, max);
-      return objToWorld ? (*objToWorld)(localBounds) : localBounds;
+      return transform ? (*transform)(localBounds) : localBounds;
    }
 
    TriangleMesh::TriangleMesh(const ParamSet& params) {
@@ -433,7 +433,7 @@ namespace raytracer {
       return cross.normalize();
    }
 
-   std::vector<std::shared_ptr<Triangle>> TriangleMesh::makeTriangules(const Transform* objToWorld, const Transform* worldToObj, bool flipNormals) {
+   std::vector<std::shared_ptr<Triangle>> TriangleMesh::makeTriangules(const Transform* transform, bool flipNormals) {
 
       std::vector<std::shared_ptr<Triangle>> triangles;
       triangles.reserve(_nTriangles);
@@ -464,8 +464,7 @@ namespace raytracer {
          auto triangle = std::make_shared<Triangle>(
             std::array<std::shared_ptr<Vertex>, 3>{vertex0, vertex1, vertex2},
             _backfaceCull,
-            objToWorld,
-            worldToObj,
+            transform,
             flipNormals
          );
 

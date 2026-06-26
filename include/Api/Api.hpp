@@ -7,6 +7,7 @@
 #include "Parser/ParserScene.hpp"
 #include "Scene/Scene.hpp"
 #include "Math/Transform.hpp"
+#include "Math/Tensor/Tensor.hpp"
 
 #include <functional>
 #include <memory>
@@ -35,7 +36,7 @@ namespace raytracer {
         static void run();
         static void cleanUp();
 
-        static void getCurrentTransform(const Transform** objToWorld, const Transform** worldToObj, bool* flipNormals);
+        static void getCurrentTransform(const Transform** transform, bool* flipNormals);
 
     private:
         Api()  = default;
@@ -44,10 +45,10 @@ namespace raytracer {
         static RunningOptions _options;
         static Scene _scene;
         static CTMStack _currCTM;
-        static std::unordered_map<std::string, Matrix> _namedCoordSystem;
+        static std::unordered_map<std::string, Tensor<double>> _namedCoordSystem;
         static GraphicsState _currGS;
         static std::stack<GraphicsState> _savedGS;
-        static std::stack<Matrix> _savedTM;
+        static std::stack<Tensor<double>> _savedTM;
         static std::vector<std::shared_ptr<const Transform>> _transformationCache;
     };
 
