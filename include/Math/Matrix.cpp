@@ -197,11 +197,11 @@ std::ostream& operator<<(std::ostream& os, const Matrix4x4& mat) {
     return os;
 }
 
-Matrix4x4 mat4_identity() {
+Matrix4x4 identity() {
     return Matrix4x4::identity();
 }
 
-Matrix4x4 mat4_translation(float tx, float ty, float tz) {
+Matrix4x4 translation(float tx, float ty, float tz) {
     return Matrix4x4{
         1, 0, 0, tx,
         0, 1, 0, ty,
@@ -210,7 +210,7 @@ Matrix4x4 mat4_translation(float tx, float ty, float tz) {
     };
 }
 
-Matrix4x4 mat4_scale(float sx, float sy, float sz) {
+Matrix4x4 scale(float sx, float sy, float sz) {
     return Matrix4x4{
         sx,  0,  0, 0,
          0, sy,  0, 0,
@@ -219,7 +219,7 @@ Matrix4x4 mat4_scale(float sx, float sy, float sz) {
     };
 }
 
-Matrix4x4 mat4_rotation(const Vector3& axis, float angleDeg) {
+Matrix4x4 rotation(const Vector3& axis, float angleDeg) {
     const float rad = angleDeg * static_cast<float>(M_PI) / 180.0f;
     const float c   = std::cos(rad);
     const float s   = std::sin(rad);
@@ -228,7 +228,7 @@ Matrix4x4 mat4_rotation(const Vector3& axis, float angleDeg) {
     // Normalize axis
     const float len = static_cast<float>(axis.length());
     if (len < 1e-6f)
-        throw std::invalid_argument("mat4_rotation: axis vector has zero length");
+        throw std::invalid_argument("rotation: axis vector has zero length");
 
     const float ax = static_cast<float>(axis.getX()) / len;
     const float ay = static_cast<float>(axis.getY()) / len;
@@ -243,7 +243,7 @@ Matrix4x4 mat4_rotation(const Vector3& axis, float angleDeg) {
     };
 }
 
-Matrix4x4 mat4_compose(const Matrix4x4& parent, const Matrix4x4& child) {
+Matrix4x4 compose(const Matrix4x4& parent, const Matrix4x4& child) {
     return parent * child;
 }
 

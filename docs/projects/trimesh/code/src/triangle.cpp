@@ -43,14 +43,14 @@ std::ostream& operator<<(std::ostream& os, const Triangle& t) {
  * (1) creates a triangle mesh manually (from the XML attributes), or
  * (2) calls another function to load an OBJ file and create the triangle mesh.
  *
- * @param flip_normals This flag asks to invert the normal of all triangles.
+ * @param flipNormals This flag asks to invert the normal of all triangles.
  * This is a global flag, set by a API command.
  * @param ps The ParamSet object sent from the client code with all the
  * information related to the triangle mesh read from the scene file.
  *
  * @return The list of Shape (triangles) that we read from the scene file.
  */
-vector<shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals, const ParamSet& ps) {
+vector<shared_ptr<Shape>> create_triangle_mesh_shape(bool flipNormals, const ParamSet& ps) {
   bool bkfc_on{ true };                // Controls whether the backface cull should be done or not.
   bool reverse_vertex_order{ false };  // If this is true, we store vertices in
                                        // reverse order inside the mesh.
@@ -84,7 +84,7 @@ vector<shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals, const Pa
   // ParamSet.
   if (filename != "") {  // Read mesh data from an OBJ file provided in the scene file.
     // Call our auxiliary function that interfaces with tinyobjloader API.
-    if (load_mesh_data(filename, reverse_vertex_order, compute_normals, flip_normals, mesh)) {
+    if (load_mesh_data(filename, reverse_vertex_order, compute_normals, flipNormals, mesh)) {
       std::cout << ">>> Mesh data successfuly loaded!\n";
     } else {
       std::cout << ">>> Mesh data loading failed!\n";

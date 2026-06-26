@@ -7,6 +7,14 @@
    <!-- The Scene -->
    <include filename="scenes/references/geometry_spheres2.xml" />
 
+
+      <object_instance_begin name="teste" />
+         <push_CTM/>
+               <scale value="10 10 10" />
+               <include filename="scenes/references/geometry_spheres2.xml" />
+         <pop_CTM/>
+      <object_instance_end/>
+
    <lookat look_from="0 10 5 " look_at="0 0 5" up="0 0 1" />
    <camera type="orthographic" screen_window="-8 8 -6 6" />
    <film type="image" x_res="800" y_res="600" filename="output/scene19.2.png" img_type="png" />

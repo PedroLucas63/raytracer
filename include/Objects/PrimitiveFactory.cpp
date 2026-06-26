@@ -6,6 +6,7 @@
 #include "Objects/Shapes/Shape.hpp"
 #include "Objects/Shapes/Triangle.hpp"
 #include "Objects/Shapes/Cylinder.hpp"
+#include "Api/Api.hpp"
 #include <iostream>
 
 namespace raytracer {
@@ -31,6 +32,11 @@ namespace raytracer {
       if (material == nullptr)
          std::cerr << "[WARN]: Primitive created without material" << std::endl;
 
+      const Transform* objToWorld = nullptr;
+      const Transform* worldToObj = nullptr;
+      bool flipNormals = false;
+      Api::getCurrentTransform(&objToWorld, &worldToObj, &flipNormals);
+
       auto primitiveList = std::make_shared<PrimitiveList>();
       std::string type = params.retrieve<std::string>("type");
       std::shared_ptr<Shape> shape;
@@ -43,7 +49,7 @@ namespace raytracer {
       } else if (type == "trianglemesh") {
          auto shapes = std::make_shared<TriangleMesh>(params);
 
-         for (auto& shape : shapes->makeTriangules()) {
+         for (auto& shape : shapes->makeTriangules(objToWorld, worldToObj, flipNormals)) {
             primitiveList->add(
                std::make_shared<GeometricPrimitive>(shape, material)
             );

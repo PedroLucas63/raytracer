@@ -50,6 +50,7 @@ add_library(raytracer_core
 	include/Core/ParamSet.cpp
 	include/Core/CTMStack.cpp
 	include/Math/Matrix.cpp
+	include/Math/Transform.cpp
 	include/Math/Vector3.cpp
 	include/Math/Point3.cpp
 	include/Math/Bounds3.cpp

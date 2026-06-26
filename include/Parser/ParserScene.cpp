@@ -39,6 +39,7 @@ namespace raytracer
        {"push_CTM", {}},
        {"pop_CTM", {}},
        {"translate", {"value"}},
+       {"scale", {"value"}},
        {"rotate", {"axis", "angle"}},
       };
 

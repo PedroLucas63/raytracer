@@ -6,6 +6,7 @@
 #include "Core/CTMStack.hpp"
 #include "Parser/ParserScene.hpp"
 #include "Scene/Scene.hpp"
+#include "Math/Transform.hpp"
 
 #include <functional>
 #include <memory>
@@ -17,9 +18,10 @@ namespace raytracer {
 
     // the "machine state" the API keeps while parsing a scene.
     struct GraphicsState {
-        std::shared_ptr<Material> curr_material;
-        bool flip_normals{ false };
         using DictOfMat = std::unordered_map<std::string, std::shared_ptr<Material>>;
+        
+        std::shared_ptr<Material> curr_material;
+        bool flipNormals{ false };
         std::shared_ptr<DictOfMat> mats_lib;
         bool mats_lib_cloned{ false };
 
@@ -33,17 +35,20 @@ namespace raytracer {
         static void run();
         static void cleanUp();
 
+        static void getCurrentTransform(const Transform** objToWorld, const Transform** worldToObj, bool* flipNormals);
+
     private:
         Api()  = default;
         ~Api() = default;
         static void generate();
         static RunningOptions _options;
         static Scene _scene;
-        static CTMStack curr_TM;
-        static std::unordered_map<std::string, Matrix> named_coord_system;
-        static GraphicsState curr_GS;
-        static std::stack<GraphicsState> saved_GS;
-        static std::stack<Matrix> saved_TM;
+        static CTMStack _currCTM;
+        static std::unordered_map<std::string, Matrix> _namedCoordSystem;
+        static GraphicsState _currGS;
+        static std::stack<GraphicsState> _savedGS;
+        static std::stack<Matrix> _savedTM;
+        static std::vector<std::shared_ptr<const Transform>> _transformationCache;
     };
 
 } // namespace raytracer

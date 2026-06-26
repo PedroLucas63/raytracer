@@ -22,10 +22,10 @@ int main() {
   ps["backface_cull"] = "on";
   ps["reverse_vertex_order"] = "false";
   ps["compute_normals"] = "false";
-  bool flip_normals{ false };  // This info comes from an API command.
+  bool flipNormals{ false };  // This info comes from an API command.
 
   // Create triangle mesh. Entry-point for our mesh handling code.
-  auto tri_list = create_triangle_mesh_shape(flip_normals, ps);
+  auto tri_list = create_triangle_mesh_shape(flipNormals, ps);
 
   std::cout << "\n\n>>> Accessing mesh data:\n";
 

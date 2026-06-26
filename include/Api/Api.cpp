@@ -13,11 +13,12 @@ namespace raytracer {
 
    RunningOptions Api::_options;
    Scene Api::_scene;
-   CTMStack Api::curr_TM;
-   std::unordered_map<std::string, Matrix> Api::named_coord_system;
-   GraphicsState Api::curr_GS;
-   std::stack<GraphicsState> Api::saved_GS;
-   std::stack<Matrix> Api::saved_TM;
+   CTMStack Api::_currCTM;
+   std::unordered_map<std::string, Matrix> Api::_namedCoordSystem;
+   GraphicsState Api::_currGS;
+   std::stack<GraphicsState> Api::_savedGS;
+   std::stack<Matrix> Api::_savedTM;
+   std::vector<std::shared_ptr<const Transform>> Api::_transformationCache;
 
    void Api::generate() {
       auto integrator = IntegratorFactory::create(_scene.getParams());
@@ -36,7 +37,7 @@ namespace raytracer {
    }
 
    void Api::run() {
-      curr_TM.reset();
+      _currCTM.reset();
 
       std::unordered_map<std::string, std::function<void(Scene&, const ParamSet&)>> handlers;
 
@@ -49,12 +50,12 @@ namespace raytracer {
       };
 
       handlers["identity"] = [&](Scene&, const ParamSet&) {
-         curr_TM.reset();
+         _currCTM.reset();
       };
 
       handlers["translate"] = [&](Scene&, const ParamSet& ps) {
          Vector3 v = ps.retrieve<Vector3>("value");
-         curr_TM.apply(mat4_translation(
+         _currCTM.apply(translation(
             static_cast<float>(v.getX()),
             static_cast<float>(v.getY()),
             static_cast<float>(v.getZ())
@@ -63,7 +64,7 @@ namespace raytracer {
 
       handlers["scale"] = [&](Scene&, const ParamSet& ps) {
          Vector3 v = ps.retrieve<Vector3>("value");
-         curr_TM.apply(mat4_scale(
+         _currCTM.apply(scale(
             static_cast<float>(v.getX()),
             static_cast<float>(v.getY()),
             static_cast<float>(v.getZ())
@@ -71,45 +72,45 @@ namespace raytracer {
       };
 
       handlers["rotate"] = [&](Scene&, const ParamSet& ps) {
-         Vector3 axis  = ps.retrieve<Vector3>("axis");
-         float   angle = ps.retrieve<float>("angle");
-         curr_TM.apply(mat4_rotation(axis, angle));
+         Vector3 axis = ps.retrieve<Vector3>("axis");
+         float angle = ps.retrieve<float>("angle");
+         _currCTM.apply(rotation(axis, angle));
       };
 
       handlers["save_coord_system"] = [&](Scene&, const ParamSet& ps) {
          std::string name = ps.retrieve<std::string>("name");
-         named_coord_system[name] = curr_TM.current();
+         _namedCoordSystem[name] = _currCTM.current();
       };
 
       handlers["restore_coord_system"] = [&](Scene&, const ParamSet& ps) {
          std::string name = ps.retrieve<std::string>("name");
-         auto it = named_coord_system.find(name);
-         if (it == named_coord_system.end())
+         auto it = _namedCoordSystem.find(name);
+         if (it == _namedCoordSystem.end())
             throw std::runtime_error("restore_coord_system: unknown coord system '" + name + "'");
          // Replace the entire CTM stack state with the saved matrix
-         curr_TM = CTMStack{};   // reset to fresh stack
-         curr_TM.apply(it->second);
+         _currCTM = CTMStack{};   // reset to fresh stack
+         _currCTM.apply(it->second);
       };
 
       handlers["push_CTM"] = [&](Scene&, const ParamSet&) {
-         curr_TM.push();
+         _currCTM.push();
       };
 
       handlers["pop_CTM"] = [&](Scene&, const ParamSet&) {
-         curr_TM.pop();
+         _currCTM.pop();
       };
 
       handlers["push_GS"] = [&](Scene&, const ParamSet&) {
-         saved_GS.push(curr_GS);
-         curr_TM.push(); 
+         _savedGS.push(_currGS);
+         _currCTM.push(); 
       };
 
       handlers["pop_GS"] = [&](Scene&, const ParamSet&) {
-         if (saved_GS.empty())
+         if (_savedGS.empty())
             throw std::runtime_error("pop_GS: graphics-state stack is empty");
-         curr_GS = saved_GS.top();
-         saved_GS.pop();
-         curr_TM.pop();
+         _currGS = _savedGS.top();
+         _savedGS.pop();
+         _currCTM.pop();
       };
 
       ParserScene::parseScene(
@@ -126,11 +127,53 @@ namespace raytracer {
    void Api::cleanUp() {
       _options = RunningOptions();
       _scene   = Scene();
-      curr_TM  = CTMStack();
-      named_coord_system.clear();
-      curr_GS  = GraphicsState();
-      while (!saved_GS.empty()) saved_GS.pop();
-      while (!saved_TM.empty()) saved_TM.pop();
+      _currCTM  = CTMStack();
+      _namedCoordSystem.clear();
+      _currGS  = GraphicsState();
+      while (!_savedGS.empty()) _savedGS.pop();
+      while (!_savedTM.empty()) _savedTM.pop();
+      _transformationCache.clear();
+   }
+
+
+   void Api::getCurrentTransform(const Transform** objToWorld, const Transform** worldToObj, bool* flipNormals) {
+      Matrix m = _currCTM.current();
+      Matrix mInv = _currCTM.currentInverse();
+
+      const Transform* t_direct = nullptr;
+      const Transform* t_inverse = nullptr;
+
+      // Find or create direct
+      for (const auto& t : _transformationCache) {
+         if (t->getMatrix() == m && t->getInverseMatrix() == mInv) {
+            t_direct = t.get();
+            break;
+         }
+      }
+      if (!t_direct) {
+         auto t = std::make_shared<Transform>(m, mInv);
+         _transformationCache.push_back(t);
+         t_direct = t.get();
+      }
+
+      // Find or create inverse
+      for (const auto& t : _transformationCache) {
+         if (t->getMatrix() == mInv && t->getInverseMatrix() == m) {
+            t_inverse = t.get();
+            break;
+         }
+      }
+      if (!t_inverse) {
+         auto t = std::make_shared<Transform>(mInv, m);
+         _transformationCache.push_back(t);
+         t_inverse = t.get();
+      }
+
+      *objToWorld = t_direct;
+      *worldToObj = t_inverse;
+      if (flipNormals) {
+         *flipNormals = _currGS.flipNormals;
+      }
    }
 
 } // namespace raytracer

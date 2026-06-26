@@ -50,13 +50,13 @@ namespace raytracer {
     };
 
 
-    Matrix4x4 mat4_identity();
-    Matrix4x4 mat4_translation(float tx, float ty, float tz);
-    Matrix4x4 mat4_scale      (float sx, float sy, float sz);
-    Matrix4x4 mat4_rotation   (const Vector3& axis, float angleDeg);
+    Matrix4x4 identity();
+    Matrix4x4 translation(float tx, float ty, float tz);
+    Matrix4x4 scale      (float sx, float sy, float sz);
+    Matrix4x4 rotation   (const Vector3& axis, float angleDeg);
 
     // Compose: parent * child  (i.e. apply child first, then parent)
-    Matrix4x4 mat4_compose(const Matrix4x4& parent, const Matrix4x4& child);
+    Matrix4x4 compose(const Matrix4x4& parent, const Matrix4x4& child);
 
     using Matrix = Matrix4x4;
 

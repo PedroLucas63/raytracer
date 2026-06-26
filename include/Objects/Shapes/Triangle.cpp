@@ -81,6 +81,7 @@ namespace raytracer {
    }
 
    std::optional<std::pair<float, Point2>> Triangle::intersectRayWithUV(const Ray& ray) const {
+      Ray localRay = worldToObj ? (*worldToObj)(ray) : ray;
       constexpr double EPSILON = std::numeric_limits<double>::epsilon();
 
       auto v0 = getVertex(0); 
@@ -91,35 +92,35 @@ namespace raytracer {
       auto edge2 = v2.getPosition() - v0.getPosition();
 
       auto normal = edge1.cross(edge2);
-      if (normal.dot(ray.direction) > 0 && _backfaceCull) return std::nullopt;
+      if (normal.dot(localRay.direction) > 0 && _backfaceCull) return std::nullopt;
 
-      auto rayCrossEdge2 = ray.direction.cross(edge2);
+      auto rayCrossEdge2 = localRay.direction.cross(edge2);
       auto determinant = edge1.dot(rayCrossEdge2);
       if (std::abs(determinant) < EPSILON) return std::nullopt;
 
       auto inverseDeterminant = 1.0 / determinant;
-      auto rayToVertex = ray.origin - v0.getPosition();
+      auto rayToVertex = localRay.origin - v0.getPosition();
       float u = inverseDeterminant * rayToVertex.dot(rayCrossEdge2);
       if (u < 0 || u > 1) return std::nullopt;
 
       auto vertexCrossEdge1 = rayToVertex.cross(edge1);
-      float v = inverseDeterminant * ray.direction.dot(vertexCrossEdge1);
+      float v = inverseDeterminant * localRay.direction.dot(vertexCrossEdge1);
       if (v < 0 || u + v > 1) return std::nullopt;
 
       float t = inverseDeterminant * edge2.dot(vertexCrossEdge1);
-      if (t < ray.t_min || t > ray.t_max) return std::nullopt;
+      if (t < localRay.t_min || t > localRay.t_max) return std::nullopt;
 
       return std::make_pair(t, Point2(u, v));
    }
 
-   Triangle::Triangle(const Triangle::Vertesis& vertesis, bool backfaceCull)
-      : _vertesis(vertesis), _backfaceCull(backfaceCull), Shape()
+   Triangle::Triangle(const Triangle::Vertesis& vertesis, bool backfaceCull, const Transform* objToWorld, const Transform* worldToObj, bool flipNormals)
+      : Shape(objToWorld, worldToObj, flipNormals), _vertesis(vertesis), _backfaceCull(backfaceCull)
    {
       checkVertices();
    }
 
-   Triangle::Triangle(const std::shared_ptr<Vertex>& firstVextex, bool backfaceCull)
-      : _backfaceCull(backfaceCull), Shape()
+   Triangle::Triangle(const std::shared_ptr<Vertex>& firstVextex, bool backfaceCull, const Transform* objToWorld, const Transform* worldToObj, bool flipNormals)
+      : Shape(objToWorld, worldToObj, flipNormals), _backfaceCull(backfaceCull)
    {
       setVertices(firstVextex);
    }
@@ -209,9 +210,20 @@ namespace raytracer {
       if (!surfel)
          return true;
 
+      Ray localRay = worldToObj ? (*worldToObj)(ray) : ray;
+      auto localPoint = localRay(t);
+      auto localNormal = getBarycentricNormal(uv);
+
+      Point3 worldIntersectPoint = objToWorld ? (*objToWorld)(localPoint) : localPoint;
+      Vector3 worldNormal = objToWorld ? objToWorld->applyNormal(localNormal).normalize() : localNormal;
+
+      if (flipNormals) {
+         worldNormal = -worldNormal;
+      }
+
       surfel->t       = t;
-      surfel->point   = ray(t);
-      surfel->normal  = getBarycentricNormal(uv);
+      surfel->point   = worldIntersectPoint;
+      surfel->normal  = worldNormal;
       surfel->viewDir = -ray.direction.normalize();
       surfel->material = nullptr;
 
@@ -234,7 +246,8 @@ namespace raytracer {
          if (vertexPos.getZ() > max.getZ()) max.setZ(vertexPos.getZ());
       }
 
-      return Bounds3(min, max);
+      Bounds3 localBounds(min, max);
+      return objToWorld ? (*objToWorld)(localBounds) : localBounds;
    }
 
    TriangleMesh::TriangleMesh(const ParamSet& params) {
@@ -420,7 +433,7 @@ namespace raytracer {
       return cross.normalize();
    }
 
-   std::vector<std::shared_ptr<Triangle>> TriangleMesh::makeTriangules() {
+   std::vector<std::shared_ptr<Triangle>> TriangleMesh::makeTriangules(const Transform* objToWorld, const Transform* worldToObj, bool flipNormals) {
 
       std::vector<std::shared_ptr<Triangle>> triangles;
       triangles.reserve(_nTriangles);
@@ -450,7 +463,10 @@ namespace raytracer {
 
          auto triangle = std::make_shared<Triangle>(
             std::array<std::shared_ptr<Vertex>, 3>{vertex0, vertex1, vertex2},
-            _backfaceCull
+            _backfaceCull,
+            objToWorld,
+            worldToObj,
+            flipNormals
          );
 
          triangles.push_back(triangle);
