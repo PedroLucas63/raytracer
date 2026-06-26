@@ -9,7 +9,9 @@ namespace raytracer {
     class CTMStack {
     private:
         Matrix _current;
-        std::stack<Matrix>  _stack;
+        Matrix _currentInverse;
+        std::stack<Matrix>  _transforms;
+        std::stack<Matrix>  _inverses;
 
     public:
         CTMStack();

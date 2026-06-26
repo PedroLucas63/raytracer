@@ -145,7 +145,7 @@ namespace raytracer {
 
       // Find or create direct
       for (const auto& t : _transformationCache) {
-         if (t->getMatrix() == m && t->getInverseMatrix() == mInv) {
+         if (t->getMatrix() == m) {
             t_direct = t.get();
             break;
          }
@@ -158,7 +158,7 @@ namespace raytracer {
 
       // Find or create inverse
       for (const auto& t : _transformationCache) {
-         if (t->getMatrix() == mInv && t->getInverseMatrix() == m) {
+         if (t->getMatrix() == mInv) {
             t_inverse = t.get();
             break;
          }

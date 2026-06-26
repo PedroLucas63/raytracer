@@ -6,7 +6,6 @@
 #include "Ray.hpp"
 #include "Bounds3.hpp"
 
-
 namespace raytracer {
 
 class Transform{
