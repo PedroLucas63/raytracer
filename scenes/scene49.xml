@@ -56,7 +56,10 @@
         <light_source type="directional" from="100 35 -30" to="0 0 0" I="1.0 1.0 1.0" attenuation="0.1 0 0" world_radius="50" />
 
 
-        <object type="plane" origin="0 0 0" norm="0 1 0" material="ground" />
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <object type="plane" material="ground" />
+        <pop_CTM/>
 
 
         <object type="trianglemesh"
@@ -66,7 +69,11 @@
                 material="metal-red"
         />
 
-      <object type="sphere" center="0 2 -25" radius="1.5" material="metal-red"/>
+      <push_CTM/>
+         <translate value="0 2 -25" />
+         <scale value="1.5 1.5 1.5" />
+         <object type="sphere" material="metal-red" />
+      <pop_CTM/>
 
 
     <world_end/>

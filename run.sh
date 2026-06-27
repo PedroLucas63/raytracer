@@ -50,3 +50,5 @@ rm -rf output
 ./build/raytracer scenes/scene47.xml
 ./build/raytracer scenes/scene48.xml
 ./build/raytracer scenes/scene49.xml
+./build/raytracer scenes/scene50.xml
+./build/raytracer scenes/scene51.xml

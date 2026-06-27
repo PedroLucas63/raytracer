@@ -11,22 +11,21 @@
 #include "Core/ParamSet.hpp"
 #include "tinyxml2.h"
 #include "Utils/ConvertFunction.hpp"
-#include "Scene/Scene.hpp"
-
+#include "Core/GraphicsState.hpp"
 
 namespace raytracer {
     class ParserScene {
         public:
             using OnElementCallback =
-                std::function<void(Scene&, const std::string& element, const ParamSet& ps)>;
+                std::function<void(GraphicsState&, const std::string& element, const ParamSet& ps)>;
 
-            static void parseScene(const char* filename, Scene& scene,
+            static void parseScene(const char* filename, GraphicsState& graphicsState,
                                    OnElementCallback onElement = nullptr);
-            static void parseScene(const char* xmlContent, bool fromString, Scene& scene,
+            static void parseScene(const char* xmlContent, bool fromString, GraphicsState& graphicsState,
                                    OnElementCallback onElement = nullptr);
 
         private:
-            static void parseDocument(tinyxml2::XMLDocument& doc, Scene& scene,
+            static void parseDocument(tinyxml2::XMLDocument& doc, GraphicsState& graphicsState,
                                       OnElementCallback onElement = nullptr);
             static std::string stringToLower(std::string s);
             static bool isValidElement(std::string_view);

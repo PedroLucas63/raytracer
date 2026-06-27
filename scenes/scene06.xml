@@ -8,9 +8,21 @@
     <world_begin/>
         <background type="single_color" color="255 255 255"/>
         <material name="red" type="flat" color="255 0 0"/>
-        <object type="sphere" center="0 0 0" radius="1" />
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" />
+        <pop_CTM/>
         <material name="yellow" type="flat" color="255 255 0"/>
-        <object type="sphere" center="2 2 2" radius="1" />
-        <object type="sphere" center="-2 -2 -2" radius="1" material="red" />
+        <push_CTM/>
+           <translate value="2 2 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2 -2 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="red" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

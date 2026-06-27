@@ -1,0 +1,16 @@
+<RT3>
+    <material type="blinn" 
+        diffuse="160  82  45" 
+        specular="0.8 0.8 0.8" 
+        ambient="16 8.2 4.5" 
+        mirror="0.1 0.1 0.1" 
+        glossiness="128"
+    />
+    
+    <object type="trianglemesh" 
+        filename="scenes/obj/table.obj" 
+        compute_normals="false" 
+        backface_cull ="true" 
+        reverse_vertex_order="false"
+    />
+</RT3>

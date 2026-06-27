@@ -35,19 +35,38 @@
         <make_named_material type="blinn" name="blueish"  ambient="0.6 0.6 0.6" diffuse ="0.1 0.2 0.9"  specular ="0.8 0.8 0.8"  glossiness ="16"/>
         
         <named_material name="redish"/>
-        <object type="box" first_point="-1 0 -1" second_point="1 2 1" />
+        <push_CTM/>
+           <translate value="0.000000 1.000000 0.000000" />
+           <scale value="2.000000 2.000000 2.000000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <named_material name="greenish"/>
-        <object type="box" first_point="-3 0 2" second_point="-1 2 4" />
+        <push_CTM/>
+           <translate value="-2.000000 1.000000 3.000000" />
+           <scale value="2.000000 2.000000 2.000000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <named_material name="blueish"/>
-        <object type="box" first_point="1 0 -3" second_point="3 2 -1" />
+        <push_CTM/>
+           <translate value="2.000000 1.000000 -2.000000" />
+           <scale value="2.000000 2.000000 2.000000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <named_material name="gold"/>
-        <object type="box" first_point="1 0 5" second_point="5 3.4 9" />
+        <push_CTM/>
+           <translate value="3.000000 1.700000 7.000000" />
+           <scale value="4.000000 3.400000 4.000000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <named_material name="grey"/>
-        <object type="plane" origin="0 0 0" norm="0 1 0" material="floor" />
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <object type="plane" material="floor" />
+        <pop_CTM/>
 
     <world_end/>
 </RT3>

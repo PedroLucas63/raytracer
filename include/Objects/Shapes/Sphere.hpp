@@ -8,21 +8,16 @@
 namespace raytracer {
    class Sphere : public Shape {
       private:
-         Point3 _center;
-         float _radius;
-
          std::pair<float, float> calculateIntersectPoints(const Ray& ray) const;
 
       public:
-         Sphere(const Point3& center, float radius): 
-            _center(center), _radius(radius) {}
-         Sphere(const ParamSet& params);
+         Sphere() = default;
          ~Sphere() = default;
 
-         bool intersect(const Ray& ray) const override;
-         bool intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const override;
+         bool intersect(const Ray& ray, const Transform& objToWorld) const override;
+         bool intersectWithSurfel(const Ray& ray, const Transform& objToWorld, float* tHit, Surfel* sf) const override;
 
-         Bounds3 getBounds() const override;
+         Bounds3 getBounds(const Transform& objToWorld) const override;
    };
 }
 

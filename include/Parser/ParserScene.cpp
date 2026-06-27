@@ -15,7 +15,6 @@
 
 namespace raytracer
 {
-
    // ── maps ──────────────────────────────────────────────────────────────────
 
    std::unordered_map<std::string, std::vector<std::string>> elementList{
@@ -36,8 +35,11 @@ namespace raytracer
        {"aggregator", {"type", "split_method", "max_prims_per_node"}},
        {"object_instance_begin", {"name"}},
        {"object_instance_end", {}},
+       {"object_instance_call", {"name"}},
        {"push_CTM", {}},
        {"pop_CTM", {}},
+       {"push_GS", {}},
+       {"pop_GS", {}},
        {"translate", {"value"}},
        {"scale", {"value"}},
        {"rotate", {"axis", "angle"}},
@@ -178,7 +180,7 @@ namespace raytracer
     * @param filename The path to the XML file to parse
     * @brief Load document from file and delegate to parseDocument
     */
-   void ParserScene::parseScene(const char *filename, Scene &scene,
+   void ParserScene::parseScene(const char *filename, GraphicsState &graphicsState,
                                 OnElementCallback onElement)
    {
       tinyxml2::XMLDocument doc;
@@ -187,7 +189,7 @@ namespace raytracer
          std::cerr << "[Parser] Failed to load XML: " << filename << '\n';
          return;
       }
-      parseDocument(doc, scene, onElement);
+      parseDocument(doc, graphicsState, onElement);
    }
 
    /**
@@ -195,7 +197,7 @@ namespace raytracer
     * @param fromString A boolean flag to differentiate this overload (not used in logic)
     * @brief Load document from string and delegate to parseDocument (useful for testing)
     */
-   void ParserScene::parseScene(const char *xmlContent, bool fromString, Scene &scene,
+   void ParserScene::parseScene(const char *xmlContent, bool fromString, GraphicsState &graphicsState,
                                 OnElementCallback onElement)
    {
       tinyxml2::XMLDocument doc;
@@ -204,10 +206,10 @@ namespace raytracer
          std::cerr << "[Parser] Failed to parse XML string.\n";
          return;
       }
-      parseDocument(doc, scene, onElement);
+      parseDocument(doc, graphicsState, onElement);
    }
 
-   void ParserScene::parseDocument(tinyxml2::XMLDocument &doc, Scene &scene,
+   void ParserScene::parseDocument(tinyxml2::XMLDocument &doc, GraphicsState &graphicsState,
                                    OnElementCallback onElement)
    {
       tinyxml2::XMLElement *root = doc.RootElement();
@@ -216,7 +218,7 @@ namespace raytracer
          throw std::runtime_error("XML document has no root element.");
       }
 
-      scene = Scene();
+      graphicsState = GraphicsState();
 
       for (auto *node = root->FirstChildElement(); node; node = node->NextSiblingElement())
       {
@@ -251,40 +253,59 @@ namespace raytracer
                std::cerr << "[Parser] Failed to convert: " << attrName << " = " << attr->Value() << '\n';
          }
 
-         if (element == "include")
-         {
-            const auto incFile = ps.retrieve<std::string>("filename");
-            if (incFile.empty())
-            {
-               std::cerr << "[Parser] <include> is missing 'filename'.\n";
-               continue;
-            }
-            if (!std::filesystem::exists(incFile))
-            {
-               std::cerr << "[Parser] Included file not found: " << incFile << '\n';
-               continue;
-            }
+          if (element == "include")
+          {
+             const auto incFile = ps.retrieve<std::string>("filename");
+             if (incFile.empty())
+             {
+                std::cerr << "[Parser] <include> is missing 'filename'.\n";
+                continue;
+             }
+             if (!std::filesystem::exists(incFile))
+             {
+                std::cerr << "[Parser] Included file not found: " << incFile << '\n';
+                continue;
+             }
+ 
+             auto includedState = GraphicsState();
+             bool hasWorldEnd = false;
+             bool hasRenderAgain = false;
+             ParamSet worldEndPs;
+             ParamSet renderAgainPs;
+ 
+             parseScene(incFile.c_str(), includedState, [&](GraphicsState& gs, const std::string& elem, const ParamSet& elemPs) {
+                if (elem == "world_end") {
+                   hasWorldEnd = true;
+                   worldEndPs = elemPs;
+                } else if (elem == "render_again") {
+                   hasRenderAgain = true;
+                   renderAgainPs = elemPs;
+                } else {
+                   if (onElement) {
+                      onElement(gs, elem, elemPs);
+                   }
+                }
+             });
+ 
+             graphicsState.include(includedState);
+ 
+             if (hasWorldEnd && onElement && !graphicsState.isDefiningObject()) {
+                onElement(graphicsState, "world_end", worldEndPs);
+             }
+             if (hasRenderAgain && onElement && !graphicsState.isDefiningObject()) {
+                onElement(graphicsState, "render_again", renderAgainPs);
+             }
+ 
+             // Notify for the include itself.
+             if (onElement)
+                onElement(graphicsState, element, ps);
 
-            auto includedScene = Scene();
-            parseScene(incFile.c_str(), includedScene, nullptr);
-            scene.include(includedScene);
-
-            // Notify for the include itself.
-            if (onElement)
-               onElement(scene, element, ps);
-
-            if (includedScene.getParams().count("world_end") > 0)
-            {
-               ParamSet empty;
-               if (onElement)
-                  onElement(scene, "world_end", empty);
-            }
       } else if (element == "aggregator") {
             try
             {
                auto aggregator = AggregateFactory::create(ps);
                if (aggregator) {
-                  scene.addAggregate(aggregator);
+                  graphicsState.addAggregate(aggregator);
                }
             }
             catch (const std::exception &e)
@@ -293,34 +314,34 @@ namespace raytracer
             }
             
             if (onElement)
-               onElement(scene, element, ps);
+               onElement(graphicsState, element, ps);
       } else if (element == "material")
          {
             try
             {
                auto material = MaterialFactory::create(ps);
-               scene.addMaterial(material);
+               graphicsState.addMaterial(material);
             }
             catch (const std::exception &e)
             {
                std::cerr << "[Parser] Failed to create material: " << e.what() << '\n';
             }
             if (onElement)
-               onElement(scene, element, ps);
+               onElement(graphicsState, element, ps);
          }
          else if (element == "make_named_material")
          {
             try
             {
                auto material = MaterialFactory::create(ps);
-               scene.addNamedMaterial(material);
+               graphicsState.addNamedMaterial(material);
             }
             catch (const std::exception &e)
             {
                std::cerr << "[Parser] Failed to create named material: " << e.what() << '\n';
             }
             if (onElement)
-               onElement(scene, element, ps);
+               onElement(graphicsState, element, ps);
          }
          else if (element == "named_material")
          {
@@ -332,39 +353,39 @@ namespace raytracer
             try
             {
                std::string name = ps.retrieve<std::string>("name");
-               scene.activateNamedMaterial(name);
+               graphicsState.activateNamedMaterial(name);
             }
             catch (const std::exception &e)
             {
                std::cerr << "[Parser] Failed to activate named material: " << e.what() << '\n';
             }
             if (onElement)
-               onElement(scene, element, ps);
+               onElement(graphicsState, element, ps);
          }
          else if (element == "object")
          {
-            if (!scene.hasAggregate()) {
-               scene.addAggregate(std::make_shared<PrimitiveList>());
+            if (!graphicsState.hasAggregate()) {
+               graphicsState.addAggregate(std::make_shared<PrimitiveList>());
             }
 
             try
             {
-               auto primitives = PrimitiveFactory::create(ps, scene);
-               scene.addPrimitives(primitives);
+               auto primitives = PrimitiveFactory::create(ps, graphicsState);
+               graphicsState.addPrimitives(primitives);
             }
             catch (const std::exception &e)
             {
                std::cerr << "[Parser] Failed to create object: " << e.what() << '\n';
             }
             if (onElement)
-               onElement(scene, element, ps);
+               onElement(graphicsState, element, ps);
          }
          else if (element == "light_source")
          {
             try
             {
                auto light = LightFactory::create(ps);
-               scene.addLight(light);
+               graphicsState.addLight(light);
             }
             catch (const std::exception &e)
             {
@@ -372,7 +393,7 @@ namespace raytracer
             }
 
             if (onElement)
-               onElement(scene, element, ps);
+               onElement(graphicsState, element, ps);
          }
          else if(element == "push_CTM"
                || element == "pop_CTM"
@@ -381,14 +402,18 @@ namespace raytracer
                || element == "scale") {
 
             if (onElement){
-               onElement(scene, element, ps);
+               onElement(graphicsState, element, ps);
             }
-         }
-         else
-         {
-            scene.setParam(element, ps);
+         } else if (element == "object_instance_begin") {
+            graphicsState.defineNewObject(ps.retrieve<std::string>("name"));
+         } else if (element == "object_instance_end") {
+            graphicsState.saveNewObject();
+         } else if (element == "object_instance_call") {
+            graphicsState.instanciateObject(ps.retrieve<std::string>("name"));
+         } else {
+            graphicsState.setParam(element, ps);
             if (onElement)
-               onElement(scene, element, ps);
+               onElement(graphicsState, element, ps);
          }
       }
    }

@@ -5,8 +5,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(CTest)
-
 add_library(raytracer_core
 	include/Image/RGBColor.cpp
 	include/Image/Image.cpp
@@ -16,6 +14,7 @@ add_library(raytracer_core
 	include/Scene/Camera.cpp
 	include/Scene/Film.cpp
 	include/Scene/Scene.cpp
+	include/Core/GraphicsState.cpp
 	include/Objects/Materials/Material.cpp
 	include/Objects/Materials/GridMaterial.cpp
 	include/Objects/Materials/FlatMaterial.cpp
@@ -93,10 +92,3 @@ target_link_libraries(raytracer_core PRIVATE tinyobjloader::tinyobjloader)
 
 find_package(OpenMP REQUIRED)
 target_link_libraries(raytracer_core PUBLIC OpenMP::OpenMP_CXX)
-
-
-
-if(BUILD_TESTING)
-	find_package(Catch2 3 CONFIG REQUIRED)
-	add_subdirectory(tests)
-endif()

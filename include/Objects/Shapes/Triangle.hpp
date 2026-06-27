@@ -51,12 +51,12 @@ namespace raytracer {
          bool _backfaceCull;
 
          void checkVertices() const;
-         std::optional<float> intersectRay(const Ray& ray) const;
-         std::optional<std::pair<float, Point2>> intersectRayWithUV(const Ray& ray) const;
+         std::optional<float> intersectRay(const Ray& ray, const Transform& objToWorld) const;
+         std::optional<std::pair<float, Point2>> intersectRayWithUV(const Ray& ray, const Transform& objToWorld) const;
       
       public:
-         Triangle(const Vertesis& vertesis, bool backfaceCull, const Transform* objToWorld = nullptr, const Transform* worldToObj = nullptr, bool flipNormals = false);
-         Triangle(const std::shared_ptr<Vertex>& firstVextex, bool backfaceCull, const Transform* objToWorld = nullptr, const Transform* worldToObj = nullptr, bool flipNormals = false);
+         Triangle(const Vertesis& vertesis, bool backfaceCull, bool flipNormals = false);
+         Triangle(const std::shared_ptr<Vertex>& firstVextex, bool backfaceCull, bool flipNormals = false);
 
          ~Triangle() = default;
 
@@ -71,9 +71,11 @@ namespace raytracer {
          Vector3 getFaceNormal() const;
          Vector3 getBarycentricNormal(const Point2& uv) const;
 
-         bool intersect(const Ray& ray) const;
-         bool intersectWithSurfel(const Ray& ray, float *tHit, Surfel* surfel) const;
-         Bounds3 getBounds() const;
+         bool intersect(const Ray& ray, const Transform& objToWorld) const;
+         bool intersectWithSurfel(
+            const Ray& ray, const Transform& objToWorld, float *tHit, Surfel* surfel
+         ) const;
+         Bounds3 getBounds(const Transform& objToWorld) const;
 
    };
 
@@ -100,7 +102,7 @@ namespace raytracer {
       public:
          TriangleMesh(const ParamSet& params);
          ~TriangleMesh() = default;
-         std::vector<std::shared_ptr<Triangle>> makeTriangules(const Transform* objToWorld = nullptr, const Transform* worldToObj = nullptr, bool flipNormals = false);
+         std::vector<std::shared_ptr<Triangle>> makeTriangules(bool flipNormals = false);
    };
 }
 

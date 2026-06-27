@@ -74,6 +74,9 @@ namespace raytracer {
          bool operator!=(const Point3& other) const {
             return !(*this == other);
          }
+         Vector3 toVector() const {
+            return Vector3(_x, _y, _z);
+         }
    };
 
    constexpr const Point3 POINT3_ZERO(0.0, 0.0, 0.0);

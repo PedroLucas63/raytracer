@@ -49,14 +49,7 @@ namespace raytracer {
         friend std::ostream& operator<<(std::ostream& os, const Matrix4x4& m);
     };
 
-
     Matrix4x4 identity();
-    Matrix4x4 translation(float tx, float ty, float tz);
-    Matrix4x4 scale      (float sx, float sy, float sz);
-    Matrix4x4 rotation   (const Vector3& axis, float angleDeg);
-
-    // Compose: parent * child  (i.e. apply child first, then parent)
-    Matrix4x4 compose(const Matrix4x4& parent, const Matrix4x4& child);
 
     using Matrix = Matrix4x4;
 

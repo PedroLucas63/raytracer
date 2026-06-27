@@ -10,7 +10,6 @@
 
         <make_named_material type="blinn" name="ground" ambient="0.03 0.03 0.03" diffuse="0.22 0.22 0.22" specular="0.05 0.05 0.05" glossiness="8" />
 
-
         <material name="green" type="blinn"
             diffuse="0.2 0.95 0.2"
             specular="0.2 0.95 0.2"
@@ -63,7 +62,5 @@
                 <include filename="scenes/references/girl.xml" />
             <pop_CTM/>
         <object_instance_end/>
-
-
     <world_end/>
 </RT3>

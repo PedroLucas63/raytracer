@@ -6,8 +6,20 @@
    <world_begin/>
       <background type="image" filename="assets/images/panorama.jpg" spherical="true" />
       <material type="flat" color="0.95 0.05 0.05" />
-      <object type="sphere" radius="0.4" center="-1 0.5 5"/>
-      <object type="sphere" radius="0.4" center="1 -0.5 8"/>
-      <object type="sphere" radius="0.4" center="-1 -1.5 3.5"/>
+      <push_CTM/>
+         <translate value="-1 0.5 5" />
+         <scale value="0.4 0.4 0.4" />
+         <object type="sphere" />
+      <pop_CTM/>
+      <push_CTM/>
+         <translate value="1 -0.5 8" />
+         <scale value="0.4 0.4 0.4" />
+         <object type="sphere" />
+      <pop_CTM/>
+      <push_CTM/>
+         <translate value="-1 -1.5 3.5" />
+         <scale value="0.4 0.4 0.4" />
+         <object type="sphere" />
+      <pop_CTM/>
    <world_end/>
 </RT3>

@@ -6,6 +6,12 @@ namespace raytracer {
       return Bounds3(raytracer::min(p1, p2), raytracer::max(p1, p2));
    }
 
+   Bounds3 Bounds3::infinite() {
+      Bounds3 bounds;
+      bounds._isInfinity = true;
+      return bounds;
+   }
+
    const Point3& Bounds3::min() const {
       return _min;
    }
@@ -36,9 +42,19 @@ namespace raytracer {
       }
    }
 
-   bool Bounds3::intersect(const Ray& ray, float &hit1, float &hit2) const {
+   bool Bounds3::intersect(
+      const Ray& ray, 
+      float &hit1, 
+      float &hit2
+   ) const {
       float tMin = -std::numeric_limits<float>::infinity();
       float tMax = std::numeric_limits<float>::infinity();
+
+      if (_isInfinity) {
+         hit1 = tMin;
+         hit2 = tMax;
+         return true;
+      }
 
       for (auto axis : {Axis::X, Axis::Y, Axis::Z}) {
          double originCoord = ray.origin[axis];

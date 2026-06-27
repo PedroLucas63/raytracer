@@ -27,13 +27,13 @@ namespace raytracer {
    // ========================================
 
 
-   void LinearBVHAccel::buildLBVH() {
-      _buildTree->buildBVH();
+   void LinearBVHAccel::buildLBVH(const Transform& transform) {
+      _buildTree->buildBVH(transform);
       int totalNodes = countNodes(_buildTree.get());
       _nodes.resize(totalNodes);
 
       int offset = 0;
-      flattenBVHTree(_buildTree.get(), &offset);
+      flattenBVHTree(_buildTree.get(), &offset, transform);
 
       _bounds = _nodes[0].bounds;
       _buildTree.reset();
@@ -46,9 +46,9 @@ namespace raytracer {
    }
 
 
-   int LinearBVHAccel::flattenBVHTree(const BVHAccel* node, int* offset){
+   int LinearBVHAccel::flattenBVHTree(const BVHAccel* node, int* offset, const Transform& transform) {
       LinearBVHNode* linearNode = &_nodes[*offset];
-      linearNode->bounds = node->getBounds();
+      linearNode->bounds = node->getBounds(transform);
 
       int myOffset = (*offset)++;
 
@@ -56,13 +56,13 @@ namespace raytracer {
       const BVHAccel* right = node->getRight();
 
       if(left == nullptr && right == nullptr){
-         linearNode->primitivesOffset = static_cast<int>(_orderedPrimitives.size());
+         linearNode->primitivesOffset = static_cast<int>(_orderedInstances.size());
  
          PrimitiveList* prims = const_cast<PrimitiveList*>(node->getPrimitives());
          uint16_t count = 0;
          if (prims) {
             for (auto it = prims->begin(); it != prims->end(); ++it) {
-               _orderedPrimitives.push_back(*it);
+               _orderedInstances.push_back(*it);
                ++count;
             }
          }
@@ -71,14 +71,14 @@ namespace raytracer {
       }else{
          linearNode->nPrimitives = 0;
          linearNode->axis        = static_cast<uint8_t>(node->getSplitAxis());
-         if (left)  flattenBVHTree(left, offset);
-         linearNode->secondChildOffset = right ? flattenBVHTree(right, offset) : -1;
+         if (left)  flattenBVHTree(left, offset, transform);
+         linearNode->secondChildOffset = right ? flattenBVHTree(right, offset, transform) : -1;
       }
 
       return myOffset;
    }
 
-   bool LinearBVHAccel::intersect(const Ray& ray) const {
+   bool LinearBVHAccel::intersect(const Ray& ray, const Transform& transform) const {
       if(_nodes.empty()) return false;
       
       int toVisit[64];
@@ -92,7 +92,8 @@ namespace raytracer {
          if(node.bounds.intersect(ray, tMin, tMax)){
             if(node.nPrimitives > 0){
                for (int i = 0; i < node.nPrimitives; i++){
-                  if(_orderedPrimitives[node.primitivesOffset + i]->intersect(ray)) return true;
+                  auto [primitive, instanceTransform] = _orderedInstances[node.primitivesOffset + i];
+                  if(primitive->intersect(ray, *instanceTransform)) return true;
                }
             } else{
                toVisit[toVisitOffset++] = node.secondChildOffset;
@@ -107,7 +108,7 @@ namespace raytracer {
       return false;
    }
 
-   bool LinearBVHAccel::intersectWithSurfel(const Ray& ray, Surfel* sf) const {
+   bool LinearBVHAccel::intersectWithSurfel(const Ray& ray, const Transform& transform, Surfel* sf) const {
       if (_nodes.empty()) return false;
  
       if (sf) sf->t = std::numeric_limits<float>::infinity();
@@ -124,14 +125,14 @@ namespace raytracer {
          if(node.bounds.intersect(ray, tMin, tMax)){
             if(node.nPrimitives > 0){
                for (int i = 0; i < node.nPrimitives; i++){
-                  const auto& prim = _orderedPrimitives[node.primitivesOffset + i];
+                  const auto& [primitive, instanceTransform] = _orderedInstances[node.primitivesOffset + i];
 
                   if(!sf){
-                     if (prim->intersect(ray)) return true;                    
+                     if (primitive->intersect(ray, *instanceTransform)) return true;                    
                   } else{
                      Surfel candidate;
                      candidate.t = std::numeric_limits<float>::infinity();
-                     if (prim->intersectWithSurfel(ray, &candidate)) {
+                     if (primitive->intersectWithSurfel(ray, *instanceTransform, &candidate)) {
                         hit = true;
                         if (candidate.t < sf->t) *sf = candidate;
                      }
@@ -150,8 +151,8 @@ namespace raytracer {
       return hit;
    }
    
-   void LinearBVHAccel::add(const std::shared_ptr<Primitive>& primitive) {
-      _buildTree->add(primitive);
+   void LinearBVHAccel::add(const instance& instance) {
+      _buildTree->add(instance);
    }
 
    void LinearBVHAccel::insert(iterator const& begin, iterator const& end) {
@@ -159,13 +160,11 @@ namespace raytracer {
    }
 
 
-   void LinearBVHAccel::merge(const std::shared_ptr<AggregatePrimitive>& other) {
-      _buildTree->merge(other);
+   void LinearBVHAccel::merge(const std::shared_ptr<AggregatePrimitive>& other, const Transform& transform) {
+      _buildTree->merge(other, transform);
    }
 
-   const Bounds3 LinearBVHAccel::getBounds() const {
+   const Bounds3 LinearBVHAccel::getBounds(const Transform& transform) const {
       return _bounds;
    }
-
-
 }

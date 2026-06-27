@@ -20,13 +20,13 @@ namespace raytracer {
             _shape(shape), _material(material) {}
          ~GeometricPrimitive() = default;
 
-         bool intersect(const Ray& ray) const override;
-         bool intersectWithSurfel(const Ray& ray, Surfel* sf) const override;
+         bool intersect(const Ray& ray, const Transform& objToWorld) const override;
+         bool intersectWithSurfel(const Ray& ray, const Transform& objToWorld, Surfel* sf) const override;
 
          const bool hasMaterial() const override;
          const std::shared_ptr<Material> getMaterial() const override;
 
-         const Bounds3 getBounds() const override;
+         const Bounds3 getBounds(const Transform& objToWorld) const override;
    };
 }
 

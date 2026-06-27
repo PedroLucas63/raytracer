@@ -21,7 +21,16 @@
             color_map="0 0.3 0.1 0.1 0.5 0.2 0.15 0.7 0.25 0.2 0.8 0.3 0.3 1 0.5"
         />
 
-        <object type="cylinder" radius="2" base="-3 3 0" top="-3 6 0"/>
-        <object type="cylinder" radius="2" base="3 3 0" top="4 6 -2"/>
+        <push_CTM/>
+           <translate value="-3.000000 4.500000 0.000000" />
+           <scale value="2.0 3.0 2.0" />
+           <object type="cylinder" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.500000 4.500000 -1.000000" />
+           <rotate axis="-0.894427 0.000000 -0.447214" angle="36.699225" />
+           <scale value="2.0 3.7416573867739413 2.0" />
+           <object type="cylinder" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

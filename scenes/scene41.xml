@@ -22,126 +22,533 @@
         <make_named_material type="blinn" name="brass" ambient="0.2 0.15 0.05" diffuse="0.8 0.6 0.2" specular="0.8 0.7 0.3" glossiness="128" />
 
         <!-- Studio floor and backdrop -->
-        <object type="plane" origin="0 0 0" norm="0 1 0" material="stone" />
-        <object type="plane" origin="0 0 16" norm="0 0 1" material="stone" />
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <object type="plane" material="stone" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 0 16" />
+           <rotate axis="1.000000 0.000000 -0.000000" angle="90.000000" />
+           <object type="plane" material="stone" />
+        <pop_CTM/>
 
         <!-- Table -->
-        <object type="box" first_point="-6 0 -2" second_point="6 0.4 10" material="wood_dark" />
-        <object type="box" first_point="-5.5 0.4 -1.5" second_point="5.5 0.9 9.5" material="wood_light" />
+        <push_CTM/>
+           <translate value="0.000000 0.200000 4.000000" />
+           <scale value="12.000000 0.400000 12.000000" />
+           <object type="box" material="wood_dark" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.000000 0.650000 4.000000" />
+           <scale value="11.000000 0.500000 11.000000" />
+           <object type="box" material="wood_light" />
+        <pop_CTM/>
 
         <!-- Chessboard base -->
-        <object type="box" first_point="-4 0.9 0" second_point="4 1.2 8" material="wood_dark" />
+        <push_CTM/>
+           <translate value="0.000000 1.050000 4.000000" />
+           <scale value="8.000000 0.300000 8.000000" />
+           <object type="box" material="wood_dark" />
+        <pop_CTM/>
 
         <!-- Chessboard squares (8x8) -->
         <named_material name="wood_light" />
-        <object type="box" first_point="-4 1.2 0" second_point="-3 1.25 1" />
-        <object type="box" first_point="-2 1.2 0" second_point="-1 1.25 1" />
-        <object type="box" first_point="0 1.2 0" second_point="1 1.25 1" />
-        <object type="box" first_point="2 1.2 0" second_point="3 1.25 1" />
-        <object type="box" first_point="-3 1.2 1" second_point="-2 1.25 2" />
-        <object type="box" first_point="-1 1.2 1" second_point="0 1.25 2" />
-        <object type="box" first_point="1 1.2 1" second_point="2 1.25 2" />
-        <object type="box" first_point="3 1.2 1" second_point="4 1.25 2" />
-        <object type="box" first_point="-4 1.2 2" second_point="-3 1.25 3" />
-        <object type="box" first_point="-2 1.2 2" second_point="-1 1.25 3" />
-        <object type="box" first_point="0 1.2 2" second_point="1 1.25 3" />
-        <object type="box" first_point="2 1.2 2" second_point="3 1.25 3" />
-        <object type="box" first_point="-3 1.2 3" second_point="-2 1.25 4" />
-        <object type="box" first_point="-1 1.2 3" second_point="0 1.25 4" />
-        <object type="box" first_point="1 1.2 3" second_point="2 1.25 4" />
-        <object type="box" first_point="3 1.2 3" second_point="4 1.25 4" />
-        <object type="box" first_point="-4 1.2 4" second_point="-3 1.25 5" />
-        <object type="box" first_point="-2 1.2 4" second_point="-1 1.25 5" />
-        <object type="box" first_point="0 1.2 4" second_point="1 1.25 5" />
-        <object type="box" first_point="2 1.2 4" second_point="3 1.25 5" />
-        <object type="box" first_point="-3 1.2 5" second_point="-2 1.25 6" />
-        <object type="box" first_point="-1 1.2 5" second_point="0 1.25 6" />
-        <object type="box" first_point="1 1.2 5" second_point="2 1.25 6" />
-        <object type="box" first_point="3 1.2 5" second_point="4 1.25 6" />
-        <object type="box" first_point="-4 1.2 6" second_point="-3 1.25 7" />
-        <object type="box" first_point="-2 1.2 6" second_point="-1 1.25 7" />
-        <object type="box" first_point="0 1.2 6" second_point="1 1.25 7" />
-        <object type="box" first_point="2 1.2 6" second_point="3 1.25 7" />
-        <object type="box" first_point="-3 1.2 7" second_point="-2 1.25 8" />
-        <object type="box" first_point="-1 1.2 7" second_point="0 1.25 8" />
-        <object type="box" first_point="1 1.2 7" second_point="2 1.25 8" />
-        <object type="box" first_point="3 1.2 7" second_point="4 1.25 8" />
+        <push_CTM/>
+           <translate value="-3.500000 1.225000 0.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.500000 1.225000 0.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.500000 1.225000 0.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.500000 1.225000 0.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.500000 1.225000 1.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.500000 1.225000 1.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.500000 1.225000 1.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.500000 1.225000 1.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-3.500000 1.225000 2.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.500000 1.225000 2.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.500000 1.225000 2.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.500000 1.225000 2.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.500000 1.225000 3.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.500000 1.225000 3.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.500000 1.225000 3.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.500000 1.225000 3.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-3.500000 1.225000 4.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.500000 1.225000 4.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.500000 1.225000 4.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.500000 1.225000 4.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.500000 1.225000 5.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.500000 1.225000 5.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.500000 1.225000 5.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.500000 1.225000 5.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-3.500000 1.225000 6.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.500000 1.225000 6.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.500000 1.225000 6.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.500000 1.225000 6.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.500000 1.225000 7.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.500000 1.225000 7.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.500000 1.225000 7.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.500000 1.225000 7.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <named_material name="wood_dark" />
-        <object type="box" first_point="-3 1.2 0" second_point="-2 1.25 1" />
-        <object type="box" first_point="-1 1.2 0" second_point="0 1.25 1" />
-        <object type="box" first_point="1 1.2 0" second_point="2 1.25 1" />
-        <object type="box" first_point="3 1.2 0" second_point="4 1.25 1" />
-        <object type="box" first_point="-4 1.2 1" second_point="-3 1.25 2" />
-        <object type="box" first_point="-2 1.2 1" second_point="-1 1.25 2" />
-        <object type="box" first_point="0 1.2 1" second_point="1 1.25 2" />
-        <object type="box" first_point="2 1.2 1" second_point="3 1.25 2" />
-        <object type="box" first_point="-3 1.2 2" second_point="-2 1.25 3" />
-        <object type="box" first_point="-1 1.2 2" second_point="0 1.25 3" />
-        <object type="box" first_point="1 1.2 2" second_point="2 1.25 3" />
-        <object type="box" first_point="3 1.2 2" second_point="4 1.25 3" />
-        <object type="box" first_point="-4 1.2 3" second_point="-3 1.25 4" />
-        <object type="box" first_point="-2 1.2 3" second_point="-1 1.25 4" />
-        <object type="box" first_point="0 1.2 3" second_point="1 1.25 4" />
-        <object type="box" first_point="2 1.2 3" second_point="3 1.25 4" />
-        <object type="box" first_point="-3 1.2 4" second_point="-2 1.25 5" />
-        <object type="box" first_point="-1 1.2 4" second_point="0 1.25 5" />
-        <object type="box" first_point="1 1.2 4" second_point="2 1.25 5" />
-        <object type="box" first_point="3 1.2 4" second_point="4 1.25 5" />
-        <object type="box" first_point="-4 1.2 5" second_point="-3 1.25 6" />
-        <object type="box" first_point="-2 1.2 5" second_point="-1 1.25 6" />
-        <object type="box" first_point="0 1.2 5" second_point="1 1.25 6" />
-        <object type="box" first_point="2 1.2 5" second_point="3 1.25 6" />
-        <object type="box" first_point="-3 1.2 6" second_point="-2 1.25 7" />
-        <object type="box" first_point="-1 1.2 6" second_point="0 1.25 7" />
-        <object type="box" first_point="1 1.2 6" second_point="2 1.25 7" />
-        <object type="box" first_point="3 1.2 6" second_point="4 1.25 7" />
-        <object type="box" first_point="-4 1.2 7" second_point="-3 1.25 8" />
-        <object type="box" first_point="-2 1.2 7" second_point="-1 1.25 8" />
-        <object type="box" first_point="0 1.2 7" second_point="1 1.25 8" />
-        <object type="box" first_point="2 1.2 7" second_point="3 1.25 8" />
+        <push_CTM/>
+           <translate value="-2.500000 1.225000 0.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.500000 1.225000 0.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.500000 1.225000 0.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.500000 1.225000 0.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-3.500000 1.225000 1.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.500000 1.225000 1.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.500000 1.225000 1.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.500000 1.225000 1.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.500000 1.225000 2.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.500000 1.225000 2.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.500000 1.225000 2.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.500000 1.225000 2.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-3.500000 1.225000 3.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.500000 1.225000 3.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.500000 1.225000 3.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.500000 1.225000 3.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.500000 1.225000 4.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.500000 1.225000 4.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.500000 1.225000 4.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.500000 1.225000 4.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-3.500000 1.225000 5.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.500000 1.225000 5.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.500000 1.225000 5.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.500000 1.225000 5.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.500000 1.225000 6.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.500000 1.225000 6.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.500000 1.225000 6.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.500000 1.225000 6.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-3.500000 1.225000 7.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.500000 1.225000 7.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.500000 1.225000 7.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.500000 1.225000 7.500000" />
+           <scale value="1.000000 0.050000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <!-- White pieces -->
         <named_material name="ivory" />
-        <object type="sphere" center="-3.5 1.55 0.5" radius="0.25" />
-        <object type="sphere" center="-2.5 1.55 0.5" radius="0.25" />
-        <object type="sphere" center="-1.5 1.55 0.5" radius="0.25" />
-        <object type="sphere" center="-0.5 1.55 0.5" radius="0.25" />
-        <object type="sphere" center="0.5 1.55 0.5" radius="0.25" />
-        <object type="sphere" center="1.5 1.55 0.5" radius="0.25" />
-        <object type="sphere" center="2.5 1.55 0.5" radius="0.25" />
-        <object type="sphere" center="3.5 1.55 0.5" radius="0.25" />
-        <object type="sphere" center="-3 1.55 1.5" radius="0.3" />
-        <object type="sphere" center="-2 1.55 1.5" radius="0.3" />
-        <object type="sphere" center="-1 1.55 1.5" radius="0.3" />
-        <object type="sphere" center="0 1.55 1.5" radius="0.3" />
-        <object type="sphere" center="1 1.55 1.5" radius="0.3" />
-        <object type="sphere" center="2 1.55 1.5" radius="0.3" />
-        <object type="sphere" center="3 1.55 1.5" radius="0.3" />
+        <push_CTM/>
+           <translate value="-3.5 1.55 0.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.5 1.55 0.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.5 1.55 0.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.5 1.55 0.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.5 1.55 0.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.5 1.55 0.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.5 1.55 0.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.5 1.55 0.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-3 1.55 1.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2 1.55 1.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1 1.55 1.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 1.55 1.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1 1.55 1.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2 1.55 1.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3 1.55 1.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
 
         <!-- Black pieces -->
         <named_material name="onyx" />
-        <object type="sphere" center="-3.5 1.55 7.5" radius="0.25" />
-        <object type="sphere" center="-2.5 1.55 7.5" radius="0.25" />
-        <object type="sphere" center="-1.5 1.55 7.5" radius="0.25" />
-        <object type="sphere" center="-0.5 1.55 7.5" radius="0.25" />
-        <object type="sphere" center="0.5 1.55 7.5" radius="0.25" />
-        <object type="sphere" center="1.5 1.55 7.5" radius="0.25" />
-        <object type="sphere" center="2.5 1.55 7.5" radius="0.25" />
-        <object type="sphere" center="3.5 1.55 7.5" radius="0.25" />
-        <object type="sphere" center="-3 1.55 6.5" radius="0.3" />
-        <object type="sphere" center="-2 1.55 6.5" radius="0.3" />
-        <object type="sphere" center="-1 1.55 6.5" radius="0.3" />
-        <object type="sphere" center="0 1.55 6.5" radius="0.3" />
-        <object type="sphere" center="1 1.55 6.5" radius="0.3" />
-        <object type="sphere" center="2 1.55 6.5" radius="0.3" />
-        <object type="sphere" center="3 1.55 6.5" radius="0.3" />
+        <push_CTM/>
+           <translate value="-3.5 1.55 7.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.5 1.55 7.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1.5 1.55 7.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.5 1.55 7.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.5 1.55 7.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.5 1.55 7.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.5 1.55 7.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.5 1.55 7.5" />
+           <scale value="0.25 0.25 0.25" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-3 1.55 6.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2 1.55 6.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-1 1.55 6.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 1.55 6.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1 1.55 6.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2 1.55 6.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3 1.55 6.5" />
+           <scale value="0.3 0.3 0.3" />
+           <object type="sphere" />
+        <pop_CTM/>
 
         <!-- Props: glass pieces and a brass coin -->
         <named_material name="glass" />
-        <object type="sphere" center="-5 1.3 3" radius="0.4" />
-        <object type="sphere" center="5 1.3 5" radius="0.4" />
+        <push_CTM/>
+           <translate value="-5 1.3 3" />
+           <scale value="0.4 0.4 0.4" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="5 1.3 5" />
+           <scale value="0.4 0.4 0.4" />
+           <object type="sphere" />
+        <pop_CTM/>
         <named_material name="brass" />
-        <object type="box" first_point="-5.2 1.22 6.5" second_point="-4.4 1.32 7.3" />
+        <push_CTM/>
+           <translate value="-4.800000 1.270000 6.900000" />
+           <scale value="0.800000 0.100000 0.800000" />
+           <object type="box" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

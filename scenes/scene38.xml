@@ -58,19 +58,17 @@
             "
         />
 
-        <object
-            type="sphere"
-            radius="3"
-            center="-4 3 0"
-            material="toon_gray"
-        />
+        <push_CTM/>
+           <translate value="-4 3 0" />
+           <scale value="3 3 3" />
+           <object type="sphere" material="toon_gray" />
+        <pop_CTM/>
 
-        <object
-            type="sphere"
-            radius="3"
-            center="4 3 0"
-            material="toon_gray"
-        />
+        <push_CTM/>
+           <translate value="4 3 0" />
+           <scale value="3 3 3" />
+           <object type="sphere" material="toon_gray" />
+        <pop_CTM/>
 
     <world_end/>
 </RT3>

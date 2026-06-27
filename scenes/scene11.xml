@@ -12,9 +12,25 @@
         <material name="cyan" type="flat" color="0 210 220"/>
         <material name="magenta" type="flat" color="220 40 180"/>
 
-        <object type="sphere" center="-2.2 0 3.5" radius="2.2" material="green" />
-        <object type="sphere" center="-2.2 0 6.0" radius="1.2" material="blue" />
-        <object type="sphere" center="2.2 0 3.5" radius="0.95" material="cyan" />
-        <object type="sphere" center="2.2 0 6.0" radius="2.0" material="magenta" />
+        <push_CTM/>
+           <translate value="-2.2 0 3.5" />
+           <scale value="2.2 2.2 2.2" />
+           <object type="sphere" material="green" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2.2 0 6.0" />
+           <scale value="1.2 1.2 1.2" />
+           <object type="sphere" material="blue" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.2 0 3.5" />
+           <scale value="0.95 0.95 0.95" />
+           <object type="sphere" material="cyan" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.2 0 6.0" />
+           <scale value="2.0 2.0 2.0" />
+           <object type="sphere" material="magenta" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

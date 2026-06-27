@@ -8,22 +8,17 @@
 namespace raytracer {
    class Plane : public Shape {
       private:
-         Point3 _origin;
-         Vector3 _norm;
-
          float getIntersection(const Ray& ray) const;
+         const static Vector3 _norm;
          
       public:
-         Plane(const Point3& origin, const Vector3& vec)
-            : _origin(origin), _norm(vec.normalize()) {}
-         Plane(const ParamSet& params);
-
+         Plane() = default;
          ~Plane() = default;
 
-         bool intersect(const Ray& ray) const;
-         bool intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const;
+         bool intersect(const Ray& ray, const Transform& objToWorld) const;
+         bool intersectWithSurfel(const Ray& ray, const Transform& objToWorld, float* tHit, Surfel* sf) const;
 
-         Bounds3 getBounds() const override;
+         Bounds3 getBounds(const Transform& objToWorld) const override;
    };
 }
 

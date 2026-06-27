@@ -7,6 +7,10 @@
     <world_begin/>
         <background type="4_colors" bl="176 214 175" tl="4 99 202" tr="4 99 202" br="176 214 175" />
         <material type="flat" color="220 10 10" />
-        <object type="sphere" radius="0.4" center="-1.5 -1.5 100000000000000" />
+        <push_CTM/>
+           <translate value="-1.5 -1.5 10000000" />
+           <scale value="0.4 0.4 0.4" />
+           <object type="sphere" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

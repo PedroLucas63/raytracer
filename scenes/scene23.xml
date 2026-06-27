@@ -20,14 +20,33 @@
         <light_source type="ambient" I="0.1 0.1 0.1"  scale="4 4 4" />
 
 
-        <object type="box" first_point="-1 0 -1" second_point="1 2 1" material="m1"/>
+        <push_CTM/>
+           <translate value="0.000000 1.000000 0.000000" />
+           <scale value="2.000000 2.000000 2.000000" />
+           <object type="box" material="m1" />
+        <pop_CTM/>
 
-        <object type="box" first_point="-3 0 2" second_point="-1 2 4" material="m2"/>
+        <push_CTM/>
+           <translate value="-2.000000 1.000000 3.000000" />
+           <scale value="2.000000 2.000000 2.000000" />
+           <object type="box" material="m2" />
+        <pop_CTM/>
 
-        <object type="box" first_point="1 0 -3" second_point="3 2 -1" material="m3"/>
+        <push_CTM/>
+           <translate value="2.000000 1.000000 -2.000000" />
+           <scale value="2.000000 2.000000 2.000000" />
+           <object type="box" material="m3" />
+        <pop_CTM/>
 
-        <object type="box" first_point="1 0 5" second_point="5 3.4 9" material="m4"/>
+        <push_CTM/>
+           <translate value="3.000000 1.700000 7.000000" />
+           <scale value="4.000000 3.400000 4.000000" />
+           <object type="box" material="m4" />
+        <pop_CTM/>
 
-        <object type="plane" origin="0 0 0" norm="0 1 0" material="floor" />
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <object type="plane" material="floor" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

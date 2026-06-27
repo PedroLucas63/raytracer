@@ -21,7 +21,15 @@
             color_map="0 0.3 0.1 0.1 0.5 0.2 0.15 0.7 0.25 0.2 0.8 0.3 0.3 1 0.5"
         />
 
-        <object type="sphere" radius="2" center="-3 5 0"/>
-        <object type="sphere" radius="2" center="3 5 0"/>
+        <push_CTM/>
+           <translate value="-3 5 0" />
+           <scale value="2 2 2" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3 5 0" />
+           <scale value="2 2 2" />
+           <object type="sphere" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

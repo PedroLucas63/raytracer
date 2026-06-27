@@ -4,6 +4,9 @@
 #include <limits>
 
 namespace raytracer {
+   Cylinder::Cylinder()
+      : Shape(), _base(0, -0.5, 0), _top(0, 0.5, 0), _radius(1.0) {}
+
    Cylinder::Cylinder(const Point3& base, const Point3& top, float radius)
       : Shape(), _base(base), _top(top), _radius(radius) {}
 
@@ -123,99 +126,101 @@ namespace raytracer {
       return hit;
    }
 
-   bool Cylinder::intersect(const Ray& ray) const {
-      // PROTEÇÃO 4: Inicialização de sanidade das variáveis locas
-      float tMinSide = INFINITY, tMaxSide = INFINITY, tMinCap = INFINITY;
-      bool hitBottom = false;
-
-      bool hitSide = intersect(ray, &tMinSide, &tMaxSide);
-      bool hitCap = intersectCaps(ray, &tMinCap, &hitBottom);
-
-      return hitSide || hitCap;
-   }
-
-   bool Cylinder::intersectWithSurfel(
-      const Ray& ray, float* tHit, Surfel* sf
-   ) const {
-      // PROTEÇÃO 4 (cont.): Inicialização de sanidade das variáveis locais
-      float tMinSide = INFINITY, tMaxSide = INFINITY, tMinCap = INFINITY;
-      bool hitBottom = false;
-
-      bool hitSide = intersect(ray, &tMinSide, &tMaxSide);
-      bool hitCap = intersectCaps(ray, &tMinCap, &hitBottom);
-
-      if (!hitSide && !hitCap) return false;
-
-      Point3 hitPointSide;
-      Vector3 normalSide;
-      if (hitSide) {
-         auto hitPoint = ray(tMinSide);
-         auto axis = _top - _base;
-         auto a = axis.normalize();
-         auto hitHeight = (hitPoint - _base).dot(a);
-
-         auto axisPoint = _base + a * hitHeight;
-
-         hitPointSide = hitPoint;
-         normalSide = (hitPoint - axisPoint).normalize();
-      }
-
-      Point3 hitPointCap;
-      Vector3 normalCap;
-      if (hitCap) {
-         auto hitPoint = ray(tMinCap);
-         auto a = (_top - _base).normalize();
-
-         hitPointCap = hitPoint;
-         normalCap = hitBottom ? -a : a;
-      }
-
-      if (hitSide && hitCap) {
-         bool capWins = (tMinCap < tMinSide + 1e-3f);
-
-         auto hit = capWins ? tMinCap : tMinSide;
-         auto point = capWins ? hitPointCap : hitPointSide;
-         auto normal = capWins ? normalCap : normalSide;
-
-         if (tHit) *tHit = hit;
-         if (sf) {
-            sf->point = point;
-            sf->normal = normal;
-         }
-      } else if (hitSide) {
-         if (tHit) *tHit = tMinSide;
-         if (sf) {
-            sf->point = hitPointSide;
-            sf->normal = normalSide;
-         }
-      } else {
-         if (tHit) *tHit = tMinCap;
-         if (sf) {
-            sf->point = hitPointCap;
-            sf->normal = normalCap;
-         }
-      }
-
-      if (sf) {
-         sf->viewDir = -ray.direction.normalize();
-      }
-
-      return hitSide || hitCap;
-   }
-
-   Bounds3 Cylinder::getBounds() const {
-      Bounds3 bounds = Bounds3::fromPoints(_base, _top);
-
-      Vector3 axis = (_top - _base).normalize();
-      Vector3 expand(
-         _radius * std::sqrt(1.0f - axis.getX() * axis.getX()),
-         _radius * std::sqrt(1.0f - axis.getY() * axis.getY()),
-         _radius * std::sqrt(1.0f - axis.getZ() * axis.getZ())
-      );
-
-      return Bounds3(
-         bounds.min() - expand,
-         bounds.max() + expand
-      );
-   }
+    bool Cylinder::intersect(const Ray& ray, const Transform& objToWorld) const {
+       auto localRay = objToWorld(ray, true);
+       // PROTEÇÃO 4: Inicialização de sanidade das variáveis locas
+       float tMinSide = INFINITY, tMaxSide = INFINITY, tMinCap = INFINITY;
+       bool hitBottom = false;
+ 
+       bool hitSide = intersect(localRay, &tMinSide, &tMaxSide);
+       bool hitCap = intersectCaps(localRay, &tMinCap, &hitBottom);
+ 
+       return hitSide || hitCap;
+    }
+ 
+    bool Cylinder::intersectWithSurfel(
+       const Ray& ray, const Transform& objToWorld, float* tHit, Surfel* sf
+    ) const {
+       auto localRay = objToWorld(ray, true);
+       // PROTEÇÃO 4 (cont.): Inicialização de sanidade das variáveis locais
+       float tMinSide = INFINITY, tMaxSide = INFINITY, tMinCap = INFINITY;
+       bool hitBottom = false;
+ 
+       bool hitSide = intersect(localRay, &tMinSide, &tMaxSide);
+       bool hitCap = intersectCaps(localRay, &tMinCap, &hitBottom);
+ 
+       if (!hitSide && !hitCap) return false;
+ 
+       Point3 hitPointSide;
+       Vector3 normalSide;
+       if (hitSide) {
+          auto hitPoint = localRay(tMinSide);
+          auto axis = _top - _base;
+          auto a = axis.normalize();
+          auto hitHeight = (hitPoint - _base).dot(a);
+ 
+          auto axisPoint = _base + a * hitHeight;
+ 
+          hitPointSide = hitPoint;
+          normalSide = (hitPoint - axisPoint).normalize();
+       }
+ 
+       Point3 hitPointCap;
+       Vector3 normalCap;
+       if (hitCap) {
+          auto hitPoint = localRay(tMinCap);
+          auto a = (_top - _base).normalize();
+ 
+          hitPointCap = hitPoint;
+          normalCap = hitBottom ? -a : a;
+       }
+ 
+       float t;
+       Point3 pLocal;
+       Vector3 nLocal;
+ 
+       if (hitSide && hitCap) {
+          bool capWins = (tMinCap < tMinSide + 1e-3f);
+ 
+          t = capWins ? tMinCap : tMinSide;
+          pLocal = capWins ? hitPointCap : hitPointSide;
+          nLocal = capWins ? normalCap : normalSide;
+       } else if (hitSide) {
+          t = tMinSide;
+          pLocal = hitPointSide;
+          nLocal = normalSide;
+       } else {
+          t = tMinCap;
+          pLocal = hitPointCap;
+          nLocal = normalCap;
+       }
+ 
+       auto pWorld = objToWorld(pLocal);
+       auto nWorld = objToWorld.applyNormal(nLocal).normalize();
+ 
+       if (tHit) *tHit = t;
+       if (sf) {
+          *sf = Surfel(t, pWorld, nullptr, nWorld, -ray.direction.normalize());
+       }
+ 
+       return true;
+    }
+ 
+    Bounds3 Cylinder::getBounds(const Transform& objToWorld) const {
+       Bounds3 bounds = Bounds3::fromPoints(_base, _top);
+ 
+       Vector3 axis = (_top - _base).normalize();
+       Vector3 expand(
+          _radius * std::sqrt(1.0f - axis.getX() * axis.getX()),
+          _radius * std::sqrt(1.0f - axis.getY() * axis.getY()),
+          _radius * std::sqrt(1.0f - axis.getZ() * axis.getZ())
+       );
+ 
+       auto localBounds = Bounds3(
+          bounds.min() - expand,
+          bounds.max() + expand
+       );
+ 
+       return objToWorld(localBounds);
+    }
 }

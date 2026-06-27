@@ -42,9 +42,21 @@
         />
 
         <!-- Linha de esferas -->
-        <object type="sphere" radius="2" center="-6 4 0" material="toon_blue"/>
-        <object type="sphere" radius="2" center="0 4 0" material="toon_blue"/>
-        <object type="sphere" radius="2" center="6 4 0" material="toon_blue"/>
+        <push_CTM/>
+           <translate value="-6 4 0" />
+           <scale value="2 2 2" />
+           <object type="sphere" material="toon_blue" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 4 0" />
+           <scale value="2 2 2" />
+           <object type="sphere" material="toon_blue" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="6 4 0" />
+           <scale value="2 2 2" />
+           <object type="sphere" material="toon_blue" />
+        <pop_CTM/>
 
     <world_end/>
 </RT3>

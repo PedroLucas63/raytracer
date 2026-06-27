@@ -28,6 +28,9 @@
         />
 
         <!-- Objects -->
-        <object type="plane" origin="0 0 0" norm="0 1 0" />
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <object type="plane" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

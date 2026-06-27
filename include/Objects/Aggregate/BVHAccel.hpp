@@ -24,7 +24,7 @@ namespace raytracer {
          Axis _lastSplitAxis;
 
          void updateSurfel(Surfel* sf, const Surfel candidate) const;
-         void updateBounds();
+         void updateBounds(const Transform& transform);
          Axis getRandomAxis() const;
 
       public:
@@ -32,16 +32,19 @@ namespace raytracer {
          BVHAccel(const ParamSet& params);
          ~BVHAccel() = default;
 
-         bool intersect(const Ray& ray) const override;
-         bool intersectWithSurfel(const Ray& ray, Surfel* sf) const override;
+         bool intersect(const Ray& ray, const Transform& transform) const override;
+         bool intersectWithSurfel(const Ray& ray, const Transform& transform, Surfel* sf) const override;
 
-         void add(const std::shared_ptr<Primitive>& primitive) override;
-         void merge(const std::shared_ptr<AggregatePrimitive>& other) override;
+         void add(const instance& instance) override;
+         void merge(
+            const std::shared_ptr<AggregatePrimitive>& other,
+            const Transform& transform
+         ) override;
 
          void insert(iterator const& begin, iterator const& end) override;
-         void buildBVH();
+         void buildBVH(const Transform& transform);
 
-         const Bounds3 getBounds() const override;
+         const Bounds3 getBounds(const Transform& transform) const override;
 
          const BVHAccel* getLeft()  const;
          const BVHAccel* getRight() const;

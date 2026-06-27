@@ -1,17 +1,15 @@
 <RT3>
-    <world_begin/>
-        <material name="metal-red" type="blinn"
-            diffuse="0.7 0.1 0.1"
-            specular="1 1 1"
-            ambient="0.01 0.05 0.05"
-            glossiness="512"
-            mirror="0.7 0.7 0.7"/>
+    <material name="metal-red" type="blinn"
+        diffuse="0.7 0.1 0.1"
+        specular="1 1 1"
+        ambient="0.01 0.05 0.05"
+        glossiness="512"
+        mirror="0.7 0.7 0.7"/>
 
-        <object type="trianglemesh"
-                filename="scenes/obj/girl.obj"
-                compute_normals="false"
-                backface_cull="false"
-                material="metal-red"
-        />
-    <world_end/>
+    <object type="trianglemesh"
+        filename="scenes/obj/girl.obj"
+        compute_normals="false"
+        backface_cull="false"
+        material="metal-red"
+    />
 </RT3>

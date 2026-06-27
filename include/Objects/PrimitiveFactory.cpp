@@ -15,60 +15,61 @@ namespace raytracer {
    }
 
    std::shared_ptr<PrimitiveList> PrimitiveFactory::createGeometricPrimitive(
-      const ParamSet& params, const Scene& scene
+      const ParamSet& params, const GraphicsState& graphicsState
    ) {
       std::shared_ptr<Material> material;
 
       if (!params.has("material")) {
-         material = scene.getLastMaterial();
+         material = graphicsState.getActivatedMaterial();
       } else {
          std::string material_name = params.retrieve<std::string>("material");
-         if (material_name.starts_with("__")) {
-            throw std::invalid_argument("Cannot reference anonymous material: " + material_name);
-         }
-         material = scene.getMaterialAt(material_name);
+         material = graphicsState.getMaterialAt(material_name);
       }
 
       if (material == nullptr)
          std::cerr << "[WARN]: Primitive created without material" << std::endl;
 
-      const Transform* objToWorld = nullptr;
-      const Transform* worldToObj = nullptr;
-      bool flipNormals = false;
-      Api::getCurrentTransform(&objToWorld, &worldToObj, &flipNormals);
-
       auto primitiveList = std::make_shared<PrimitiveList>();
       std::string type = params.retrieve<std::string>("type");
       std::shared_ptr<Shape> shape;
+
+      bool flipNormals;
+      std::shared_ptr<Transform> transform;
+      Api::getCurrentTransform(&transform, &flipNormals);
+      
+      static const auto identityTransform = std::make_shared<Transform>();
+
       if (type == "sphere") {
-         shape = std::make_shared<Sphere>(params);
+         shape = std::make_shared<Sphere>();
       } else if (type == "plane") {
-         shape = std::make_shared<Plane>(params);
+         shape = std::make_shared<Plane>();
       } else if(type == "box"){
-         shape = std::make_shared<Box>(params);
+         shape = std::make_shared<Box>();
+      } else if (type == "cylinder") {
+         shape = std::make_shared<Cylinder>();
       } else if (type == "trianglemesh") {
          auto shapes = std::make_shared<TriangleMesh>(params);
+         auto triangles = shapes->makeTriangules(flipNormals);
 
-         for (auto& shape : shapes->makeTriangules(objToWorld, worldToObj, flipNormals)) {
+         for (auto& shape : triangles) {
+            auto p = std::make_shared<GeometricPrimitive>(shape, material);
             primitiveList->add(
-               std::make_shared<GeometricPrimitive>(shape, material)
+               {p, identityTransform}
             );
          }
 
          return primitiveList;
-      } else if (type == "cylinder") {
-         shape = std::make_shared<Cylinder>(params);
       } else {
          throw std::invalid_argument("Unknown primitive type: " + type);
       }
 
       auto primitive = std::make_shared<GeometricPrimitive>(shape, material);
-      primitiveList->add(primitive);
+      primitiveList->add({primitive, identityTransform});
       return primitiveList;
    }
 
    std::shared_ptr<PrimitiveList> PrimitiveFactory::create(
-      const ParamSet& params, const Scene& scene
+      const ParamSet& params, const GraphicsState& graphicsState
    ) {
       if (!params.has("type")) {
          throw std::invalid_argument("ObjectFactory requires a 'type' parameter");
@@ -76,7 +77,7 @@ namespace raytracer {
 
       auto type = params.retrieve<std::string>("type");
       if (isGeometricPrimitive(type)) {
-         return createGeometricPrimitive(params, scene);
+         return createGeometricPrimitive(params, graphicsState);
       } else {
          throw std::invalid_argument("Invalid primitive 'type', received: " + type);
       }

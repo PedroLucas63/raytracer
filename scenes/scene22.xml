@@ -45,12 +45,27 @@
         <light_source type="ambient" I="0.1 0.1 0.1"/>
 
         <!-- Esferas -->
-        <object type="sphere" center="5 5 5" radius="2.5" material="mirror1"/>
-        <object type="sphere" center="10 5 10" radius="2.5" material="mirror2"/>
-        <object type="sphere" center="15 5 5" radius="2.5" material="mirror3"/>
+        <push_CTM/>
+           <translate value="5 5 5" />
+           <scale value="2.5 2.5 2.5" />
+           <object type="sphere" material="mirror1" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="10 5 10" />
+           <scale value="2.5 2.5 2.5" />
+           <object type="sphere" material="mirror2" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="15 5 5" />
+           <scale value="2.5 2.5 2.5" />
+           <object type="sphere" material="mirror3" />
+        <pop_CTM/>
 
         <!-- Plano -->
-        <object type="plane" origin="0 0 0" norm="0 1 0"/>
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <object type="plane" />
+        <pop_CTM/>
 
     <world_end/>
 </RT3>

@@ -32,9 +32,16 @@
       <light_source type="point" from="-10 15 -10" I="0.9 0.9 0.9" />
       <light_source type="directional" from="10 20 -15" to="0 0 7" I="0.4 0.4 0.4" world_radius="50" />
 
-      <object type="plane" origin="0 -10 0" norm="0 1 0" material="stone" />
+      <push_CTM/>
+         <translate value="0 -10 0" />
+         <object type="plane" material="stone" />
+      <pop_CTM/>
 
-      <object type="plane" origin="0 0 25" norm="0 0 1" material="stone" />
+      <push_CTM/>
+         <translate value="0 0 25" />
+         <rotate axis="1.000000 0.000000 -0.000000" angle="90.000000" />
+         <object type="plane" material="stone" />
+      <pop_CTM/>
 
       <object type="trianglemesh"
                filename="scenes/obj/smaug.obj"

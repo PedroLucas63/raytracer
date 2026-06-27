@@ -2,7 +2,7 @@
 
 #include "Objects/Primitive.hpp"
 #include "Objects/Aggregate/PrimitiveList.hpp"
-#include "Scene/Scene.hpp"
+#include "Core/GraphicsState.hpp"
 #include <memory>
 #include <string>
 
@@ -13,12 +13,12 @@ namespace raytracer {
 
          static bool isGeometricPrimitive(const std::string& type);
          static std::shared_ptr<PrimitiveList> createGeometricPrimitive(
-            const ParamSet& params, const Scene& scene
+            const ParamSet& params, const GraphicsState& graphicsState
          );
 
       public:
          static std::shared_ptr<PrimitiveList> create(
-            const ParamSet& params, const Scene& scene
+            const ParamSet& params, const GraphicsState& graphicsState
          );
    };
 }

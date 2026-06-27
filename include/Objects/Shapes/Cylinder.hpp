@@ -14,14 +14,15 @@ namespace raytracer {
          bool intersectCaps(const Ray& ray, float* t, bool* hitBottom) const;
       
       public:
+         Cylinder();
          Cylinder(const Point3& base, const Point3& top, float radius);
          Cylinder(const ParamSet& params);
          ~Cylinder() = default;
 
-         bool intersect(const Ray& ray) const override;
-         bool intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const override;
+         bool intersect(const Ray& ray, const Transform& objToWorld) const override;
+         bool intersectWithSurfel(const Ray& ray, const Transform& objToWorld, float* tHit, Surfel* sf) const override;
 
-         Bounds3 getBounds() const override;
+         Bounds3 getBounds(const Transform& objToWorld) const override;
    };
 }
 

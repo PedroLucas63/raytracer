@@ -43,12 +43,28 @@
       <light_source type="ambient" I="0.1 0.1 0.1" scale="3 3 3" />
 
       <!-- Esferas -->
-      <object type="sphere" center="5 5 5" radius="2.5" material="mirror_red" />
-      <object type="sphere" center="10 5 10" radius="2.5" material="mirror_green" />
-      <object type="sphere" center="15 5 5" radius="2.5" material="mirror_blue" />
+      <push_CTM/>
+         <translate value="5 5 5" />
+         <scale value="2.5 2.5 2.5" />
+         <object type="sphere" material="mirror_red" />
+      <pop_CTM/>
+      <push_CTM/>
+         <translate value="10 5 10" />
+         <scale value="2.5 2.5 2.5" />
+         <object type="sphere" material="mirror_green" />
+      <pop_CTM/>
+      <push_CTM/>
+         <translate value="15 5 5" />
+         <scale value="2.5 2.5 2.5" />
+         <object type="sphere" material="mirror_blue" />
+      <pop_CTM/>
 
       <!-- Chão -->
-      <object type="sphere" center="10 -1000 5" radius="995" material="floor" />
+      <push_CTM/>
+         <translate value="10 -1000 5" />
+         <scale value="995 995 995" />
+         <object type="sphere" material="floor" />
+      <pop_CTM/>
 
    <world_end/>
 </RT3>

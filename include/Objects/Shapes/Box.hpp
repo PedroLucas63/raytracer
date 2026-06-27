@@ -8,22 +8,19 @@
 
 namespace raytracer{
     class Box : public Shape{
-
         private:
-            Point3 _first;
-            Point3 _second;
+            static const Point3 _first;
+            static const Point3 _second;
+
+            Vector3 computeNormal(const Ray& ray, float tHit) const;
         public:
 
-            Box (Point3 first, Point3 second) :
-                _first(first), _second(second){}
-            
-            Box (const ParamSet& params);
+            Box() = default;
             ~Box() = default;
 
-            bool intersect(const Ray& ray) const override;
-            bool intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const override;
-            Bounds3 getBounds() const override;
-
+            bool intersect(const Ray& ray, const Transform& objToWorld) const override;
+            bool intersectWithSurfel(const Ray& ray, const Transform& objToWorld, float* tHit, Surfel* sf) const override;
+            Bounds3 getBounds(const Transform& objToWorld) const override;
     };
 }
 

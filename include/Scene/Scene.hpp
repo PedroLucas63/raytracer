@@ -1,7 +1,6 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 
-
 #include "Scene/Background/Background.hpp"
 #include "Objects/Primitive.hpp"
 #include "Objects/Materials/Material.hpp"
@@ -14,18 +13,26 @@
 #include <unordered_map>
 
 namespace raytracer {
+   class PrimitiveList;
    using ParamSets = std::unordered_map<std::string, ParamSet>;
+
+   struct Object {
+      std::string name;
+      std::shared_ptr<Primitive> primitive;
+      std::shared_ptr<Transform> transform;
+   };
 
    class Scene {
       private:
-         std::shared_ptr<AggregatePrimitive> _aggregate;
-         std::unordered_map<std::string, std::shared_ptr<Material>> _materialMap;
-         std::shared_ptr<Material> _lastMaterial = nullptr;
-
+         std::shared_ptr<AggregatePrimitive> _instances;
+         std::unordered_map<std::string, Object> _objects;
          std::vector<std::shared_ptr<Light>> _lights;
          std::shared_ptr<AmbientLight> _ambientLight = nullptr;
 
          std::shared_ptr<Background> _background;
+
+         std::string _currentObjectName;
+         std::shared_ptr<PrimitiveList> _currentObject = nullptr;
 
          ParamSets _params;
          
@@ -34,19 +41,17 @@ namespace raytracer {
          ~Scene() = default;
          Scene& operator=(const Scene& other);
 
+         bool intersectWithSurfel(const Ray& r, const Transform& transform, Surfel* surfel) const;
          bool intersectWithSurfel(const Ray& r, Surfel* surfel) const;
+         bool intersect(const Ray& r, const Transform& transform) const;
          bool intersect(const Ray& r) const;
 
-         void addNamedMaterial(const std::shared_ptr<Material>& material);
-         void activateNamedMaterial(const std::string& name);
-
          bool hasAggregate() const;
+         bool isDefiningObject() const { return _currentObject != nullptr; }
          void addAggregate(const std::shared_ptr<AggregatePrimitive>& aggregate);
-         void addPrimitive(const std::shared_ptr<Primitive>& primitive);
-         void addPrimitives(const std::shared_ptr<AggregatePrimitive>& primitives);
-         void addMaterial(const std::shared_ptr<Material>& material);
-         std::shared_ptr<Material> getMaterialAt(const std::string& name) const;
-         std::shared_ptr<Material> getLastMaterial() const { return _lastMaterial; }
+         void addPrimitives(const std::shared_ptr<AggregatePrimitive>& primitives, const Transform& transform);
+         
+         void instanciateObject(const std::string& name, std::shared_ptr<Transform> transform);
 
          void addLight(const std::shared_ptr<Light>& light);
          const std::vector<std::shared_ptr<Light>>& getLights() const;
@@ -61,9 +66,13 @@ namespace raytracer {
          ParamSet getParam(const std::string& key) const;
          const ParamSets& getParams() const;
 
-         void include(const Scene& other);
+         void include(const Scene& other, const Transform& transform);
 
+         void prepareAggregate(const Transform& transform);
          void prepareAggregate();
+
+         void defineNewObject(std::string name);
+         void saveNewObject();
    };
 }
 

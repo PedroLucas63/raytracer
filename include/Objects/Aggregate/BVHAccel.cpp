@@ -28,31 +28,31 @@ namespace raytracer {
          }
       }
 
-   bool BVHAccel::intersect(const Ray& ray) const {
+   bool BVHAccel::intersect(const Ray& ray, const Transform& transform) const {
       float tMin, tMax;
       if (!_bounds.intersect(ray, tMin, tMax)) return false;
 
       if (_left == nullptr && _right == nullptr) {
-         return _primitives  && _primitives->intersect(ray);
-      } else if (_left != nullptr && _left->intersect(ray)) {
+         return _primitives  && _primitives->intersect(ray, transform);
+      } else if (_left != nullptr && _left->intersect(ray, transform)) {
          return true;
-      } else if (_right != nullptr && _right->intersect(ray)) {
+      } else if (_right != nullptr && _right->intersect(ray, transform)) {
          return true;
       }
 
       return false;
    }
 
-   bool BVHAccel::intersectWithSurfel(const Ray& ray, Surfel* sf) const {
+   bool BVHAccel::intersectWithSurfel(const Ray& ray, const Transform& transform, Surfel* sf) const {
       float tMin, tMax;
       if (!_bounds.intersect(ray, tMin, tMax)) return false;
       
       if (_left == nullptr && _right == nullptr) {
-         return _primitives != nullptr && _primitives->intersectWithSurfel(ray, sf);
+         return _primitives != nullptr && _primitives->intersectWithSurfel(ray, transform, sf);
       }
 
       if (!sf) {
-         return (_left && _left->intersect(ray)) || (_right && _right->intersect(ray));
+         return (_left && _left->intersect(ray, transform)) || (_right && _right->intersect(ray, transform));
       }
 
       sf->t = std::numeric_limits<float>::infinity();
@@ -64,12 +64,12 @@ namespace raytracer {
       Surfel rightSf = Surfel();
       rightSf.t = std::numeric_limits<float>::infinity();
 
-      if (_left != nullptr && _left->intersectWithSurfel(ray, &leftSf)) {
+      if (_left != nullptr && _left->intersectWithSurfel(ray, transform, &leftSf)) {
          hit = true;
          updateSurfel(sf, leftSf);
       } 
       
-      if (_right != nullptr && _right->intersectWithSurfel(ray, &rightSf)) {
+      if (_right != nullptr && _right->intersectWithSurfel(ray, transform, &rightSf)) {
          hit = true;
          updateSurfel(sf, rightSf);
       }
@@ -83,7 +83,7 @@ namespace raytracer {
       }
    }
 
-   void BVHAccel::buildBVH() {
+   void BVHAccel::buildBVH(const Transform& transform) {
       if (_primitives->size() > _maxPrimitivesPerNode) {
          int elementsPerLeaf = _primitives->size() / 2;
 
@@ -94,10 +94,10 @@ namespace raytracer {
             _primitives->begin(), 
             _primitives->end(), 
             [randomAxis](
-               const std::shared_ptr<Primitive>& a, 
-               const std::shared_ptr<Primitive>& b
+               const auto& a, 
+               const auto& b
             ) {
-               return a->getBounds().min()[randomAxis] < b->getBounds().min()[randomAxis];
+               return a.first->getBounds(*(a.second)).min()[randomAxis] < b.first->getBounds(*(b.second)).min()[randomAxis];
             }
          );
 
@@ -109,51 +109,54 @@ namespace raytracer {
          auto end = _primitives->end();
 
          _left->insert(begin, middle);
-         _left->buildBVH();
+         _left->buildBVH(transform);
 
          _right->insert(middle, end);
-         _right->buildBVH();
+         _right->buildBVH(transform);
 
          _primitives->clear();
       }
 
-      updateBounds();
+      updateBounds(transform);
    }
 
    void BVHAccel::insert(iterator const& begin, iterator const& end) {
       _primitives->insert(begin, end);
    }
 
-   void BVHAccel::add(const std::shared_ptr<Primitive>& primitive) {
-      _primitives->add(primitive);
+   void BVHAccel::add(const instance& instance) {
+      _primitives->add(instance);
    }
 
-   void BVHAccel::merge(const std::shared_ptr<AggregatePrimitive>& other) {
+   void BVHAccel::merge(
+      const std::shared_ptr<AggregatePrimitive>& other,
+      const Transform& transform
+   ) {
       auto otherBVH = std::dynamic_pointer_cast<BVHAccel>(other);
       if (otherBVH) {
-         _primitives->merge(otherBVH->_primitives);
+         _primitives->merge(otherBVH->_primitives, transform);
       } else {
-         _primitives->merge(other);
+         _primitives->merge(other, transform);
       }
    }
 
-   void BVHAccel::updateBounds() {
+   void BVHAccel::updateBounds(const Transform& transform) {
       if (_left && _right) {
-         auto leftBounds = _left->getBounds();
-         auto rightBounds = _right->getBounds();
+         auto leftBounds = _left->getBounds(transform);
+         auto rightBounds = _right->getBounds(transform);
          _bounds = leftBounds.merge(rightBounds);
       } else if (_left) {
-         _bounds = _left->getBounds();
+         _bounds = _left->getBounds(transform);
       } else if (_right) {
-         _bounds = _right->getBounds();
+         _bounds = _right->getBounds(transform);
       } else if (_primitives) {
-         _bounds = _primitives->getBounds();
+         _bounds = _primitives->getBounds(transform);
       } else {
          _bounds = Bounds3(POINT3_ZERO, POINT3_ZERO);
       }
    }
 
-   const Bounds3 BVHAccel::getBounds() const {
+   const Bounds3 BVHAccel::getBounds(const Transform& transform) const {
       return _bounds;
    }
 

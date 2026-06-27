@@ -1,0 +1,15 @@
+<RT3>
+    <!-- <material type="blinn" diffuse="123 104 238" specular="0.8 0.8 0.8" mirror="0.1 0.1 0.1" glossiness="128"/> -->
+    <material type="blinn" 
+        diffuse="220 220 220" 
+        specular="0.8 0.8 0.8" 
+        ambient="22 22 22" 
+        mirror="0.1 0.1 0.1" 
+        glossiness="128"
+    />
+    
+    <object type="trianglemesh" 
+        filename="scenes/obj/chair.obj" 
+        backface_cull ="true"
+    />
+</RT3>

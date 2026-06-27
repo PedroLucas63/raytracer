@@ -20,11 +20,35 @@
       <light_source type="ambient" I="0.1 0.1 0.1"  scale="5 5 5" />
 
 
-      <object type="sphere" center="15 5 1" radius="2.0" material="m1" />   
-      <object type="sphere" center="5 5 7" radius="2.0" material="m2" />   
-      <object type="sphere" center="19 5 14" radius="2.0" material="m3" />   
-      <object type="sphere" center="24 5 7" radius="2.0" material="m3" />   
-      <object type="sphere" center="11 5 14" radius="2.0" material="m4" />  
-      <object type="sphere" center="17.8 5 7.8" radius="2.0" material="m5" />
+      <push_CTM/>
+         <translate value="15 5 1" />
+         <scale value="2.0 2.0 2.0" />
+         <object type="sphere" material="m1" />
+      <pop_CTM/>   
+      <push_CTM/>
+         <translate value="5 5 7" />
+         <scale value="2.0 2.0 2.0" />
+         <object type="sphere" material="m2" />
+      <pop_CTM/>   
+      <push_CTM/>
+         <translate value="19 5 14" />
+         <scale value="2.0 2.0 2.0" />
+         <object type="sphere" material="m3" />
+      <pop_CTM/>   
+      <push_CTM/>
+         <translate value="24 5 7" />
+         <scale value="2.0 2.0 2.0" />
+         <object type="sphere" material="m3" />
+      <pop_CTM/>   
+      <push_CTM/>
+         <translate value="11 5 14" />
+         <scale value="2.0 2.0 2.0" />
+         <object type="sphere" material="m4" />
+      <pop_CTM/>  
+      <push_CTM/>
+         <translate value="17.8 5 7.8" />
+         <scale value="2.0 2.0 2.0" />
+         <object type="sphere" material="m5" />
+      <pop_CTM/>
    <world_end/>
 </RT3>

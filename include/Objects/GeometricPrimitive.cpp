@@ -1,12 +1,12 @@
 #include "Objects/GeometricPrimitive.hpp"
 
 namespace raytracer {
-   bool GeometricPrimitive::intersect(const Ray& ray) const {
-      return _shape->intersect(ray);
+   bool GeometricPrimitive::intersect(const Ray& ray, const Transform& objToWorld) const {
+      return _shape->intersect(ray, objToWorld);
    }
 
-   bool GeometricPrimitive::intersectWithSurfel(const Ray& ray, Surfel* sf) const {
-      auto result = _shape->intersectWithSurfel(ray, nullptr, sf);
+   bool GeometricPrimitive::intersectWithSurfel(const Ray& ray, const Transform& objToWorld, Surfel* sf) const {
+      auto result = _shape->intersectWithSurfel(ray, objToWorld, nullptr, sf);
       if (result && sf) {
          sf->material = _material;
       }
@@ -24,7 +24,7 @@ namespace raytracer {
       return _material;
    }
 
-   const Bounds3 GeometricPrimitive::getBounds() const {
-      return _shape->getBounds();
+   const Bounds3 GeometricPrimitive::getBounds(const Transform& objToWorld) const {
+      return _shape->getBounds(objToWorld);
    }
 }

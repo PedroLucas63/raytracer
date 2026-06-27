@@ -22,84 +22,227 @@
         <make_named_material type="blinn" name="accent_green" ambient="0.05 0.3 0.05" diffuse="0.2 0.8 0.2" specular="0.8 0.8 0.8" glossiness="128" />
 
         <!-- Ground and back wall -->
-        <object type="plane" origin="0 0 0" norm="0 1 0" material="ground" />
-        <object type="plane" origin="0 0 12" norm="0 0 1" material="ground" />
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <object type="plane" material="ground" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 0 12" />
+           <rotate axis="1.000000 0.000000 -0.000000" angle="90.000000" />
+           <object type="plane" material="ground" />
+        <pop_CTM/>
 
         <!-- Torso -->
         <named_material name="metal_light" />
-        <object type="box" first_point="-1.6 2.2 -0.6" second_point="1.6 5.2 0.6" />
+        <push_CTM/>
+           <translate value="0.000000 3.700000 0.000000" />
+           <scale value="3.200000 3.000000 1.200000" />
+           <object type="box" />
+        <pop_CTM/>
         <named_material name="metal_dark" />
-        <object type="box" first_point="-1.35 2.9 0.65" second_point="1.35 4.8 1.0" />
+        <push_CTM/>
+           <translate value="0.000000 3.850000 0.825000" />
+           <scale value="2.700000 1.900000 0.350000" />
+           <object type="box" />
+        <pop_CTM/>
         <named_material name="accent_green" />
-        <object type="sphere" center="-0.9 3.3 1.05" radius="0.18" />
-        <object type="sphere" center="-0.4 3.3 1.05" radius="0.18" />
+        <push_CTM/>
+           <translate value="-0.9 3.3 1.05" />
+           <scale value="0.18 0.18 0.18" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-0.4 3.3 1.05" />
+           <scale value="0.18 0.18 0.18" />
+           <object type="sphere" />
+        <pop_CTM/>
         <named_material name="accent_red" />
-        <object type="sphere" center="0.1 3.3 1.05" radius="0.18" />
+        <push_CTM/>
+           <translate value="0.1 3.3 1.05" />
+           <scale value="0.18 0.18 0.18" />
+           <object type="sphere" />
+        <pop_CTM/>
         <named_material name="accent_blue" />
-        <object type="sphere" center="0.6 3.3 1.05" radius="0.18" />
+        <push_CTM/>
+           <translate value="0.6 3.3 1.05" />
+           <scale value="0.18 0.18 0.18" />
+           <object type="sphere" />
+        <pop_CTM/>
         <named_material name="accent_yellow" />
-        <object type="box" first_point="-0.9 4.1 0.95" second_point="0.9 4.45 1.12" />
+        <push_CTM/>
+           <translate value="0.000000 4.275000 1.035000" />
+           <scale value="1.800000 0.350000 0.170000" />
+           <object type="box" />
+        <pop_CTM/>
         <named_material name="accent_blue" />
-        <object type="sphere" center="0.0 3.9 1.2" radius="0.22" />
+        <push_CTM/>
+           <translate value="0.0 3.9 1.2" />
+           <scale value="0.22 0.22 0.22" />
+           <object type="sphere" />
+        <pop_CTM/>
 
         <!-- Head -->
         <named_material name="metal_light" />
-        <object type="box" first_point="-1.0 5.4 -0.7" second_point="1.0 7.0 0.7" />
+        <push_CTM/>
+           <translate value="0.000000 6.200000 0.000000" />
+           <scale value="2.000000 1.600000 1.400000" />
+           <object type="box" />
+        <pop_CTM/>
         <named_material name="metal_dark" />
-        <object type="box" first_point="-0.95 5.7 0.72" second_point="0.95 6.65 0.98" />
+        <push_CTM/>
+           <translate value="0.000000 6.175000 0.850000" />
+           <scale value="1.900000 0.950000 0.260000" />
+           <object type="box" />
+        <pop_CTM/>
         <named_material name="accent_blue" />
-        <object type="sphere" center="-0.45 6.35 1.05" radius="0.22" />
-        <object type="sphere" center="0.45 6.35 1.05" radius="0.22" />
+        <push_CTM/>
+           <translate value="-0.45 6.35 1.05" />
+           <scale value="0.22 0.22 0.22" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.45 6.35 1.05" />
+           <scale value="0.22 0.22 0.22" />
+           <object type="sphere" />
+        <pop_CTM/>
         <named_material name="accent_red" />
-        <object type="box" first_point="-0.7 5.8 0.9" second_point="0.7 6.15 1.08" />
+        <push_CTM/>
+           <translate value="0.000000 5.975000 0.990000" />
+           <scale value="1.400000 0.350000 0.180000" />
+           <object type="box" />
+        <pop_CTM/>
         <named_material name="metal_dark" />
-        <object type="box" first_point="-0.6 5.9 1.08" second_point="-0.3 6.02 1.18" />
-        <object type="box" first_point="-0.15 5.9 1.08" second_point="0.15 6.02 1.18" />
-        <object type="box" first_point="0.3 5.9 1.08" second_point="0.6 6.02 1.18" />
+        <push_CTM/>
+           <translate value="-0.450000 5.960000 1.130000" />
+           <scale value="0.300000 0.120000 0.100000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.000000 5.960000 1.130000" />
+           <scale value="0.300000 0.120000 0.100000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.450000 5.960000 1.130000" />
+           <scale value="0.300000 0.120000 0.100000" />
+           <object type="box" />
+        <pop_CTM/>
         <named_material name="accent_yellow" />
-        <object type="sphere" center="-0.75 6.7 1.0" radius="0.12" />
-        <object type="sphere" center="0.75 6.7 1.0" radius="0.12" />
+        <push_CTM/>
+           <translate value="-0.75 6.7 1.0" />
+           <scale value="0.12 0.12 0.12" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.75 6.7 1.0" />
+           <scale value="0.12 0.12 0.12" />
+           <object type="sphere" />
+        <pop_CTM/>
 
         <!-- Neck -->
         <named_material name="metal_dark" />
-        <object type="box" first_point="-0.3 5.1 -0.3" second_point="0.3 5.5 0.3" />
+        <push_CTM/>
+           <translate value="0.000000 5.300000 0.000000" />
+           <scale value="0.600000 0.400000 0.600000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <!-- Arms -->
         <named_material name="metal_dark" />
-        <object type="box" first_point="-3.0 3.6 -0.4" second_point="-1.6 4.2 0.4" />
-        <object type="box" first_point="1.6 3.6 -0.4" second_point="3.0 4.2 0.4" />
+        <push_CTM/>
+           <translate value="-2.300000 3.900000 0.000000" />
+           <scale value="1.400000 0.600000 0.800000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2.300000 3.900000 0.000000" />
+           <scale value="1.400000 0.600000 0.800000" />
+           <object type="box" />
+        <pop_CTM/>
         <named_material name="metal_light" />
-        <object type="sphere" center="-3.2 3.9 0" radius="0.35" />
-        <object type="sphere" center="3.2 3.9 0" radius="0.35" />
+        <push_CTM/>
+           <translate value="-3.2 3.9 0" />
+           <scale value="0.35 0.35 0.35" />
+           <object type="sphere" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.2 3.9 0" />
+           <scale value="0.35 0.35 0.35" />
+           <object type="sphere" />
+        <pop_CTM/>
 
         <!-- Hands -->
         <named_material name="accent_blue" />
-        <object type="box" first_point="-3.8 3.2 -0.5" second_point="-3.1 3.9 0.5" />
-        <object type="box" first_point="3.1 3.2 -0.5" second_point="3.8 3.9 0.5" />
+        <push_CTM/>
+           <translate value="-3.450000 3.550000 0.000000" />
+           <scale value="0.700000 0.700000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="3.450000 3.550000 0.000000" />
+           <scale value="0.700000 0.700000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <!-- Hips -->
         <named_material name="metal_dark" />
-        <object type="box" first_point="-1.4 1.6 -0.5" second_point="1.4 2.2 0.5" />
+        <push_CTM/>
+           <translate value="0.000000 1.900000 0.000000" />
+           <scale value="2.800000 0.600000 1.000000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <!-- Legs -->
         <named_material name="metal_light" />
-        <object type="box" first_point="-1.2 0.2 -0.4" second_point="-0.2 1.6 0.4" />
-        <object type="box" first_point="0.2 0.2 -0.4" second_point="1.2 1.6 0.4" />
+        <push_CTM/>
+           <translate value="-0.700000 0.900000 0.000000" />
+           <scale value="1.000000 1.400000 0.800000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.700000 0.900000 0.000000" />
+           <scale value="1.000000 1.400000 0.800000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <!-- Feet -->
         <named_material name="metal_dark" />
-        <object type="box" first_point="-1.6 0 -1.1" second_point="-0.1 0.3 0.7" />
-        <object type="box" first_point="0.1 0 -1.1" second_point="1.6 0.3 0.7" />
+        <push_CTM/>
+           <translate value="-0.850000 0.150000 -0.200000" />
+           <scale value="1.500000 0.300000 1.800000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0.850000 0.150000 -0.200000" />
+           <scale value="1.500000 0.300000 1.800000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <!-- Shoulder plates -->
         <named_material name="accent_red" />
-        <object type="box" first_point="-2.2 4.3 -0.8" second_point="-1.4 4.8 0.8" />
-        <object type="box" first_point="1.4 4.3 -0.8" second_point="2.2 4.8 0.8" />
+        <push_CTM/>
+           <translate value="-1.800000 4.550000 0.000000" />
+           <scale value="0.800000 0.500000 1.600000" />
+           <object type="box" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="1.800000 4.550000 0.000000" />
+           <scale value="0.800000 0.500000 1.600000" />
+           <object type="box" />
+        <pop_CTM/>
 
         <!-- Antenna -->
         <named_material name="accent_blue" />
-        <object type="sphere" center="0 7.4 0" radius="0.18" />
+        <push_CTM/>
+           <translate value="0 7.4 0" />
+           <scale value="0.18 0.18 0.18" />
+           <object type="sphere" />
+        <pop_CTM/>
         <named_material name="metal_dark" />
-        <object type="box" first_point="-0.08 7.0 -0.08" second_point="0.08 7.35 0.08" />
+        <push_CTM/>
+           <translate value="0.000000 7.175000 0.000000" />
+           <scale value="0.160000 0.350000 0.160000" />
+           <object type="box" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

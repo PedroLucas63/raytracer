@@ -53,19 +53,38 @@
         <light_source type="point" from="-5 18 8" I="0.7 0.7 0.7" attenuation="1 0 0"/>
 
         <!-- CHÃO: plano em Z, pois a câmera vê Z como "baixo" -->
-        <object type="plane" origin="0 0 -15" norm="0 0 1" material="mirror" />
+        <push_CTM/>
+           <translate value="0 0 -15" />
+           <rotate axis="1.000000 0.000000 -0.000000" angle="90.000000" />
+           <object type="plane" material="mirror" />
+        <pop_CTM/>
 
         <!-- TETO: acima em Z -->
-        <object type="plane" origin="0 0 25" norm="0 0 -1" material="mirror" />
+        <push_CTM/>
+           <translate value="0 0 25" />
+           <rotate axis="-1.000000 0.000000 -0.000000" angle="90.000000" />
+           <object type="plane" material="mirror" />
+        <pop_CTM/>
 
         <!-- PAREDE DE FUNDO (longe da câmera em Y) -->
-        <object type="plane" origin="0 -25 0" norm="0 1 0" material="mirror" />
+        <push_CTM/>
+           <translate value="0 -25 0" />
+           <object type="plane" material="mirror" />
+        <pop_CTM/>
 
         <!-- PAREDE ESQUERDA -->
-        <object type="plane" origin="-20 0 0" norm="1 0 0" material="mirror" />
+        <push_CTM/>
+           <translate value="-20 0 0" />
+           <rotate axis="0.000000 0.000000 -1.000000" angle="90.000000" />
+           <object type="plane" material="mirror" />
+        <pop_CTM/>
 
         <!-- PAREDE DIREITA -->
-        <object type="plane" origin="20 0 0" norm="-1 0 0" material="mirror" />
+        <push_CTM/>
+           <translate value="20 0 0" />
+           <rotate axis="0.000000 0.000000 1.000000" angle="90.000000" />
+           <object type="plane" material="mirror" />
+        <pop_CTM/>
 
         <object type="trianglemesh"
                 filename="scenes/obj/teapot.obj"

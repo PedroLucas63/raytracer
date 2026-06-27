@@ -20,7 +20,14 @@
         <material type="blinn" name="floor" diffuse="0.2 0.2 0.2" specular="0.1 0.1 0.1" ambient="0.02 0.02 0.02" glossiness="10"/>
 
         <!-- Objects -->
-        <object type="sphere" center="0 1 0" radius="1" material="redish" />
-        <object type="plane" origin="0 0 0" norm="0 1 0" material="floor" />
+        <push_CTM/>
+           <translate value="0 1 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="redish" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <object type="plane" material="floor" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

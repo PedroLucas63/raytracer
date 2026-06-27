@@ -20,21 +20,18 @@ namespace raytracer {
       uint16_t nPrimitives;
       uint8_t axis;
       uint8_t pad[1];        // ensure 32 byte total size
-
    };
-
 
    class LinearBVHAccel : public AggregatePrimitive {
       private:
          std::vector<LinearBVHNode> _nodes;
-         std::vector<std::shared_ptr<Primitive>> _orderedPrimitives;
+         std::vector<instance> _orderedInstances;
          std::shared_ptr<BVHAccel> _buildTree;
          Bounds3 _bounds;
          int     _maxPrimitivesPerNode;
          BVHAccel::SplitMethod _splitMethod;
 
-
-         int flattenBVHTree(const BVHAccel* node, int* offset);
+         int flattenBVHTree(const BVHAccel* node, int* offset, const Transform& transform);
          int countNodes(const BVHAccel* node) const;
 
       public:
@@ -43,16 +40,19 @@ namespace raytracer {
          LinearBVHAccel(const ParamSet& params);
          ~LinearBVHAccel() = default;
 
-         bool intersect(const Ray& ray) const override;
-         bool intersectWithSurfel(const Ray& ray, Surfel* sf) const override;
+         bool intersect(const Ray& ray, const Transform& transform) const override;
+         bool intersectWithSurfel(const Ray& ray, const Transform& transform, Surfel* sf) const override;
 
-         void add(const std::shared_ptr<Primitive>& primitive) override;
-         void merge(const std::shared_ptr<AggregatePrimitive>& other) override;
+         void add(const instance& instance) override;
+         void merge(
+            const std::shared_ptr<AggregatePrimitive>& other,
+            const Transform& transform
+         ) override;
 
          void insert(iterator const& begin, iterator const& end) override;
-         void buildLBVH();
+         void buildLBVH(const Transform& transform);
 
-         const Bounds3 getBounds() const override;
+         const Bounds3 getBounds(const Transform& transform) const override;
    };
 }
 

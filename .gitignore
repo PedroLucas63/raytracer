@@ -68,3 +68,7 @@ Testing/
 .cache/
 output/
 .idea
+
+vgcore.*
+core
+core.*vgcore.*

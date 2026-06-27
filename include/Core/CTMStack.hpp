@@ -1,28 +1,26 @@
 #pragma once
 
-#include "Math/Matrix.hpp"
+#include "Math/Transform.hpp"
 #include <stack>
 #include <stdexcept>
+#include <memory>
 
 namespace raytracer {
 
     class CTMStack {
     private:
-        Matrix _current;
-        Matrix _currentInverse;
-        std::stack<Matrix>  _transforms;
-        std::stack<Matrix>  _inverses;
+        std::shared_ptr<Transform> _current;
+        std::stack<std::shared_ptr<Transform>>  _transforms;
 
     public:
         CTMStack();
 
         void push();
         void pop();
-        void apply(const Matrix& m);
+        void apply(const Transform& t);
         void reset();
 
-        const Matrix& current() const;
-        Matrix currentInverse() const;
+        const std::shared_ptr<Transform>& current() const;
 
         bool   empty() const;
         size_t depth() const;

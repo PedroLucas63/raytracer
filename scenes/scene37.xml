@@ -39,12 +39,11 @@
             "
         />
 
-        <object
-            type="sphere"
-            radius="3"
-            center="0 0 0"
-            material="toon_red"
-        />
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <scale value="3 3 3" />
+           <object type="sphere" material="toon_red" />
+        <pop_CTM/>
 
     <world_end/>
 </RT3>

@@ -62,58 +62,188 @@
          <light_source type="point" from="0 1 0" I="1.0 1.0 1.0" attenuation="1 0 0"/>
 
          <!-- CHÃO -->
-        <object type="plane" origin="0 0 0" norm="0 1 0" material="green" />
+        <push_CTM/>
+           <translate value="0 0 0" />
+           <object type="plane" material="green" />
+        <pop_CTM/>
 
         <!-- TETO -->
-        <object type="plane" origin="0 10 0" norm="0 1 0" material="blue" />
+        <push_CTM/>
+           <translate value="0 10 0" />
+           <object type="plane" material="blue" />
+        <pop_CTM/>
 
         <!-- PAREDE ESQUERDA -->
-        <object type="plane" origin="-5 0 0" norm="1 0 0" material="mirror" />
+        <push_CTM/>
+           <translate value="-5 0 0" />
+           <rotate axis="0.000000 0.000000 -1.000000" angle="90.000000" />
+           <object type="plane" material="mirror" />
+        <pop_CTM/>
 
         <!-- PAREDE DIREITA -->
-        <object type="plane" origin="5 0 0" norm="1 0 0" material="mirror" />
+        <push_CTM/>
+           <translate value="5 0 0" />
+           <rotate axis="0.000000 0.000000 -1.000000" angle="90.000000" />
+           <object type="plane" material="mirror" />
+        <pop_CTM/>
 
         <!-- FUNDO -->
-        <object type="plane" origin="0 0 10" norm="0 0 1" material="magenta" />
+        <push_CTM/>
+           <translate value="0 0 10" />
+           <rotate axis="1.000000 0.000000 -0.000000" angle="90.000000" />
+           <object type="plane" material="magenta" />
+        <pop_CTM/>
 
         <!-- FRENTE -->
-        <object type="plane" origin="0 0 -11" norm="0 0 1" material="yellow" />
+        <push_CTM/>
+           <translate value="0 0 -11" />
+           <rotate axis="1.000000 0.000000 -0.000000" angle="90.000000" />
+           <object type="plane" material="yellow" />
+        <pop_CTM/>
 
         <!-- ESFERAS -->
-        <object type="sphere" center="0 5 0" radius="1" material="metal"/>
-        <object type="sphere" center="0 7 0" radius="1" material="metal"/>
-        <object type="sphere" center="0 3 0" radius="1" material="metal"/>
+        <push_CTM/>
+           <translate value="0 5 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 7 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 3 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
 
-        <object type="sphere" center="-2 5 0" radius="1" material="metal"/>
-        <object type="sphere" center="-2 7 0" radius="1" material="metal"/>
-        <object type="sphere" center="-2 3 0" radius="1" material="metal"/>
+        <push_CTM/>
+           <translate value="-2 5 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2 7 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2 3 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
 
-        <object type="sphere" center="2 5 0" radius="1" material="metal"/>
-        <object type="sphere" center="2 7 0" radius="1" material="metal"/>
-        <object type="sphere" center="2 3 0" radius="1" material="metal"/>
+        <push_CTM/>
+           <translate value="2 5 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2 7 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2 3 0" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
 
-        <object type="sphere" center="0 5 2" radius="1" material="metal"/>
-        <object type="sphere" center="0 7 2" radius="1" material="metal"/>
-        <object type="sphere" center="0 3 2" radius="1" material="metal"/>
+        <push_CTM/>
+           <translate value="0 5 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 7 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 3 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
 
-        <object type="sphere" center="-2 5 2" radius="1" material="metal"/>
-        <object type="sphere" center="-2 7 2" radius="1" material="metal"/>
-        <object type="sphere" center="-2 3 2" radius="1" material="metal"/>
+        <push_CTM/>
+           <translate value="-2 5 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2 7 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2 3 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
 
-        <object type="sphere" center="2 5 2" radius="1" material="metal"/>
-        <object type="sphere" center="2 7 2" radius="1" material="metal"/>
-        <object type="sphere" center="2 3 2" radius="1" material="metal"/>
+        <push_CTM/>
+           <translate value="2 5 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2 7 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2 3 2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
 
-        <object type="sphere" center="0 5 -2" radius="1" material="metal"/>
-        <object type="sphere" center="0 7 -2" radius="1" material="metal"/>
-        <object type="sphere" center="0 3 -2" radius="1" material="metal"/>
+        <push_CTM/>
+           <translate value="0 5 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 7 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="0 3 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
 
-        <object type="sphere" center="-2 5 -2" radius="1" material="metal"/>
-        <object type="sphere" center="-2 7 -2" radius="1" material="metal"/>
-        <object type="sphere" center="-2 3 -2" radius="1" material="metal"/>
+        <push_CTM/>
+           <translate value="-2 5 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2 7 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="-2 3 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
 
-        <object type="sphere" center="2 5 -2" radius="1" material="metal"/>
-        <object type="sphere" center="2 7 -2" radius="1" material="metal"/>
-        <object type="sphere" center="2 3 -2" radius="1" material="metal"/>
+        <push_CTM/>
+           <translate value="2 5 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2 7 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
+        <push_CTM/>
+           <translate value="2 3 -2" />
+           <scale value="1 1 1" />
+           <object type="sphere" material="metal" />
+        <pop_CTM/>
     <world_end/>
 </RT3>

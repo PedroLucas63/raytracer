@@ -2,56 +2,51 @@
 #include <cmath>
 
 namespace raytracer {
-   Plane::Plane(const ParamSet& params) {
-      if (!params.has("origin")) {
-         throw std::invalid_argument("Plane requires a 'origin' parameter");
-      }
-      if (!params.has("norm")) {
-         throw std::invalid_argument("Plane requires a 'norm' parameter");
-      }
-
-      _origin = params.retrieve<Point3>("origin");
-      _norm = params.retrieve<Vector3>("norm").normalize();
-   }
+   const Vector3 Plane::_norm = VECTOR3_UNIT_Y;
 
    float Plane::getIntersection(const Ray& ray) const {
       const float EPS = 1e-6;
       float denom = _norm.dot(ray.direction);
 
       if (fabs(denom) < EPS) {
-         float dist = _norm.dot(ray.origin - _origin);
-         return fabs(dist) < EPS ? 0 : -1;
+         return -1;
       }
       
-      return _norm.dot(_origin - ray.origin) / denom;
+      return _norm.dot(-ray.origin.toVector()) / denom;
    }
 
-   bool Plane::intersect(const Ray& ray) const {
-      float t = getIntersection(ray);
-      return t >= ray.t_min && t <= ray.t_max;
+   bool Plane::intersect(const Ray& ray, const Transform& objToWorld) const {
+      auto localRay = objToWorld(ray, true);
+      float t = getIntersection(localRay);
+      return t >= localRay.t_min && t <= localRay.t_max;
    }
 
-   bool Plane::intersectWithSurfel(const Ray& ray, float* tHit, Surfel* sf) const {
-      auto t = getIntersection(ray);
+   bool Plane::intersectWithSurfel(
+      const Ray& ray, const Transform& objToWorld, float* tHit, Surfel* sf
+   ) const {
+      auto localRay = objToWorld(ray, true);
+      auto t = getIntersection(localRay);
 
-      if (t < ray.t_min || t > ray.t_max) return false;
+      if (t < localRay.t_min || t > localRay.t_max) return false;
 
       if (tHit) {
          *tHit = t;
       }
 
       if (sf) {
-         auto intersectPoint = ray.origin + (ray.direction * t);
-         auto normal = _norm.dot(ray.direction) < 0 ? _norm : _norm * -1.0f;
-         *sf = Surfel(t, intersectPoint, nullptr, normal, -ray.direction.normalize());
+         auto pLocal = localRay.origin + (localRay.direction * t);
+         Vector3 nLocal = (_norm.dot(localRay.direction) < 0)
+            ? _norm
+            : -_norm;
+         auto pWorld = objToWorld(pLocal);
+         auto nWorld = objToWorld.applyNormal(nLocal).normalize();
+         *sf = Surfel(t, pWorld, nullptr, nWorld, -ray.direction.normalize());
       }
 
       return true;
    }
 
-   Bounds3 Plane::getBounds() const {
-      auto point1 = Point3(-INFINITY, -INFINITY, -INFINITY);
-      auto point2 = Point3(INFINITY, INFINITY, INFINITY);
-      return Bounds3(point1, point2);
+   Bounds3 Plane::getBounds(const Transform& objToWorld) const {
+      return Bounds3::infinite();
    }
 }

@@ -40,9 +40,21 @@
       <light_source type="ambient" I="0.1 0.1 0.1"/>
 
       <!-- Esferas grandes -->
-      <object type="sphere" center="-3 -6 -2" radius="2.5" material="mirror1"/>
-      <object type="sphere" center="3 -6 0" radius="2.5" material="mirror2"/>
-      <object type="sphere" center="0 -6 -4" radius="2.0" material="colorful"/>
+      <push_CTM/>
+         <translate value="-3 -6 -2" />
+         <scale value="2.5 2.5 2.5" />
+         <object type="sphere" material="mirror1" />
+      <pop_CTM/>
+      <push_CTM/>
+         <translate value="3 -6 0" />
+         <scale value="2.5 2.5 2.5" />
+         <object type="sphere" material="mirror2" />
+      <pop_CTM/>
+      <push_CTM/>
+         <translate value="0 -6 -4" />
+         <scale value="2.0 2.0 2.0" />
+         <object type="sphere" material="colorful" />
+      <pop_CTM/>
 
    <world_end/>
 </RT3>
