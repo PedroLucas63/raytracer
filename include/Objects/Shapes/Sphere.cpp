@@ -7,6 +7,13 @@ namespace raytracer {
    ) const {
       auto oc = ray.origin.toVector();
 
+      auto d = ray.direction.normalize();
+      auto proj = oc.dot(d);
+      auto oc_perp = oc - d * proj;
+      auto delta_stable = 1.0f - oc_perp.lengthSquared();
+
+      if (delta_stable < 0) return {-1, -1};
+
       auto A = ray.direction.dot(ray.direction);
       auto B = 2.0f * oc.dot(ray.direction);
       auto C = oc.dot(oc) - 1.0f;
