@@ -161,6 +161,7 @@ namespace raytracer {
    //    );
    // }
 
+   // TODO: A cena incluida já vem com o transform aplicado, então não é necessário aplicar novamente. Talvez seja necessário rever a lógica de como os objetos são instanciados e transformados.
    void Scene::include(const Scene& other, const Transform& transform) {
       _params.insert(other._params.begin(), other._params.end());
  

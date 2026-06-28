@@ -125,11 +125,9 @@ namespace raytracer {
    }
 
    void GraphicsState::include(const GraphicsState& other) {
-      std::shared_ptr<Transform> transform;
-      bool flipNormals;
-      Api::getCurrentTransform(&transform, &flipNormals);
+      static const std::shared_ptr<Transform> transformIdentity = std::make_shared<Transform>();
 
-      _scene.include(other._scene, *transform);
+      _scene.include(other._scene, *transformIdentity);
 
       if (other._currMaterial.empty()) {
          throw std::runtime_error("Cannot include a graphics state with no activated material");

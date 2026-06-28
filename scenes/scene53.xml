@@ -27,7 +27,8 @@
 
         <object_instance_begin name="dinning_chair" />
             <push_CTM/>
-                <scale value="0.2 0.2 0.2"/>
+                <scale value="0.1 0.1 0.1"/>
+                <rotate axis="1 0 0" angle="-90.01"/>
                 <include filename="scenes/references/03_dinning_chair.xml" />
             <pop_CTM/>
         <object_instance_end/>
@@ -36,7 +37,7 @@
             <!-- The table -->
             <push_CTM/>
                 <translate value="0 4.1 0" />
-                <scale value="0.16 0.16 0.16"/>
+                <scale value="0.08 0.08 0.08"/>
                 <include filename="scenes/references/03_dinning_table.xml" />
             <pop_CTM/>
             <!-- Chair #1, at the head of the table -->
