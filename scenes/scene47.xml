@@ -11,23 +11,6 @@
 
       <make_named_material type="flat" color="0.95 0.05 0.05" name="red" />
 
-
-      <make_named_material
-         name="pyramid"
-         type="blinn"
-         diffuse="0.65 0.35 0.20"
-         specular="0.20 0.20 0.20"
-         ambient="0.03 0.03 0.03"
-         glossiness="70"
-      />
-
-      <material name="yellow" type="blinn"
-         diffuse="0.6 0.4 0.05"
-         specular="0.6 0.4 0.05"
-         ambient="0.3 0.03 0.2"
-         glossiness="1024"
-      />
-
       <make_named_material
          name="metal"
          type="blinn"
@@ -36,7 +19,6 @@
          ambient="0.5 0.5 0.8"
          glossiness="512"
          mirror="0.7 0.7 0.7"
-         
       />
       
       <light_source type="point" from="5 15 15" I="0.9 0.9 0.9" attenuation="1 0 0" />
@@ -50,18 +32,15 @@
 
       <push_CTM/>
          <translate value="0 0 25" />
-         <rotate axis="1.000000 0.000000 -0.000000" angle="90.000000" />
+         <rotate axis="1.0 0 0" angle="90" />
          <object type="plane" material="stone" />
       <pop_CTM/>
 
       <object type="trianglemesh"
-               filename="scenes/obj/body.obj"
-               compute_normals="false"
-               backface_cull="false"
-               material="metal"
+         filename="scenes/obj/body.obj"
+         compute_normals="false"
+         backface_cull="false"
+         material="metal"
       />
-
-
-
    <world_end/>
 </RT3>

@@ -218,6 +218,10 @@ namespace raytracer {
 
       Surfel reflectionSurfel;
       if (scene.intersectWithSurfel(reflectionRay, &reflectionSurfel)) {
+         if (reflectionRay.direction.dot(reflectionSurfel.normal) > 0) {
+            reflectionSurfel.normal = -reflectionSurfel.normal;
+         }
+
          auto material = reflectionSurfel.material;
 
          if (auto blinnMaterial = std::dynamic_pointer_cast<BlinnMaterial>(material)) {

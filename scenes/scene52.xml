@@ -9,7 +9,7 @@
       <background type="single_color" color="242 242 242"/>
 
       <light_source type="ambient" I="0.8 0.8 0.8" scale="1 1 1" />
-      <light_source type="point" from="0 3 -2"  I="1.0 0.8 0.8" attenuation="0.3 0 0"/>
+      <light_source type="point" from="0 -2 -5"  I="1.0 0.8 0.8" attenuation="0.1 0 0"/>
 
       <material name="mirror" type="blinn"
          diffuse="0.2 0.2 0.2"
@@ -22,14 +22,14 @@
          <push_CTM/>
             <rotate axis="1 0 0" angle="90.0"/>
             <rotate axis="0 1 0" angle="180.0"/>
-            <scale value="2 2 2"/>
+            <scale value="5 5 5"/>
             <include filename="scenes/references/girl.xml" />
          <pop_CTM/>
       <object_instance_end/>
 
       <push_GS/>
          <translate value="-0.5 0 -1" />
-         <rotate axis="0 1 0" angle="45.0"/>
+         <rotate axis="0 1 0" angle="-25.0"/>
          <object_instance_call name="girl" />
       <pop_GS/>
 
@@ -39,7 +39,7 @@
 
       <push_GS/>
          <translate value="0.5 0 -1" />
-         <rotate axis="0 1 0" angle="-45.0"/>
+         <rotate axis="0 1 0" angle="25.0"/>
          <object_instance_call name="girl" />
       <pop_GS/>
    <world_end/>

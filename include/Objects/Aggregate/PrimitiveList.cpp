@@ -43,28 +43,12 @@ namespace raytracer {
          return Bounds3(Point3(0, 0, 0), Point3(0, 0, 0));
       }
 
-      double minX = INFINITY, minY = INFINITY, minZ = INFINITY;
-      double maxX = -INFINITY, maxY = -INFINITY, maxZ = -INFINITY;
-
-      for (auto& instance : _instances) {
-         auto [primitive, instanceTransform] = instance;
-         auto bound = primitive->getBounds(*instanceTransform);
-
-         minX = std::min(minX, bound.min().getX());
-         minY = std::min(minY, bound.min().getY());
-         minZ = std::min(minZ, bound.min().getZ());
-
-         maxX = std::max(maxX, bound.max().getX());
-         maxY = std::max(maxY, bound.max().getY());
-         maxZ = std::max(maxZ, bound.max().getZ());
+      Bounds3 totalBounds = _instances[0].first->getBounds(*(_instances[0].second));
+      for (size_t i = 1; i < _instances.size(); ++i) {
+         auto [primitive, instanceTransform] = _instances[i];
+         totalBounds = totalBounds.merge(primitive->getBounds(*instanceTransform));
       }
-
-      auto bound = Bounds3(
-         Point3(minX, minY, minZ),
-         Point3(maxX, maxY, maxZ)
-      );
-
-      return bound;
+      return totalBounds;
    } 
 
    void PrimitiveList::add(const instance& instance) {

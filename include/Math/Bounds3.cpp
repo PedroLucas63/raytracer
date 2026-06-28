@@ -21,6 +21,9 @@ namespace raytracer {
    }
 
    Bounds3 Bounds3::merge(const Bounds3& bounds) const {
+      if (_isInfinity || bounds._isInfinity) {
+         return Bounds3::infinite();
+      }
       auto p_min = raytracer::min(_min, bounds._min);
       auto p_max = raytracer::max(_max, bounds._max);
 

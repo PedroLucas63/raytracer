@@ -8,30 +8,6 @@
     <world_begin/>
         <background type="single_color" color="242 242 242"/>
 
-        <material name="green" type="blinn"
-            diffuse="0.2 0.95 0.2"
-            specular="0.2 0.95 0.2"
-            ambient="0.02 0.3 0.02"
-            glossiness="1024"/>
-
-        <material name="magenta" type="blinn"
-            diffuse="0.6 0.2 0.6"
-            specular="0.6 0.2 0.6"
-            ambient="0.2 0.02 0.2"
-            glossiness="1024"/>
-
-        <material name="yellow" type="blinn"
-            diffuse="0.6 0.4 0.05"
-            specular="0.6 0.4 0.05"
-            ambient="0.3 0.03 0.2"
-            glossiness="1024"/>
-
-        <material name="blue" type="blinn"
-            diffuse="0.2 0.2 0.95"
-            specular="0.2 0.2 0.95"
-            ambient="0.02 0.02 0.3"
-            glossiness="1024"/>
-
         <material name="metal" type="blinn"
             diffuse="0.05 0.05 0.05"
             specular="1 1 1"
@@ -92,6 +68,5 @@
                 backface_cull="false"
                 material="metal"
         />
-
     <world_end/>
 </RT3>

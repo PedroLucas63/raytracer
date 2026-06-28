@@ -15,7 +15,7 @@ namespace raytracer {
          std::stack<std::shared_ptr<Material>> _currMaterial;
          std::list<DictOfMat> _materialStack;
          bool _flipNormals = false;
-         bool _materialsCloned = false;
+         bool _materialsCloned = true;
 
       public:
          GraphicsState();
