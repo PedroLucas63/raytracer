@@ -1,0 +1,515 @@
+<RT3>
+   <lookat look_from="0 4.5 -7" look_at="0 0 0" up="0 1 0" />
+   <camera type="perspective" fovy="55" />
+   <film type="image" w_res="2560" h_res="1440" filename="output/scene52_grid.png" img_type="png" />
+   <aggregator type="lbvh" split_method="middle" max_prims_per_node="8" />
+   <integrator type="blinn_phong" depth="5" />
+
+   <world_begin/>
+      <background type="single_color" color="242 242 242"/>
+
+      <light_source type="ambient" I="0.8 0.8 0.8" scale="1 1 1" />
+      <light_source type="point" from="0 10 -10"  I="1.0 0.8 0.8" attenuation="0.1 0 0"/>
+
+      <material name="mirror" type="blinn"
+         diffuse="0.2 0.2 0.2"
+         specular="0.2 0.2 0.2"
+         ambient="0.02 0.02 0.02"
+         glossiness="0"
+         mirror="0.95 0.95 0.95"/>
+
+      <object_instance_begin name="girl" />
+         <push_CTM/>
+            <rotate axis="1 0 0" angle="90.0"/>
+            <rotate axis="0 1 0" angle="180.0"/>
+            <scale value="5 5 5"/>
+            <include filename="scenes/references/girl.xml" />
+         <pop_CTM/>
+      <object_instance_end/>
+
+      <push_GS/>
+         <translate value="-2.50 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.50 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-2.00 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.50 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-1.00 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="-0.50 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.00 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="0.50 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.00 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="1.50 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.00 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 -2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 -2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 -1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 -1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 -0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 0.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 0.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 1.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 1.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 2.00" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+      <push_GS/>
+         <translate value="2.50 0 2.50" />
+         <object_instance_call name="girl" />
+      <pop_GS/>
+   <world_end/>
+</RT3>
