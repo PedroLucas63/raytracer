@@ -85,15 +85,18 @@ namespace raytracer {
       int toVisitOffset = 0;
       int currentIdx    = 0;
 
+      Ray localRay = transform.isIdentity() ? ray : transform(ray, true);
+
       while(true){
          const LinearBVHNode& node = _nodes[currentIdx];
          float tMin, tMax;
 
-         if(node.bounds.intersect(ray, tMin, tMax)){
+         if(node.bounds.intersect(localRay, tMin, tMax)){
             if(node.nPrimitives > 0){
                for (int i = 0; i < node.nPrimitives; i++){
                   auto [primitive, instanceTransform] = _orderedInstances[node.primitivesOffset + i];
-                  if(primitive->intersect(ray, *instanceTransform)) return true;
+                  auto combinedTransform = transform * (*instanceTransform);
+                  if(primitive->intersect(ray, combinedTransform)) return true;
                }
             } else{
                toVisit[toVisitOffset++] = node.secondChildOffset;
@@ -118,21 +121,24 @@ namespace raytracer {
       int  toVisitOffset = 0;
       int  currentIdx    = 0;
 
+      Ray localRay = transform.isIdentity() ? ray : transform(ray, true);
+
       while(true){
          const LinearBVHNode& node = _nodes[currentIdx];
          float tMin, tMax;
 
-         if(node.bounds.intersect(ray, tMin, tMax)){
+         if(node.bounds.intersect(localRay, tMin, tMax)){
             if(node.nPrimitives > 0){
                for (int i = 0; i < node.nPrimitives; i++){
                   const auto& [primitive, instanceTransform] = _orderedInstances[node.primitivesOffset + i];
+                  auto combinedTransform = transform * (*instanceTransform);
 
                   if(!sf){
-                     if (primitive->intersect(ray, *instanceTransform)) return true;                    
+                     if (primitive->intersect(ray, combinedTransform)) return true;                    
                   } else{
                      Surfel candidate;
                      candidate.t = std::numeric_limits<float>::infinity();
-                     if (primitive->intersectWithSurfel(ray, *instanceTransform, &candidate)) {
+                     if (primitive->intersectWithSurfel(ray, combinedTransform, &candidate)) {
                         hit = true;
                         if (candidate.t < sf->t) *sf = candidate;
                      }
@@ -165,6 +171,6 @@ namespace raytracer {
    }
 
    const Bounds3 LinearBVHAccel::getBounds(const Transform& transform) const {
-      return _bounds;
+      return transform(_bounds);
    }
 }

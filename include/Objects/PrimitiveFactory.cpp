@@ -6,6 +6,8 @@
 #include "Objects/Shapes/Shape.hpp"
 #include "Objects/Shapes/Triangle.hpp"
 #include "Objects/Shapes/Cylinder.hpp"
+#include "Objects/Aggregate/BVHAccel.hpp"
+#include "Objects/Aggregate/PrimitiveList.hpp"
 #include "Api/Api.hpp"
 #include <iostream>
 
@@ -14,7 +16,7 @@ namespace raytracer {
       return type == "sphere" || type == "plane" || type == "box" || type == "trianglemesh" || type == "cylinder";
    }
 
-   std::shared_ptr<PrimitiveList> PrimitiveFactory::createGeometricPrimitive(
+   std::shared_ptr<AggregatePrimitive> PrimitiveFactory::createGeometricPrimitive(
       const ParamSet& params, const GraphicsState& graphicsState
    ) {
       std::shared_ptr<Material> material;
@@ -29,7 +31,6 @@ namespace raytracer {
       if (material == nullptr)
          std::cerr << "[WARN]: Primitive created without material" << std::endl;
 
-      auto primitiveList = std::make_shared<PrimitiveList>();
       std::string type = params.retrieve<std::string>("type");
       std::shared_ptr<Shape> shape;
 
@@ -48,27 +49,30 @@ namespace raytracer {
       } else if (type == "cylinder") {
          shape = std::make_shared<Cylinder>();
       } else if (type == "trianglemesh") {
+         auto bvh = std::make_shared<BVHAccel>();
          auto shapes = std::make_shared<TriangleMesh>(params);
          auto triangles = shapes->makeTriangules(flipNormals);
 
          for (auto& shape : triangles) {
             auto p = std::make_shared<GeometricPrimitive>(shape, material);
-            primitiveList->add(
+            bvh->add(
                {p, identityTransform}
             );
          }
 
-         return primitiveList;
+         bvh->buildBVH(*identityTransform);
+         return bvh;
       } else {
          throw std::invalid_argument("Unknown primitive type: " + type);
       }
 
+      auto list = std::make_shared<PrimitiveList>();
       auto primitive = std::make_shared<GeometricPrimitive>(shape, material);
-      primitiveList->add({primitive, identityTransform});
-      return primitiveList;
+      list->add({primitive, identityTransform});
+      return list;
    }
 
-   std::shared_ptr<PrimitiveList> PrimitiveFactory::create(
+   std::shared_ptr<AggregatePrimitive> PrimitiveFactory::create(
       const ParamSet& params, const GraphicsState& graphicsState
    ) {
       if (!params.has("type")) {

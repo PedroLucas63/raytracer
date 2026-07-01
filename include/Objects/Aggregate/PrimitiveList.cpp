@@ -5,7 +5,8 @@ namespace raytracer {
    bool PrimitiveList::intersect(const Ray& ray, const Transform& transform) const {
       for (auto instance : _instances) {
          auto [primitive, instanceTransform] = instance;
-         if (primitive->intersect(ray, *instanceTransform)) 
+         Transform composed = transform * (*instanceTransform);
+         if (primitive->intersect(ray, composed)) 
             return true;
       }
 
@@ -23,7 +24,8 @@ namespace raytracer {
       for (auto& instance : _instances) {
          auto [primitive, instanceTransform] = instance;
          Surfel actualSf = Surfel();
-         if (primitive->intersectWithSurfel(ray, *instanceTransform, &actualSf)) {
+         Transform composed = transform * (*instanceTransform);
+         if (primitive->intersectWithSurfel(ray, composed, &actualSf)) {
             hit = true;
             if (actualSf.t < minimumSf.t) {
                minimumSf = actualSf;
@@ -43,10 +45,12 @@ namespace raytracer {
          return Bounds3(Point3(0, 0, 0), Point3(0, 0, 0));
       }
 
-      Bounds3 totalBounds = _instances[0].first->getBounds(*(_instances[0].second));
+      Bounds3 totalBounds = _instances[0].first->getBounds(transform * (*_instances[0].second));
       for (size_t i = 1; i < _instances.size(); ++i) {
          auto [primitive, instanceTransform] = _instances[i];
-         totalBounds = totalBounds.merge(primitive->getBounds(*instanceTransform));
+         auto composedTransform = transform * (*instanceTransform);
+         auto instanceBounds = primitive->getBounds(composedTransform);
+         totalBounds = totalBounds.merge(instanceBounds);
       }
       return totalBounds;
    } 
@@ -65,8 +69,8 @@ namespace raytracer {
       
       for (const auto& instance : otherList->_instances) {
          auto [primitive, instanceTransform] = instance;
-         auto newTransform = std::make_shared<Transform>(transform * (*instanceTransform));
-         _instances.push_back({primitive, newTransform});
+         auto combinedTransform = std::make_shared<Transform>(transform * (*instanceTransform));
+         _instances.push_back({primitive, combinedTransform});
       }
    }
 

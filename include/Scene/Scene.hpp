@@ -8,18 +8,18 @@
 #include "Objects/Aggregate/AggregatePrimitive.hpp"
 #include "Objects/Light/Light.hpp"
 #include "Objects/Light/AmbientLight.hpp"
+#include "Objects/Aggregate/BVHAccel.hpp"
+
 #include <vector>
 #include <memory>
 #include <unordered_map>
 
 namespace raytracer {
-   class PrimitiveList;
    using ParamSets = std::unordered_map<std::string, ParamSet>;
 
    struct Object {
       std::string name;
       std::shared_ptr<Primitive> primitive;
-      std::shared_ptr<Transform> transform;
    };
 
    class Scene {
@@ -32,7 +32,7 @@ namespace raytracer {
          std::shared_ptr<Background> _background;
 
          std::string _currentObjectName;
-         std::shared_ptr<PrimitiveList> _currentObject = nullptr;
+         std::shared_ptr<BVHAccel> _currentObject = nullptr;
 
          ParamSets _params;
          
@@ -51,7 +51,7 @@ namespace raytracer {
          void addAggregate(const std::shared_ptr<AggregatePrimitive>& aggregate);
          void addPrimitives(const std::shared_ptr<AggregatePrimitive>& primitives, const Transform& transform);
          
-         void instanciateObject(const std::string& name, std::shared_ptr<Transform> transform);
+         void instanciateObject(const std::string& name, const Transform& transform);
 
          void addLight(const std::shared_ptr<Light>& light);
          const std::vector<std::shared_ptr<Light>>& getLights() const;

@@ -20,44 +20,44 @@ namespace raytracer {
       _instances = aggregate;
    }
 
-   void Scene::addPrimitives(const std::shared_ptr<AggregatePrimitive>& primitives, const Transform& transform) {
+   void Scene::addPrimitives(
+      const std::shared_ptr<AggregatePrimitive>& primitives,
+      const Transform& transform
+   ) {
       if (!_instances) {
          _instances = std::make_shared<PrimitiveList>();
       }
 
+      std::shared_ptr<Transform> t = std::make_shared<Transform>(transform);
+
       if (_currentObject) {
-         _currentObject->merge(primitives, transform);
+         _currentObject->add({primitives, t});
       } else {
-         _instances->merge(primitives, transform);
+         _instances->add({primitives, t});
       }
    }
 
-   void Scene::instanciateObject(const std::string& name, std::shared_ptr<Transform> transform) {
+   void Scene::instanciateObject(
+      const std::string& name, 
+      const Transform& transform
+   ) {
       if (!_instances) {
          throw std::runtime_error("Cannot instantiate object: no aggregate primitive set in the scene.");
       }
 
       auto it = _objects.find(name);
+      auto t = std::make_shared<Transform>(transform);
 
       if (it != _objects.end()) {
          auto obj = it->second;
          auto primitive = obj.primitive;
-         auto t = std::make_shared<Transform>((*transform) * (*obj.transform));
          
          if (_currentObject) {
-           if (auto aggregatePrimitive = std::dynamic_pointer_cast<AggregatePrimitive>(primitive)) {
-               _currentObject->merge(aggregatePrimitive, *t);
-            } else {
-               _currentObject->add({primitive, t});
-            }
+            _currentObject->add({primitive, t});
             return;
          }
 
-         if (auto aggregatePrimitive = std::dynamic_pointer_cast<AggregatePrimitive>(primitive)) {
-            _instances->merge(aggregatePrimitive, *t);
-         } else {
-            _instances->add({primitive, t});
-         }
+         _instances->add({primitive, t});
       } else {
          throw std::runtime_error("Object not found: " + name);
       }
@@ -207,20 +207,23 @@ namespace raytracer {
          throw std::runtime_error("An object with the name '" + name + "' already exists. Choose a different name.");
       }
 
-      _currentObject = std::make_shared<PrimitiveList>();
+      _currentObject = std::make_shared<BVHAccel>();
    }
    void Scene::saveNewObject() {
       if (!_currentObject) {
          throw std::runtime_error("No object is currently being defined. Call defineNewObject() before saving.");
       }
 
+      static auto transform = std::make_shared<Transform>();
+
       Object newObject;
       newObject.name = _currentObjectName;
+      _currentObject->buildBVH(*transform);
       newObject.primitive = _currentObject;
-      newObject.transform = std::make_shared<Transform>();
 
       _objects[_currentObjectName] = newObject;
 
       _currentObject = nullptr;
+      _currentObjectName.clear();
    }
 }

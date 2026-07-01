@@ -95,7 +95,7 @@ namespace raytracer {
       std::shared_ptr<Transform> transform;
       bool flipNormals;
       Api::getCurrentTransform(&transform, &flipNormals);
-      _scene.instanciateObject(name, transform);
+      _scene.instanciateObject(name, *transform);
    }
 
    void GraphicsState::addLight(const std::shared_ptr<Light>& light) {

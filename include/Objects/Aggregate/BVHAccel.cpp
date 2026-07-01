@@ -30,7 +30,9 @@ namespace raytracer {
 
    bool BVHAccel::intersect(const Ray& ray, const Transform& transform) const {
       float tMin, tMax;
-      if (!_bounds.intersect(ray, tMin, tMax)) return false;
+      Ray localRay = transform.isIdentity() ? ray : transform(ray, true);
+      
+      if (!_bounds.intersect(localRay, tMin, tMax)) return false;
 
       if (_left == nullptr && _right == nullptr) {
          return _primitives  && _primitives->intersect(ray, transform);
@@ -45,7 +47,9 @@ namespace raytracer {
 
    bool BVHAccel::intersectWithSurfel(const Ray& ray, const Transform& transform, Surfel* sf) const {
       float tMin, tMax;
-      if (!_bounds.intersect(ray, tMin, tMax)) return false;
+      Ray localRay = transform.isIdentity() ? ray : transform(ray, true);
+
+      if (!_bounds.intersect(localRay, tMin, tMax)) return false;
       
       if (_left == nullptr && _right == nullptr) {
          return _primitives != nullptr && _primitives->intersectWithSurfel(ray, transform, sf);
@@ -157,7 +161,7 @@ namespace raytracer {
    }
 
    const Bounds3 BVHAccel::getBounds(const Transform& transform) const {
-      return _bounds;
+      return transform.isIdentity() ? _bounds : transform(_bounds);
    }
 
    Axis BVHAccel::getRandomAxis() const {
