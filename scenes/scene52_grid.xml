@@ -6,7 +6,7 @@
    <integrator type="blinn_phong" depth="5" />
 
    <world_begin/>
-      <background type="single_color" color="242 242 242"/>
+      <background type="image" filename="assets/images/studio.png" spherical="true" />
 
       <light_source type="ambient" I="0.8 0.8 0.8" scale="1 1 1" />
       <light_source type="point" from="0 10 -10"  I="1.0 0.8 0.8" attenuation="0.1 0 0"/>
@@ -26,6 +26,16 @@
             <include filename="scenes/references/girl.xml" />
          <pop_CTM/>
       <object_instance_end/>
+
+      <make_named_material type="blinn" name="gold" diffuse="1 0.65 0.0" specular="0.8 0.6 0.2" ambient="0.1 0.065 0.0" mirror="0.4 0.4 0.4" glossiness="512"/>
+
+      <named_material name="gold"/>
+      <object type="trianglemesh" ntriangles="2" indices="0 1 2 0 2 3"
+         vertices="-3 0 3  3 0 3  3 0 -3  -3 0 -3"
+         normals="0 1 0  0 1 0  0 1 0  0 1 0 "
+         uv="0 0  1 0  1 1  0 1"
+         reverse_vertex_order="false"
+         backface_cull="on"/>
 
       <push_GS/>
          <translate value="-2.50 0 -2.50" />
