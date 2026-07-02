@@ -19,7 +19,9 @@ Este ray tracer possui:
 - Intersecao com esfera e plano.
 - Sistema de materiais por nome (cor solida e quadriculado).
 - Pipeline de render com selecao da intersecao mais proxima.
-- Suite de testes automatizados com Catch2.
+- Suporte a transformações lineares afins (translação, rotação e escala) aplicadas a objetos geométricos e câmeras.
+- Gerenciamento de estado gráfico via pilha de matrizes CTM e pilha de Graphics State (GS).
+- Instanciação geométrica de objetos para reuso em memória.
 
 ## Status Das Tarefas (Projetos Da Disciplina)
 
@@ -68,6 +70,14 @@ Este ray tracer possui:
 ### Projeto 08 - Estruturas de Aceleração Espacial
 - [x] Representação tridimensional de caixas delimitadoras alinhadas aos eixos (`Bounds3` / AABB) com algoritmo rápido de interseção de raios.
 - [x] Árvore de partição espacial Bounding Volume Hierarchy (`BVHAccel`) com divisão mediana dos objetos (`split_method="middle"`).
+
+### Projeto 09 - Transformações e Instanciação de Objetos
+- [x] Implementação da classe `Matrix4x4` com operações algébricas como multiplicação, transposição e cálculo de inversa.
+- [x] Classe de transformação afim `Transform` para aplicar transformações geométricas e suas inversas em raios (`Ray`), normais, pontos, vetores e caixas delimitadoras (`Bounds3`).
+- [x] Implementação da pilha de matriz de transformação corrente (CTM) e do estado gráfico (Graphics State) com suporte a tags `<push_CTM/>` / `<pop_CTM/>` e `<push_GS/>` / `<pop_GS/>`.
+- [x] Implementação de transformações espaciais com suporte a `<translate>`, `<scale>`, `<rotate>`, `<lookat>` e `<identity/>` nas cenas XML.
+- [x] Suporte à definição e instanciação de templates de objetos geométricos através de `<object_instance_begin>`, `<object_instance_end>` e `<object_instance_call>`.
+- [x] Otimização e reuso de malhas e geometrias compartilhadas via instanciamento.
 
 ---
 
@@ -170,15 +180,6 @@ Exemplo:
 
 Formatos de gravação suportados: `.png`, `.jpg`, `.bmp`, `.tga`, `.ppm`, entre outros.
 
-## Testes
-
-```bash
-cmake --preset default
-cmake --build build
-ctest --test-dir build --output-on-failure
-```
-
-A suite cobre parsing, opcoes de execucao, utilitarios de imagem, `RGBColor`, `Background` e `ParamSet`.
 
 ## Formato Dos Elementos Da Cena (XML)
 
@@ -253,6 +254,19 @@ Define a estrutura de aceleração espacial para interseções:
   - `compute_normals="true|false"`: Calcula as normais geometricamente caso o arquivo OBJ não as possua.
   - `backface_cull="true|false"`: Ativa descarte de faces traseiras.
   - `material="nome"`.
+
+#### Transformações e Gerenciamento de Estado
+Pilha e transformações aplicadas à CTM corrente:
+- `<push_CTM/>` / `<pop_CTM/>`: Salva e restaura a CTM corrente na pilha de transformações.
+- `<push_GS/>` / `<pop_GS/>`: Salva e restaura o Graphics State completo (incluindo materiais e a CTM).
+- `<translate value="dx dy dz"/>`: Aplica translação à CTM.
+- `<scale value="sx sy sz"/>`: Aplica escala à CTM.
+- `<rotate axis="x y z" angle="graus"/>`: Aplica rotação de `graus` em torno do eixo `(x, y, z)` à CTM.
+- `<identity/>`: Reinicia a CTM para a matriz identidade.
+
+#### Instanciação de Objetos
+- `<object_instance_begin name="nome"/>` e `<object_instance_end/>`: Delimitam a criação de um template reutilizável chamado `nome`.
+- `<object_instance_call name="nome"/>`: Instancia e insere na cena o template de objeto previamente definido, aplicando as transformações vigentes na CTM.
 
 ---
 
